@@ -1,8 +1,8 @@
 %YAML 1.1
 ---
 type: object
-id: "http://devicetree.org/schemas/soc/example.yaml#",
-"$schema": "http://json-schema.org/draft-04/schema#",
+id: "http://devicetree.org/schemas/soc/example.yaml#"
+$schema: "http://json-schema.org/draft-04/schema#"
 
 version: 1
 
@@ -27,16 +27,16 @@ properties:
       Compatible strings for the board example.
 
     items:
-      allOf:
-        - enum: 
+      oneOf:
+        - enum:
           - "example,board"
           - "example,board2"
-        - "example,soc"
+        - { const: "example,soc" }
 
   model:
     type: string
     description: models that this board family supports
-    enum: 
+    enum:
       - "Example EVM"
       - "Example EVM2"
 
