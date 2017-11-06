@@ -8,7 +8,7 @@ import glob
 
 class schema_group():
     def __init__(self):
-        self.schemas = dict()
+        self.schemas = list()
         for filename in glob.iglob("schemas/**/*.yaml", recursive=True):
             self.load_binding_schema(filename)
 
@@ -19,27 +19,64 @@ class schema_group():
             print("Error in schema", filename, exc)
             return
 
+        # Check that the validation schema is valid
         try:
             jsonschema.Draft4Validator.check_schema(schema)
         except jsonschema.SchemaError as exc:
             print("Error(s) validating schema", filename, exc)
             return
 
-        if ("match" in schema):
-            schemas[schema.match] = schema
+        # Check that the selection schema is valid. The selection
+        # schema determines when a binding should get applied
+        if "select" in schema.keys():
+            try:
+                jsonschema.Draft4Validator.check_schema(schema)
+            except jsonschema.SchemaError as exc:
+                print("Error(s) validating schema", filename, exc)
+                return
+
+        schema["filename"] = filename
+        self.schemas.append(schema)
         print("loaded schema", filename)
+
+    def check_node(self, dt, node, path):
+        #print("checking node", path, "against a schemas")
+        for schema in self.schemas:
+            if "select" in schema.keys():
+                v = jsonschema.Draft4Validator(schema["select"])
+                if v.is_valid(node):
+                    print("node", path, "matches", schema["filename"])
+                    v2 = jsonschema.Draft4Validator(schema)
+                    errors = sorted(v2.iter_errors(node), key=lambda e: e.path)
+                    if (errors):
+                        for error in errors:
+                            print(error.path, error.message)
+
+    def check_subtree(self, dt, subtree, path="/"):
+        self.check_node(dt, subtree, path)
+        for name,value in subtree.items():
+            if type(value) == dict:
+                self.check_subtree(dt, value, '/'.join([path,name]))
+
+    def check_trees(self, dt):
+        """Check the given DT against all schemas"""
+        for subtree in dt:
+            self.check_subtree(dt, subtree)
 
 if __name__ == "__main__":
     sg = schema_group()
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("yamldt", type=str,
+                    help="Filename of YAML encoded devicetree input file")
+    args = ap.parse_args()
+
+
+    testtree = yaml.load(open(args.yamldt).read())
+    sg.check_trees(testtree)
     exit(0)
 
-    argparser = argparse.ArgumentParser()
-    argparser.add_argument("yamldt", type=str, help="Filename of YAML encoded devicetree input file")
-    args = argparser.parse_args()
-
-
     schema = yaml.load(open("dt-schema-core.json").read())
-    testtree = yaml.load(open(args.yamldt).read())
 
     errors = jsonschema.Draft4Validator.check_schema(schema)
     if errors:

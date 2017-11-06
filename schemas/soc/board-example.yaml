@@ -1,37 +1,33 @@
 %YAML 1.1
 ---
-type: object
 id: "http://devicetree.org/schemas/soc/example.yaml#"
 $schema: "http://json-schema.org/draft-04/schema#"
-
 version: 1
 
 title: A board example using compatible and model properties
-
 maintainer:
   name: Skeleton Person <skel@kernel.org>
 
-allOf:
-  - "$ref": "#/root-node.yaml"
-
 # this binding is selected when the compatible property constraint matches
-selected: "compatible"
+select:
+  type: string
+  required: ["compatible"]
+  properties:
+    compatible:
+      contains:
+        enum: [ "example,board", "example,board2" ]
 
 description: >
   A board binding example. Matches on a top-level compatible string and model.
 
 properties:
-
+  # The "select" keyword above already ensures the board compatible is in the
+  # list. This entry makes sure the soc compatible string is also there. It is
+  # also a place to put the description for documentation purposes.
   compatible:
-    description: |
-      Compatible strings for the board example.
-
-    items:
-      oneOf:
-        - enum:
-          - "example,board"
-          - "example,board2"
-        - { const: "example,soc" }
+    description: Compatible strings for the board example.
+    contains:
+        const: "example,soc"
 
   model:
     type: string

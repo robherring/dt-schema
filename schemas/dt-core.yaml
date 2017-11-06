@@ -8,6 +8,13 @@
 id: "http://devicetree.org/alpha-01/schema-core#"
 $schema: "http://json-schema.org/draft-04/schema#"
 description: "Schema for core devicetree bindings"
+
+# this binding is selected when the compatible property constraint matches
+select:
+  required: [ $path ]
+  properties:
+    $path: { const: "/" }
+
 definitions:
     proptypes:
         "#cells":
@@ -15,8 +22,8 @@ definitions:
             minimum: 0
             maximum: 8
         flag:
-            type: [null, boolean]
-            enum: [ true ]
+            type: boolean
+            enum: [ true, "Null" ]
         stringarray:
             type: array
             items: { type: string }
@@ -48,11 +55,11 @@ definitions:
     address-spec:
         type: array
         length: ".../#address-cells"
-        items: { type: "integer" }
+        items: { type: integer }
     size-spec:
         type: array
         length: ".../#size-cells"
-        items: { type: "integer" }
+        items: { type: integer }
     addr-size-spec:
         type: array
         additionalItems: false
@@ -87,10 +94,11 @@ definitions:
     propdata:
         type: [string, integer, array, boolean]
         items: { $ref: "#/definitions/propdata" }
+
     node:
         allOf:
           - { $ref: "#/definitions/std-properties" }
-          - type: "object"
+          - type: object
             additionalProperties: false
             patternProperties:
                 # property and node namespace overlaps. Catch both here
@@ -110,6 +118,6 @@ definitions:
                 "^\\$path$": { }
                 "^\\$labels$": { }
 
-type: array
-items: { $ref: "#/definitions/node" }
+allOf:
+- { $ref: "#/definitions/node" }
 
