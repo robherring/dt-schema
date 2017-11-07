@@ -28,9 +28,11 @@ class schema_group():
 
         # Check that the selection schema is valid. The selection
         # schema determines when a binding should get applied
+        resolver = jsonschema.RefResolver.from_schema(schema)
+        validator = jsonschema.Draft4Validator(schema, resolver=resolver)
         if "select" in schema.keys():
             try:
-                jsonschema.Draft4Validator.check_schema(schema)
+                validator.check_schema(schema)
             except jsonschema.SchemaError as exc:
                 print("Error(s) validating schema", filename, exc)
                 return
@@ -43,10 +45,11 @@ class schema_group():
         #print("checking node", path, "against a schemas")
         for schema in self.schemas:
             if "select" in schema.keys():
-                v = jsonschema.Draft4Validator(schema["select"])
+                resolver = jsonschema.RefResolver.from_schema(schema)
+                v = jsonschema.Draft4Validator(schema["select"], resolver=resolver)
                 if v.is_valid(node):
                     print("node", path, "matches", schema["filename"])
-                    v2 = jsonschema.Draft4Validator(schema)
+                    v2 = jsonschema.Draft4Validator(schema, resolver=resolver)
                     errors = sorted(v2.iter_errors(node), key=lambda e: e.path)
                     if (errors):
                         for error in errors:

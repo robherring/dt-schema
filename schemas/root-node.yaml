@@ -14,10 +14,23 @@ maintainer:
 # this binding is selected when the compatible property constraint matches
 #  selected: "compatible"
 
+select:
+  required: ["$path"]
+  properties:
+    $path: { enum: ["/"] }
+
 properties:
+  compatible:
+    type: array
+    items:
+      - type: string
   model:
     type: string
     description: models that this board family supports
+  "#address-cells":
+    type: number
+  "#size-cells":
+    type: number
 
 required:
   - compatible

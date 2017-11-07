@@ -10,7 +10,7 @@ title: ARM Juno boards
 select:
   required: ["compatible", "$path"]
   properties:
-    $path: { const: "/" }
+    $path: { enum: ["/"] }
     compatible:
       contains:
         enum: [ "arm,juno", "arm,juno-r1", "arm,juno-r2" ]
