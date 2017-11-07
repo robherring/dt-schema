@@ -1,0 +1,1261 @@
+# 1 "juno.yaml"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "juno.yaml"
+
+# ARM Ltd. Juno Platform
+
+# Copyright (c) 2013-2014 ARM Ltd.
+
+# This file is licensed under a dual GPLv2 or BSD license.
+
+
+
+# 1 "../../../include/dt-bindings/interrupt-controller/arm-gic.h" 1
+
+
+
+
+
+
+
+# 1 "../../../include/dt-bindings/interrupt-controller/irq.h" 1
+# 9 "../../../include/dt-bindings/interrupt-controller/arm-gic.h" 2
+# 11 "juno.yaml" 2
+# 1 "juno-base.yamli" 1
+# 1 "juno-clocks.yamli" 1
+
+# ARM Juno Platform clocks
+
+# Copyright (c) 2013-2014 ARM Ltd
+
+# This file is licensed under a dual GPLv2 or BSD license.
+
+
+# SoC fixed clocks
+- $path: /
+  refclk7273800hz:
+    $labels: [ soc_uartclk ]
+    compatible: [ "fixed-clock" ]
+    "#clock-cells": 0
+    clock-frequency: 7273800
+    clock-output-names: "juno:uartclk"
+
+  clk48mhz:
+    $labels: [ soc_usb48mhz ]
+    compatible: [ "fixed-clock" ]
+    "#clock-cells": 0
+    clock-frequency: 48000000
+    clock-output-names: "clk48mhz"
+
+  clk50mhz:
+    $labels: [ soc_smc50mhz ]
+    compatible: [ "fixed-clock" ]
+    "#clock-cells": 0
+    clock-frequency: 50000000
+    clock-output-names: "smc_clk"
+
+  refclk100mhz:
+    $labels: [ soc_refclk100mhz ]
+    compatible: [ "fixed-clock" ]
+    "#clock-cells": 0
+    clock-frequency: 100000000
+    clock-output-names: "apb_pclk"
+
+  refclk400mhz:
+    $labels: [ soc_faxiclk ]
+    compatible: [ "fixed-clock" ]
+    "#clock-cells": 0
+    clock-frequency: 400000000
+    clock-output-names: "faxi_clk"
+# 2 "juno-base.yamli" 2
+
+
+# Devices shared by all Juno boards
+
+  dma-ranges: [ 0, 0, 0, 0, 0x100, 0 ]
+
+  timer@2a810000:
+    $labels: [ memtimer ]
+    compatible: [ "arm,armv7-timer-mem" ]
+    reg: [ 0x0, 0x2a810000, 0x0, 0x10000 ]
+    clock-frequency: 50000000
+    "#address-cells": 2
+    "#size-cells": 2
+    ranges: true
+    status: "disabled"
+    frame@2a830000:
+      frame-number: 1
+      interrupts: [ [ 0, 60, 4 ] ]
+      reg: [ 0x0, 0x2a830000, 0x0, 0x10000 ]
+
+  mhu@2b1f0000:
+    $labels: [ mailbox ]
+    compatible: [ "arm,mhu", "arm,primecell" ]
+    reg: [ 0x0, 0x2b1f0000, 0x0, 0x1000 ]
+    interrupts: [ [ 0, 36, 4 ], [ 0, 35, 4 ] ]
+    interrupt-names: [ "mhu_lpri_rx", "mhu_hpri_rx" ]
+    "#mbox-cells": 1
+    clocks: $soc_refclk100mhz
+    clock-names: "apb_pclk"
+
+  iommu@2b500000:
+    $labels: [ smmu_pcie ]
+    compatible: [ "arm,mmu-401", "arm,smmu-v1" ]
+    reg: [ 0x0, 0x2b500000, 0x0, 0x10000 ]
+    interrupts: [ [ 0, 40, 4 ], [ 0, 40, 4 ] ]
+    "#iommu-cells": 1
+    "#global-interrupts": 1
+    dma-coherent: true
+    status: "disabled"
+
+  iommu@2b600000:
+    $labels: [ smmu_etr ]
+    compatible: [ "arm,mmu-401", "arm,smmu-v1" ]
+    reg: [ 0x0, 0x2b600000, 0x0, 0x10000 ]
+    interrupts: [ [ 0, 42, 4 ], [ 0, 42, 4 ] ]
+    "#iommu-cells": 1
+    "#global-interrupts": 1
+    dma-coherent: true
+    power-domains: [ $scpi_devpd, 0 ]
+
+  interrupt-controller@2c010000:
+    $labels: [ gic ]
+    compatible: [ "arm,gic-400", "arm,cortex-a15-gic" ]
+    reg: [ [ 0x0, 0x2c010000, 0, 0x1000 ], [ 0x0, 0x2c02f000, 0, 0x2000 ], [ 0x0, 0x2c04f000, 0, 0x2000 ], [ 0x0, 0x2c06f000, 0, 0x2000 ] ]
+    "#address-cells": 2
+    "#interrupt-cells": 3
+    "#size-cells": 2
+    interrupt-controller: true
+    interrupts: [ [ 1, 9, (((1 << (6)) - 1) << 8) | 4 ] ]
+    ranges: [ 0, 0, 0, 0x2c1c0000, 0, 0x40000 ]
+    v2m@0:
+      $labels: [ v2m_0 ]
+      compatible: [ "arm,gic-v2m-frame" ]
+      msi-controller: true
+      reg: [ 0, 0, 0, 0x1000 ]
+
+  timer:
+    compatible: [ "arm,armv8-timer" ]
+    interrupts: [ [ 1, 13, (((1 << (6)) - 1) << 8) | 8 ], [ 1, 14, (((1 << (6)) - 1) << 8) | 8 ], [ 1, 11, (((1 << (6)) - 1) << 8) | 8 ], [ 1, 10, (((1 << (6)) - 1) << 8) | 8 ] ]
+
+
+# Juno TRMs specify the size for these coresight components as 64K.
+# The actual size is just 4K though 64K is reserved. Access to the
+# unmapped reserved region results in a DECERR response.
+
+  etf@20010000:
+    # etf0
+    compatible: [ "arm,coresight-tmc", "arm,primecell" ]
+    reg: [ 0, 0x20010000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    ports:
+      "#address-cells": 1
+      "#size-cells": 0
+
+      # input port
+      port@0:
+        reg: 0
+        endpoint:
+          $labels: [ etf0_in_port ]
+          slave-mode: true
+          remote-endpoint: $main_funnel_out_port
+
+      # output port
+      port@1:
+        reg: 0
+        endpoint:
+          $labels: [ etf0_out_port ]
+
+  tpiu@20030000:
+    compatible: [ "arm,coresight-tpiu", "arm,primecell" ]
+    reg: [ 0, 0x20030000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    port:
+      endpoint:
+        $labels: [ tpiu_in_port ]
+        slave-mode: true
+        remote-endpoint: $replicator_out_port0
+
+# main funnel on Juno r0, cssys0 funnel on Juno r1/r2 as per TRM
+  funnel@20040000:
+    $labels: [ main_funnel ]
+    compatible: [ "arm,coresight-funnel", "arm,primecell" ]
+    reg: [ 0, 0x20040000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    ports:
+      "#address-cells": 1
+      "#size-cells": 0
+
+      # output port
+      port@0:
+        reg: 0
+        endpoint:
+          $labels: [ main_funnel_out_port ]
+          remote-endpoint: $etf0_in_port
+
+      # input ports
+      port@1:
+        reg: 0
+        endpoint:
+          $labels: [ main_funnel_in_port0 ]
+          slave-mode: true
+          remote-endpoint: $cluster0_funnel_out_port
+
+      port@2:
+        reg: 1
+        endpoint:
+          $labels: [ main_funnel_in_port1 ]
+          slave-mode: true
+          remote-endpoint: $cluster1_funnel_out_port
+
+  etr@20070000:
+    compatible: [ "arm,coresight-tmc", "arm,primecell" ]
+    reg: [ 0, 0x20070000, 0, 0x1000 ]
+    iommus: [ $smmu_etr, 0 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    port:
+      endpoint:
+        $labels: [ etr_in_port ]
+        slave-mode: true
+        remote-endpoint: $replicator_out_port1
+
+  stm@20100000:
+    compatible: [ "arm,coresight-stm", "arm,primecell" ]
+    reg: [ [ 0, 0x20100000, 0, 0x1000 ], [ 0, 0x28000000, 0, 0x1000000 ] ]
+    reg-names: [ "stm-base", "stm-stimulus-base" ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    port:
+      endpoint:
+        $labels: [ stm_out_port ]
+
+  cpu_debug@22010000:
+    $labels: [ cpu_debug0 ]
+    compatible: [ "arm,coresight-cpu-debug", "arm,primecell" ]
+    reg: [ 0x0, 0x22010000, 0x0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+
+  etm@22040000:
+    $labels: [ etm0 ]
+    compatible: [ "arm,coresight-etm4x", "arm,primecell" ]
+    reg: [ 0, 0x22040000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    port:
+      endpoint:
+        $labels: [ cluster0_etm0_out_port ]
+        remote-endpoint: $cluster0_funnel_in_port0
+
+  funnel@220c0000:
+    # cluster0 funnel
+    compatible: [ "arm,coresight-funnel", "arm,primecell" ]
+    reg: [ 0, 0x220c0000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    ports:
+      "#address-cells": 1
+      "#size-cells": 0
+
+      port@0:
+        reg: 0
+        endpoint:
+          $labels: [ cluster0_funnel_out_port ]
+          remote-endpoint: $main_funnel_in_port0
+
+      port@1:
+        reg: 0
+        endpoint:
+          $labels: [ cluster0_funnel_in_port0 ]
+          slave-mode: true
+          remote-endpoint: $cluster0_etm0_out_port
+
+      port@2:
+        reg: 1
+        endpoint:
+          $labels: [ cluster0_funnel_in_port1 ]
+          slave-mode: true
+          remote-endpoint: $cluster0_etm1_out_port
+
+  cpu_debug@22110000:
+    $labels: [ cpu_debug1 ]
+    compatible: [ "arm,coresight-cpu-debug", "arm,primecell" ]
+    reg: [ 0x0, 0x22110000, 0x0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+
+  etm@22140000:
+    $labels: [ etm1 ]
+    compatible: [ "arm,coresight-etm4x", "arm,primecell" ]
+    reg: [ 0, 0x22140000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    port:
+      endpoint:
+        $labels: [ cluster0_etm1_out_port ]
+        remote-endpoint: $cluster0_funnel_in_port1
+
+  cpu_debug@23010000:
+    $labels: [ cpu_debug2 ]
+    compatible: [ "arm,coresight-cpu-debug", "arm,primecell" ]
+    reg: [ 0x0, 0x23010000, 0x0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+
+  etm@23040000:
+    $labels: [ etm2 ]
+    compatible: [ "arm,coresight-etm4x", "arm,primecell" ]
+    reg: [ 0, 0x23040000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    port:
+      endpoint:
+        $labels: [ cluster1_etm0_out_port ]
+        remote-endpoint: $cluster1_funnel_in_port0
+
+  funnel@230c0000:
+    # cluster1 funnel
+    compatible: [ "arm,coresight-funnel", "arm,primecell" ]
+    reg: [ 0, 0x230c0000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    ports:
+      "#address-cells": 1
+      "#size-cells": 0
+
+      port@0:
+        reg: 0
+        endpoint:
+          $labels: [ cluster1_funnel_out_port ]
+          remote-endpoint: $main_funnel_in_port1
+
+      port@1:
+        reg: 0
+        endpoint:
+          $labels: [ cluster1_funnel_in_port0 ]
+          slave-mode: true
+          remote-endpoint: $cluster1_etm0_out_port
+
+      port@2:
+        reg: 1
+        endpoint:
+          $labels: [ cluster1_funnel_in_port1 ]
+          slave-mode: true
+          remote-endpoint: $cluster1_etm1_out_port
+      port@3:
+        reg: 2
+        endpoint:
+          $labels: [ cluster1_funnel_in_port2 ]
+          slave-mode: true
+          remote-endpoint: $cluster1_etm2_out_port
+      port@4:
+        reg: 3
+        endpoint:
+          $labels: [ cluster1_funnel_in_port3 ]
+          slave-mode: true
+          remote-endpoint: $cluster1_etm3_out_port
+
+  cpu_debug@23110000:
+    $labels: [ cpu_debug3 ]
+    compatible: [ "arm,coresight-cpu-debug", "arm,primecell" ]
+    reg: [ 0x0, 0x23110000, 0x0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+
+  etm@23140000:
+    $labels: [ etm3 ]
+    compatible: [ "arm,coresight-etm4x", "arm,primecell" ]
+    reg: [ 0, 0x23140000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    port:
+      endpoint:
+        $labels: [ cluster1_etm1_out_port ]
+        remote-endpoint: $cluster1_funnel_in_port1
+
+  cpu_debug@23210000:
+    $labels: [ cpu_debug4 ]
+    compatible: [ "arm,coresight-cpu-debug", "arm,primecell" ]
+    reg: [ 0x0, 0x23210000, 0x0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+
+  etm@23240000:
+    $labels: [ etm4 ]
+    compatible: [ "arm,coresight-etm4x", "arm,primecell" ]
+    reg: [ 0, 0x23240000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    port:
+      endpoint:
+        $labels: [ cluster1_etm2_out_port ]
+        remote-endpoint: $cluster1_funnel_in_port2
+
+  cpu_debug@23310000:
+    $labels: [ cpu_debug5 ]
+    compatible: [ "arm,coresight-cpu-debug", "arm,primecell" ]
+    reg: [ 0x0, 0x23310000, 0x0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+
+  etm@23340000:
+    $labels: [ etm5 ]
+    compatible: [ "arm,coresight-etm4x", "arm,primecell" ]
+    reg: [ 0, 0x23340000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+    port:
+      endpoint:
+        $labels: [ cluster1_etm3_out_port ]
+        remote-endpoint: $cluster1_funnel_in_port3
+
+  replicator@20120000:
+    compatible: [ "qcom,coresight-replicator1x", "arm,primecell" ]
+    reg: [ 0, 0x20120000, 0, 0x1000 ]
+
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+    power-domains: [ $scpi_devpd, 0 ]
+
+    ports:
+      "#address-cells": 1
+      "#size-cells": 0
+
+      # replicator output ports
+      port@0:
+        reg: 0
+        endpoint:
+          $labels: [ replicator_out_port0 ]
+          remote-endpoint: $tpiu_in_port
+
+      port@1:
+        reg: 1
+        endpoint:
+          $labels: [ replicator_out_port1 ]
+          remote-endpoint: $etr_in_port
+
+      # replicator input port
+      port@2:
+        reg: 0
+        endpoint:
+          $labels: [ replicator_in_port0 ]
+          slave-mode: true
+
+  sram@2e000000:
+    $labels: [ sram ]
+    compatible: [ "arm,juno-sram-ns", "mmio-sram" ]
+    reg: [ 0x0, 0x2e000000, 0x0, 0x8000 ]
+
+    "#address-cells": 1
+    "#size-cells": 1
+    ranges: [ 0, 0x0, 0x2e000000, 0x8000 ]
+
+    scp-shmem@0:
+      $labels: [ cpu_scp_lpri ]
+      compatible: [ "arm,juno-scp-shmem" ]
+      reg: [ 0x0, 0x200 ]
+
+    scp-shmem@200:
+      $labels: [ cpu_scp_hpri ]
+      compatible: [ "arm,juno-scp-shmem" ]
+      reg: [ 0x200, 0x200 ]
+
+  pcie@40000000:
+    $labels: [ pcie_ctlr ]
+    compatible: [ "arm,juno-r1-pcie", "plda,xpressrich3-axi", "pci-host-ecam-generic" ]
+    device_type: "pci"
+    reg: [ 0, 0x40000000, 0, 0x10000000 ]
+    # ECAM config space
+    bus-range: [ 0, 255 ]
+    linux,pci-domain: 0
+    "#address-cells": 3
+    "#size-cells": 2
+    dma-coherent: true
+    ranges: [ [ 0x01000000, 0x00, 0x00000000, 0x00, 0x5f800000, 0x0, 0x00800000 ], [ 0x02000000, 0x00, 0x50000000, 0x00, 0x50000000, 0x0, 0x08000000 ], [ 0x42000000, 0x40, 0x00000000, 0x40, 0x00000000, 0x1, 0x00000000 ] ]
+    "#interrupt-cells": 1
+    interrupt-map-mask: [ 0, 0, 0, 7 ]
+    interrupt-map: [ [ 0, 0, 0, 1, $gic, 0, 0, 0, 136, 4 ], [ 0, 0, 0, 2, $gic, 0, 0, 0, 137, 4 ], [ 0, 0, 0, 3, $gic, 0, 0, 0, 138, 4 ], [ 0, 0, 0, 4, $gic, 0, 0, 0, 139, 4 ] ]
+    msi-parent: $v2m_0
+    status: "disabled"
+    iommu-map-mask: 0x0
+    # RC has no means to output PCI RID
+    iommu-map: [ 0x0, $smmu_pcie, 0x0, 0x1 ]
+
+  scpi:
+    compatible: [ "arm,scpi" ]
+    mboxes: [ $mailbox, 1 ]
+    shmem: $cpu_scp_hpri
+
+    clocks:
+      compatible: [ "arm,scpi-clocks" ]
+
+      scpi-dvfs:
+        $labels: [ scpi_dvfs ]
+        compatible: [ "arm,scpi-dvfs-clocks" ]
+        "#clock-cells": 1
+        clock-indices: [ 0, 1, 2 ]
+        clock-output-names: [ "atlclk", "aplclk", "gpuclk" ]
+      scpi-clk:
+        $labels: [ scpi_clk ]
+        compatible: [ "arm,scpi-variable-clocks" ]
+        "#clock-cells": 1
+        clock-indices: 3
+        clock-output-names: "pxlclk"
+
+    scpi-power-domains:
+      $labels: [ scpi_devpd ]
+      compatible: [ "arm,scpi-power-domains" ]
+      num-domains: 2
+      "#power-domain-cells": 1
+
+    sensors:
+      $labels: [ scpi_sensors0 ]
+      compatible: [ "arm,scpi-sensors" ]
+      "#thermal-sensor-cells": 1
+
+  thermal-zones:
+    pmic:
+      polling-delay: 1000
+      polling-delay-passive: 100
+      thermal-sensors: [ $scpi_sensors0, 0 ]
+
+    soc:
+      polling-delay: 1000
+      polling-delay-passive: 100
+      thermal-sensors: [ $scpi_sensors0, 3 ]
+
+    big_cluster:
+      $labels: [ big_cluster_thermal_zone ]
+      polling-delay: 1000
+      polling-delay-passive: 100
+      thermal-sensors: [ $scpi_sensors0, 21 ]
+      status: "disabled"
+
+    little_cluster:
+      $labels: [ little_cluster_thermal_zone ]
+      polling-delay: 1000
+      polling-delay-passive: 100
+      thermal-sensors: [ $scpi_sensors0, 22 ]
+      status: "disabled"
+
+    gpu0:
+      $labels: [ gpu0_thermal_zone ]
+      polling-delay: 1000
+      polling-delay-passive: 100
+      thermal-sensors: [ $scpi_sensors0, 23 ]
+      status: "disabled"
+
+    gpu1:
+      $labels: [ gpu1_thermal_zone ]
+      polling-delay: 1000
+      polling-delay-passive: 100
+      thermal-sensors: [ $scpi_sensors0, 24 ]
+      status: "disabled"
+
+  iommu@7fb00000:
+    $labels: [ smmu_dma ]
+    compatible: [ "arm,mmu-401", "arm,smmu-v1" ]
+    reg: [ 0x0, 0x7fb00000, 0x0, 0x10000 ]
+    interrupts: [ [ 0, 95, 4 ], [ 0, 95, 4 ] ]
+    "#iommu-cells": 1
+    "#global-interrupts": 1
+    dma-coherent: true
+    status: "disabled"
+
+  iommu@7fb10000:
+    $labels: [ smmu_hdlcd1 ]
+    compatible: [ "arm,mmu-401", "arm,smmu-v1" ]
+    reg: [ 0x0, 0x7fb10000, 0x0, 0x10000 ]
+    interrupts: [ [ 0, 99, 4 ], [ 0, 99, 4 ] ]
+    "#iommu-cells": 1
+    "#global-interrupts": 1
+
+  iommu@7fb20000:
+    $labels: [ smmu_hdlcd0 ]
+    compatible: [ "arm,mmu-401", "arm,smmu-v1" ]
+    reg: [ 0x0, 0x7fb20000, 0x0, 0x10000 ]
+    interrupts: [ [ 0, 97, 4 ], [ 0, 97, 4 ] ]
+    "#iommu-cells": 1
+    "#global-interrupts": 1
+
+  iommu@7fb30000:
+    $labels: [ smmu_usb ]
+    compatible: [ "arm,mmu-401", "arm,smmu-v1" ]
+    reg: [ 0x0, 0x7fb30000, 0x0, 0x10000 ]
+    interrupts: [ [ 0, 101, 4 ], [ 0, 101, 4 ] ]
+    "#iommu-cells": 1
+    "#global-interrupts": 1
+    dma-coherent: true
+
+  dma@7ff00000:
+    compatible: [ "arm,pl330", "arm,primecell" ]
+    reg: [ 0x0, 0x7ff00000, 0, 0x1000 ]
+    "#dma-cells": 1
+    "#dma-channels": 8
+    "#dma-requests": 32
+    interrupts: [ [ 0, 88, 4 ], [ 0, 89, 4 ], [ 0, 90, 4 ], [ 0, 91, 4 ], [ 0, 92, 4 ], [ 0, 108, 4 ], [ 0, 109, 4 ], [ 0, 110, 4 ], [ 0, 111, 4 ] ]
+    iommus: [ [ $smmu_dma, 0 ], [ $smmu_dma, 1 ], [ $smmu_dma, 2 ], [ $smmu_dma, 3 ], [ $smmu_dma, 4 ], [ $smmu_dma, 5 ], [ $smmu_dma, 6 ], [ $smmu_dma, 7 ], [ $smmu_dma, 8 ] ]
+    clocks: $soc_faxiclk
+    clock-names: "apb_pclk"
+
+  hdlcd@7ff50000:
+    compatible: [ "arm,hdlcd" ]
+    reg: [ 0, 0x7ff50000, 0, 0x1000 ]
+    interrupts: [ [ 0, 93, 4 ] ]
+    iommus: [ $smmu_hdlcd1, 0 ]
+    clocks: [ $scpi_clk, 3 ]
+    clock-names: "pxlclk"
+
+    port:
+      hdlcd1-endpoint:
+        $labels: [ hdlcd1_output ]
+        remote-endpoint: $tda998x_1_input
+
+  hdlcd@7ff60000:
+    compatible: [ "arm,hdlcd" ]
+    reg: [ 0, 0x7ff60000, 0, 0x1000 ]
+    interrupts: [ [ 0, 85, 4 ] ]
+    iommus: [ $smmu_hdlcd0, 0 ]
+    clocks: [ $scpi_clk, 3 ]
+    clock-names: "pxlclk"
+
+    port:
+      hdlcd0-endpoint:
+        $labels: [ hdlcd0_output ]
+        remote-endpoint: $tda998x_0_input
+
+  uart@7ff80000:
+    $labels: [ soc_uart0 ]
+    compatible: [ "arm,pl011", "arm,primecell" ]
+    reg: [ 0x0, 0x7ff80000, 0x0, 0x1000 ]
+    interrupts: [ [ 0, 83, 4 ] ]
+    clocks: [ $soc_uartclk, $soc_refclk100mhz ]
+    clock-names: [ "uartclk", "apb_pclk" ]
+
+  i2c@7ffa0000:
+    compatible: [ "snps,designware-i2c" ]
+    reg: [ 0x0, 0x7ffa0000, 0x0, 0x1000 ]
+    "#address-cells": 1
+    "#size-cells": 0
+    interrupts: [ [0, 104, 4 ] ]
+    clock-frequency: 400000
+    i2c-sda-hold-time-ns: 500
+    clocks: $soc_smc50mhz
+
+    hdmi-transmitter@70:
+      compatible: [ "nxp,tda998x" ]
+      reg: 0x70
+      port:
+        tda998x-0-endpoint:
+          $labels: [ tda998x_0_input ]
+          remote-endpoint: $hdlcd0_output
+
+    hdmi-transmitter@71:
+      compatible: [ "nxp,tda998x" ]
+      reg: 0x71
+      port:
+        tda998x-1-endpoint:
+          $labels: [ tda998x_1_input ]
+          remote-endpoint: $hdlcd1_output
+
+  ohci@7ffb0000:
+    compatible: [ "generic-ohci" ]
+    reg: [ 0x0, 0x7ffb0000, 0x0, 0x10000 ]
+    interrupts: [ [ 0, 116, 4 ] ]
+    iommus: [ $smmu_usb, 0 ]
+    clocks: $soc_usb48mhz
+
+  ehci@7ffc0000:
+    compatible: [ "generic-ehci" ]
+    reg: [ 0x0, 0x7ffc0000, 0x0, 0x10000 ]
+    interrupts: [ [ 0, 117, 4 ] ]
+    iommus: [ $smmu_usb, 0 ]
+    clocks: $soc_usb48mhz
+
+  memory-controller@7ffd0000:
+    compatible: [ "arm,pl354", "arm,primecell" ]
+    reg: [ 0, 0x7ffd0000, 0, 0x1000 ]
+    interrupts: [ [ 0, 86, 4 ], [ 0, 87, 4 ] ]
+    clocks: $soc_smc50mhz
+    clock-names: "apb_pclk"
+
+  memory@80000000:
+    device_type: "memory"
+    # last 16MB of the first memory area is reserved for secure world use by firmware
+    reg: [ [ 0x00000000, 0x80000000, 0x0, 0x7f000000 ], [ 0x00000008, 0x80000000, 0x1, 0x80000000 ] ]
+
+  smb@8000000:
+    compatible: [ "simple-bus" ]
+    "#address-cells": 2
+    "#size-cells": 1
+    ranges: [ [ 0, 0, 0, 0x08000000, 0x04000000 ], [ 1, 0, 0, 0x14000000, 0x04000000 ], [ 2, 0, 0, 0x18000000, 0x04000000 ], [ 3, 0, 0, 0x1c000000, 0x04000000 ], [ 4, 0, 0, 0x0c000000, 0x04000000 ], [ 5, 0, 0, 0x10000000, 0x04000000 ] ]
+
+    "#interrupt-cells": 1
+    interrupt-map-mask: [ 0, 0, 15 ]
+    interrupt-map: [ [ 0, 0, 0, $gic, 0, 0, 0, 68, 4 ], [ 0, 0, 1, $gic, 0, 0, 0, 69, 4 ], [ 0, 0, 2, $gic, 0, 0, 0, 70, 4 ], [ 0, 0, 3, $gic, 0, 0, 0, 160, 4 ], [ 0, 0, 4, $gic, 0, 0, 0, 161, 4 ], [ 0, 0, 5, $gic, 0, 0, 0, 162, 4 ], [ 0, 0, 6, $gic, 0, 0, 0, 163, 4 ], [ 0, 0, 7, $gic, 0, 0, 0, 164, 4 ], [ 0, 0, 8, $gic, 0, 0, 0, 165, 4 ], [ 0, 0, 9, $gic, 0, 0, 0, 166, 4 ], [ 0, 0, 10, $gic, 0, 0, 0, 167, 4 ], [ 0, 0, 11, $gic, 0, 0, 0, 168, 4 ], [ 0, 0, 12, $gic, 0, 0, 0, 169, 4 ] ]
+
+
+
+
+# 1 "juno-motherboard@2.yamli" 1
+
+    # ARM Juno Platform motherboard peripherals
+
+    # Copyright (c) 2013-2014 ARM Ltd
+
+    # This file is licensed under a dual GPLv2 or BSD license.
+
+
+
+    clk24mhz:
+      $labels: [ mb_clk24mhz ]
+      compatible: [ "fixed-clock" ]
+      "#clock-cells": 0
+      clock-frequency: 24000000
+      clock-output-names: "juno_mb:clk24mhz"
+
+    clk25mhz:
+      $labels: [ mb_clk25mhz ]
+      compatible: [ "fixed-clock" ]
+      "#clock-cells": 0
+      clock-frequency: 25000000
+      clock-output-names: "juno_mb:clk25mhz"
+
+    refclk1mhz:
+      $labels: [ v2m_refclk1mhz ]
+      compatible: [ "fixed-clock" ]
+      "#clock-cells": 0
+      clock-frequency: 1000000
+      clock-output-names: "juno_mb:refclk1mhz"
+
+    refclk32khz:
+      $labels: [ v2m_refclk32khz ]
+      compatible: [ "fixed-clock" ]
+      "#clock-cells": 0
+      clock-frequency: 32768
+      clock-output-names: "juno_mb:refclk32khz"
+
+    motherboard:
+      compatible: [ "arm,vexpress,v2p-p1", "simple-bus" ]
+      "#address-cells": 2
+      # SMB chipselect number and offset
+      "#size-cells": 1
+      "#interrupt-cells": 1
+      ranges: true
+      model: "V2M-Juno"
+      arm,hbi: 0x252
+      arm,vexpress,site: 0
+      arm,v2m-memory-map: "rs1"
+
+      mcc-sb-3v3:
+        $labels: [ mb_fixed_3v3 ]
+        compatible: [ "regulator-fixed" ]
+        regulator-name: "MCC_SB_3V3"
+        regulator-min-microvolt: 3300000
+        regulator-max-microvolt: 3300000
+        regulator-always-on: true
+
+      gpio_keys:
+        compatible: [ "gpio-keys" ]
+        "#address-cells": 1
+        "#size-cells": 0
+
+        power-button:
+          debounce_interval: 50
+          wakeup-source: true
+          linux,code: 116
+          label: "POWER"
+          gpios: [ $iofpga_gpio0, 0, 0x4 ]
+        home-button:
+          debounce_interval: 50
+          wakeup-source: true
+          linux,code: 102
+          label: "HOME"
+          gpios: [ $iofpga_gpio0, 1, 0x4 ]
+        rlock-button:
+          debounce_interval: 50
+          wakeup-source: true
+          linux,code: 152
+          label: "RLOCK"
+          gpios: [ $iofpga_gpio0, 2, 0x4 ]
+        vol-up-button:
+          debounce_interval: 50
+          wakeup-source: true
+          linux,code: 115
+          label: "VOL+"
+          gpios: [ $iofpga_gpio0, 3, 0x4 ]
+        vol-down-button:
+          debounce_interval: 50
+          wakeup-source: true
+          linux,code: 114
+          label: "VOL-"
+          gpios: [ $iofpga_gpio0, 4, 0x4 ]
+        nmi-button:
+          debounce_interval: 50
+          wakeup-source: true
+          linux,code: 99
+          label: "NMI"
+          gpios: [ $iofpga_gpio0, 5, 0x4 ]
+
+      flash@0,00000000:
+        # 2 $ 32MiB NOR Flash memory mounted on CS0
+        compatible: [ "arm,vexpress-flash", "cfi-flash" ]
+        linux,part-probe: "afs"
+        reg: [ 0, 0x00000000, 0x04000000 ]
+        bank-width: 4
+
+        # Unfortunately, accessing the flash disturbs
+        # the CPU idle states (suspend) and CPU
+        # hotplug of the platform. For this reason,
+        # flash hardware access is disabled by default.
+
+        status: "disabled"
+
+      ethernet@2,00000000:
+        compatible: [ "smsc,lan9118", "smsc,lan9115" ]
+        reg: [ 2, 0x00000000, 0x10000 ]
+        interrupts: [ [ 3 ] ]
+        phy-mode: "mii"
+        reg-io-width: 4
+        smsc,irq-active-high: true
+        smsc,irq-push-pull: true
+        clocks: $mb_clk25mhz
+        vdd33a-supply: $mb_fixed_3v3
+        vddvario-supply: $mb_fixed_3v3
+
+      iofpga@3,00000000:
+        compatible: [ "simple-bus" ]
+        "#address-cells": 1
+        "#size-cells": 1
+        ranges: [ 0, 3, 0, 0x200000 ]
+
+        sysctl@20000:
+          $labels: [ v2m_sysctl ]
+          compatible: [ "arm,sp810", "arm,primecell" ]
+          reg: [ 0x020000, 0x1000 ]
+          clocks: [ $v2m_refclk32khz, $v2m_refclk1mhz, $mb_clk24mhz ]
+          clock-names: [ "refclk", "timclk", "apb_pclk" ]
+          "#clock-cells": 1
+          clock-output-names: [ "timerclken0", "timerclken1", "timerclken2", "timerclken3" ]
+          assigned-clocks: [ [ $v2m_sysctl, 0 ], [ $v2m_sysctl, 1 ], [ $v2m_sysctl, 3 ], [ $v2m_sysctl, 3 ] ]
+          assigned-clock-parents: [ $v2m_refclk1mhz, $v2m_refclk1mhz, $v2m_refclk1mhz, $v2m_refclk1mhz ]
+
+        apbregs@10000:
+          compatible: [ "syscon", "simple-mfd" ]
+          reg: [ 0x010000, 0x1000 ]
+
+          led0:
+            compatible: [ "register-bit-led" ]
+            offset: 0x08
+            mask: 0x01
+            label: "vexpress:0"
+            linux,default-trigger: "heartbeat"
+            default-state: "on"
+          led1:
+            compatible: [ "register-bit-led" ]
+            offset: 0x08
+            mask: 0x02
+            label: "vexpress:1"
+            linux,default-trigger: "mmc0"
+            default-state: "off"
+          led2:
+            compatible: [ "register-bit-led" ]
+            offset: 0x08
+            mask: 0x04
+            label: "vexpress:2"
+            linux,default-trigger: "cpu0"
+            default-state: "off"
+          led3:
+            compatible: [ "register-bit-led" ]
+            offset: 0x08
+            mask: 0x08
+            label: "vexpress:3"
+            linux,default-trigger: "cpu1"
+            default-state: "off"
+          led4:
+            compatible: [ "register-bit-led" ]
+            offset: 0x08
+            mask: 0x10
+            label: "vexpress:4"
+            linux,default-trigger: "cpu2"
+            default-state: "off"
+          led5:
+            compatible: [ "register-bit-led" ]
+            offset: 0x08
+            mask: 0x20
+            label: "vexpress:5"
+            linux,default-trigger: "cpu3"
+            default-state: "off"
+          led6:
+            compatible: [ "register-bit-led" ]
+            offset: 0x08
+            mask: 0x40
+            label: "vexpress:6"
+            default-state: "off"
+          led7:
+            compatible: [ "register-bit-led" ]
+            offset: 0x08
+            mask: 0x80
+            label: "vexpress:7"
+            default-state: "off"
+
+        mmci@50000:
+          compatible: [ "arm,pl180", "arm,primecell" ]
+          reg: [ 0x050000, 0x1000 ]
+          interrupts: [ [ 5 ] ]
+          # cd-gpios = <&v2m_mmc_gpios 0 0>;
+          # wp-gpios = <&v2m_mmc_gpios 1 0>;
+          max-frequency: 12000000
+          vmmc-supply: $mb_fixed_3v3
+          clocks: [ $mb_clk24mhz, $soc_smc50mhz ]
+          clock-names: [ "mclk", "apb_pclk" ]
+
+        kmi@60000:
+          compatible: [ "arm,pl050", "arm,primecell" ]
+          reg: [ 0x060000, 0x1000 ]
+          interrupts: [ [ 8 ] ]
+          clocks: [ $mb_clk24mhz, $soc_smc50mhz ]
+          clock-names: [ "KMIREFCLK", "apb_pclk" ]
+
+        kmi@70000:
+          compatible: [ "arm,pl050", "arm,primecell" ]
+          reg: [ 0x070000, 0x1000 ]
+          interrupts: [ [ 8 ] ]
+          clocks: [ $mb_clk24mhz, $soc_smc50mhz ]
+          clock-names: [ "KMIREFCLK", "apb_pclk" ]
+
+        wdt@f0000:
+          compatible: [ "arm,sp805", "arm,primecell" ]
+          reg: [ 0x0f0000, 0x10000 ]
+          interrupts: [ [ 7 ] ]
+          clocks: [ $mb_clk24mhz, $soc_smc50mhz ]
+          clock-names: [ "wdogclk", "apb_pclk" ]
+
+        timer@110000:
+          $labels: [ v2m_timer01 ]
+          compatible: [ "arm,sp804", "arm,primecell" ]
+          reg: [ 0x110000, 0x10000 ]
+          interrupts: [ [ 9 ] ]
+          clocks: [ [ $v2m_sysctl, 0 ], [ $v2m_sysctl, 1 ], $mb_clk24mhz ]
+          clock-names: [ "timclken1", "timclken2", "apb_pclk" ]
+
+        timer@120000:
+          $labels: [ v2m_timer23 ]
+          compatible: [ "arm,sp804", "arm,primecell" ]
+          reg: [ 0x120000, 0x10000 ]
+          interrupts: [ [ 9 ] ]
+          clocks: [ [ $v2m_sysctl, 2 ], [ $v2m_sysctl, 3 ], $mb_clk24mhz ]
+          clock-names: [ "timclken1", "timclken2", "apb_pclk" ]
+
+        rtc@170000:
+          compatible: [ "arm,pl031", "arm,primecell" ]
+          reg: [ 0x170000, 0x10000 ]
+          interrupts: [ [ 0 ] ]
+          clocks: $soc_smc50mhz
+          clock-names: "apb_pclk"
+
+        gpio@1d0000:
+          $labels: [ iofpga_gpio0 ]
+          compatible: [ "arm,pl061", "arm,primecell" ]
+          reg: [ 0x1d0000, 0x1000 ]
+          interrupts: [ [ 6 ] ]
+          clocks: $soc_smc50mhz
+          clock-names: "apb_pclk"
+          gpio-controller: true
+          "#gpio-cells": 2
+          interrupt-controller: true
+          "#interrupt-cells": 2
+# 610 "juno-base.yamli" 2
+
+  tlx@60000000:
+    $labels: [ site2 ]
+    compatible: [ "simple-bus" ]
+    "#address-cells": 1
+    "#size-cells": 1
+    ranges: [ 0, 0, 0x60000000, 0x10000000 ]
+    "#interrupt-cells": 1
+    interrupt-map-mask: [ 0, 0 ]
+    interrupt-map: [ 0, 0, $gic, 0, 0, 0, 168, 4 ]
+# 12 "juno.yaml" 2
+
+  model: "ARM Juno development board (r0)"
+  compatible: [ "arm,juno", "arm,vexpress" ]
+  interrupt-parent: $gic
+  "#address-cells": 2
+  "#size-cells": 2
+
+  aliases:
+    serial0: $soc_uart0
+
+  chosen:
+    stdout-path: "serial0:115200n8"
+
+  psci:
+    compatible: [ "arm,psci-0.2" ]
+    method: "smc"
+
+  cpus:
+    "#address-cells": 2
+    "#size-cells": 0
+
+    cpu-map:
+      cluster0:
+        core0:
+          cpu: $A57_0
+        core1:
+          cpu: $A57_1
+
+      cluster1:
+        core0:
+          cpu: $A53_0
+        core1:
+          cpu: $A53_1
+        core2:
+          cpu: $A53_2
+        core3:
+          cpu: $A53_3
+
+    idle-states:
+      entry-method: "arm,psci"
+
+      cpu-sleep-0:
+        $labels: [ CPU_SLEEP_0 ]
+        compatible: [ "arm,idle-state" ]
+        arm,psci-suspend-param: 0x0010000
+        local-timer-stop: true
+        entry-latency-us: 300
+        exit-latency-us: 1200
+        min-residency-us: 2000
+
+      cluster-sleep-0:
+        $labels: [ CLUSTER_SLEEP_0 ]
+        compatible: [ "arm,idle-state" ]
+        arm,psci-suspend-param: 0x1010000
+        local-timer-stop: true
+        entry-latency-us: 400
+        exit-latency-us: 1200
+        min-residency-us: 2500
+
+    cpu@0:
+      $labels: [ A57_0 ]
+      compatible: [ "arm,cortex-a57", "arm,armv8" ]
+      reg: [ 0x0, 0x0 ]
+      device_type: "cpu"
+      enable-method: "psci"
+      i-cache-size: 0xc000
+      i-cache-line-size: 64
+      i-cache-sets: 256
+      d-cache-size: 0x8000
+      d-cache-line-size: 64
+      d-cache-sets: 256
+      next-level-cache: $A57_L2
+      clocks: [ $scpi_dvfs, 0 ]
+      cpu-idle-states: [ $CPU_SLEEP_0, $CLUSTER_SLEEP_0 ]
+      capacity-dmips-mhz: 1024
+
+    cpu@1:
+      $labels: [ A57_1 ]
+      compatible: [ "arm,cortex-a57", "arm,armv8" ]
+      reg: [ 0x0, 0x1 ]
+      device_type: "cpu"
+      enable-method: "psci"
+      i-cache-size: 0xc000
+      i-cache-line-size: 64
+      i-cache-sets: 256
+      d-cache-size: 0x8000
+      d-cache-line-size: 64
+      d-cache-sets: 256
+      next-level-cache: $A57_L2
+      clocks: [ $scpi_dvfs, 0 ]
+      cpu-idle-states: [ $CPU_SLEEP_0, $CLUSTER_SLEEP_0 ]
+      capacity-dmips-mhz: 1024
+
+    cpu@100:
+      $labels: [ A53_0 ]
+      compatible: [ "arm,cortex-a53", "arm,armv8" ]
+      reg: [ 0x0, 0x100 ]
+      device_type: "cpu"
+      enable-method: "psci"
+      i-cache-size: 0x8000
+      i-cache-line-size: 64
+      i-cache-sets: 256
+      d-cache-size: 0x8000
+      d-cache-line-size: 64
+      d-cache-sets: 128
+      next-level-cache: $A53_L2
+      clocks: [ $scpi_dvfs, 1 ]
+      cpu-idle-states: [ $CPU_SLEEP_0, $CLUSTER_SLEEP_0 ]
+      capacity-dmips-mhz: 578
+
+    cpu@101:
+      $labels: [ A53_1 ]
+      compatible: [ "arm,cortex-a53", "arm,armv8" ]
+      reg: [ 0x0, 0x101 ]
+      device_type: "cpu"
+      enable-method: "psci"
+      i-cache-size: 0x8000
+      i-cache-line-size: 64
+      i-cache-sets: 256
+      d-cache-size: 0x8000
+      d-cache-line-size: 64
+      d-cache-sets: 128
+      next-level-cache: $A53_L2
+      clocks: [ $scpi_dvfs, 1 ]
+      cpu-idle-states: [ $CPU_SLEEP_0, $CLUSTER_SLEEP_0 ]
+      capacity-dmips-mhz: 578
+
+    cpu@102:
+      $labels: [ A53_2 ]
+      compatible: [ "arm,cortex-a53", "arm,armv8" ]
+      reg: [ 0x0, 0x102 ]
+      device_type: "cpu"
+      enable-method: "psci"
+      i-cache-size: 0x8000
+      i-cache-line-size: 64
+      i-cache-sets: 256
+      d-cache-size: 0x8000
+      d-cache-line-size: 64
+      d-cache-sets: 128
+      next-level-cache: $A53_L2
+      clocks: [ $scpi_dvfs, 1 ]
+      cpu-idle-states: [ $CPU_SLEEP_0, $CLUSTER_SLEEP_0 ]
+      capacity-dmips-mhz: 578
+
+    cpu@103:
+      $labels: [ A53_3 ]
+      compatible: [ "arm,cortex-a53", "arm,armv8" ]
+      reg: [ 0x0, 0x103 ]
+      device_type: "cpu"
+      enable-method: "psci"
+      i-cache-size: 0x8000
+      i-cache-line-size: 64
+      i-cache-sets: 256
+      d-cache-size: 0x8000
+      d-cache-line-size: 64
+      d-cache-sets: 128
+      next-level-cache: $A53_L2
+      clocks: [ $scpi_dvfs, 1 ]
+      cpu-idle-states: [ $CPU_SLEEP_0, $CLUSTER_SLEEP_0 ]
+      capacity-dmips-mhz: 578
+
+    l2-cache0:
+      $labels: [ A57_L2 ]
+      compatible: [ "cache" ]
+      cache-size: 0x200000
+      cache-line-size: 64
+      cache-sets: 2048
+
+    l2-cache1:
+      $labels: [ A53_L2 ]
+      compatible: [ "cache" ]
+      cache-size: 0x100000
+      cache-line-size: 64
+      cache-sets: 1024
+
+  pmu_a57:
+    compatible: [ "arm,cortex-a57-pmu" ]
+    interrupts: [ [ 0, 02, 4 ], [ 0, 06, 4 ] ]
+    interrupt-affinity: [ $A57_0, $A57_1 ]
+
+  pmu_a53:
+    compatible: [ "arm,cortex-a53-pmu" ]
+    interrupts: [ [ 0, 18, 4 ], [ 0, 22, 4 ], [ 0, 26, 4 ], [ 0, 30, 4 ] ]
+    interrupt-affinity: [ $A53_0, $A53_1, $A53_2, $A53_3 ]
+
+- $path: etm0
+  cpu: $A57_0
+
+- $path: etm1
+  cpu: $A57_1
+
+- $path: etm2
+  cpu: $A53_0
+
+- $path: etm3
+  cpu: $A53_1
+
+- $path: etm4
+  cpu: $A53_2
+
+- $path: etm5
+  cpu: $A53_3
+
+- $path: etf0_out_port
+  remote-endpoint: $replicator_in_port0
+
+- $path: replicator_in_port0
+  remote-endpoint: $etf0_out_port
+
+- $path: stm_out_port
+  remote-endpoint: $main_funnel_in_port2
+
+- $path: main_funnel
+  ports:
+    port@3:
+      reg: 2
+      endpoint:
+        $labels: [ main_funnel_in_port2 ]
+        slave-mode: true
+        remote-endpoint: $stm_out_port
+
+- $path: cpu_debug0
+  cpu: $A57_0
+
+- $path: cpu_debug1
+  cpu: $A57_1
+
+- $path: cpu_debug2
+  cpu: $A53_0
+
+- $path: cpu_debug3
+  cpu: $A53_1
+
+- $path: cpu_debug4
+  cpu: $A53_2
+
+- $path: cpu_debug5
+  cpu: $A53_3
+

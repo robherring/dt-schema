@@ -1,0 +1,123 @@
+# Notes:
+# - Extra work is being done to allow 'bare' single item properties,
+#   as well as arrays for multiple instances.
+#   ie. both "acme" and ["acme"] are accepted.
+#   This is nicer for humans, but makes things more complicated to parse.
+#   Should it be disallowed, and always enforce the correct array wrapping?
+
+id: "http://devicetree.org/alpha-01/schema-core#"
+$schema: "http://json-schema.org/draft-04/schema#"
+description: "Schema for core devicetree bindings"
+
+# this binding is selected when the compatible property constraint matches
+select:
+  required: [ $path ]
+  properties:
+    $path: { const: "/" }
+
+definitions:
+    proptypes:
+        "#cells":
+            type: integer
+            minimum: 0
+            maximum: 8
+        flag:
+            type: boolean
+            enum: [ true, "Null" ]
+        stringarray:
+            type: array
+            items: { type: string }
+            minitems: 1
+            uniqueItems: true
+    cell:
+        oneOf:
+          - type: integer
+            minimum: 0
+            maximum: 0xffffffff
+          - type: string
+            pattern: "^[0-9<>()|/+\\- ]*$"
+    uint8:
+        type: integer
+        minimum: 0
+        maximum: 0xff
+    int-spec:
+        type: array
+        items: { $ref: "#/definitions/cell" }
+    intext-spec:
+        type: array
+        items:
+          - { $ref: "#/definitions/labelref" }
+          - { $ref: "#/definitions/int-spec" }
+    gpio-spec: {}
+    labelref:
+        type: string
+        pattern: "^\\$[a-zA-Z_][a-zA-Z0-9_]*$"
+    address-spec:
+        type: array
+        length: ".../#address-cells"
+        items: { type: integer }
+    size-spec:
+        type: array
+        length: ".../#size-cells"
+        items: { type: integer }
+    addr-size-spec:
+        type: array
+        additionalItems: false
+        items:
+          - { $ref: "#/definitions/address-spec" }
+          - { $ref: "#/definitions/size-spec" }
+
+    std-properties:
+        type: object
+        properties:
+            $labels:
+                type: array
+                items:
+                    type: string
+                    pattern: "^[a-zA-Z_][a-zA-Z0-9_]*$"
+            $path: { type: string }
+            "#address-cells": { $ref: "#/definitions/proptypes/#cells" }
+            "#gpio-cells": { $ref: "#/definitions/proptypes/#cells" }
+            "#interrupt-cells": { $ref: "#/definitions/proptypes/#cells" }
+            "#size-cells": { $ref: "#/definitions/proptypes/#cells" }
+            compatible: { $ref: "#/definitions/proptypes/stringarray" }
+            gpio-controller: { $ref: "#/definitions/proptypes/flag" }
+            interrupt-controller: { $ref: "#/definitions/proptypes/flag" }
+            interrupt-parent: { $ref: "#/definitions/labelref" }
+            interrupts:
+                type: array
+                items: { $ref: "#/definitions/int-spec" }
+            interrupts-extended:
+                type: array
+                items: { $ref: "#/definitions/intext-spec" }
+
+    propdata:
+        type: [string, integer, array, boolean]
+        items: { $ref: "#/definitions/propdata" }
+
+    node:
+        allOf:
+          - { $ref: "#/definitions/std-properties" }
+          - type: object
+            additionalProperties: false
+            patternProperties:
+                # property and node namespace overlaps. Catch both here
+                "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,30}$":
+                    oneOf:
+                      - { $ref: "#/definitions/node" }
+                      - { $ref: "#/definitions/propdata" }
+
+                # Anything with a '@' is definitely a node
+                "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,30}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$":
+                    $ref: "#/definitions/node"
+
+                # Anything with a '#' is definitely a property
+                "^#[a-zA-Z0-9,+\\-._]{0,30}$":
+                    $ref: "#/definitions/propdata"
+
+                "^\\$path$": { }
+                "^\\$labels$": { }
+
+allOf:
+- { $ref: "#/definitions/node" }
+

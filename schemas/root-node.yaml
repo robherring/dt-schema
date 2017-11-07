@@ -1,12 +1,12 @@
 %YAML 1.1
 ---
 type: object
-id: "http://devicetree.org/schemas/root-node.yaml#",
-"$schema": "http://json-schema.org/draft-04/schema#",
+id: http://devicetree.org/schemas/root-node.yaml#
+$schema: http://json-schema.org/draft-04/schema#
 
 version: 1
 
-title: Common root node 
+title: Common root node
 
 maintainer:
   name: Device Tree <dt@kernel.org>
@@ -14,29 +14,30 @@ maintainer:
 # this binding is selected when the compatible property constraint matches
 #  selected: "compatible"
 
+select:
+  required: ["$path"]
+  properties:
+    $path: { enum: ["/"] }
+
 properties:
   compatible:
-    "$ref": "dt-schema-core.json#/definitions/proptypes/stringarray"
-
+    type: array
+    items:
+      - type: string
   model:
     type: string
     description: models that this board family supports
-
   "#address-cells":
-      type: integer
-
+    type: number
   "#size-cells":
-      type: integer
+    type: number
 
-  memory:
-    "$ref": "dt-schema-core.json#/definitions/node"
-  
-  required: 
-    - compatible
-    - model
-    - "#address-cells"
-    - "#size-cells"
-    - memory
+required:
+  - compatible
+  - model
+  - "#address-cells"
+  - "#size-cells"
+  - memory
 
 example: |
     / {
