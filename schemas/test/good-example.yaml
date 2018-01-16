@@ -27,6 +27,9 @@ properties:
       - "ARM Juno development board (r1)"
       - "ARM Juno development board (r2)"
 
+  vendor,property:
+    description: Vendor specific properties must have a description
+
 required:
   - model
   - compatible

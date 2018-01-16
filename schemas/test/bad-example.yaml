@@ -24,6 +24,9 @@ properties:
   another-property:
     description: 0
 
+  vendor,property:
+    enum: [ 0, 1, 2 ]
+
 required:
   - model
   - psci
