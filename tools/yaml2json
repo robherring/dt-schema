@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+
+import sys
+import argparse
+import yaml
+import json
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-o', '--output', nargs=1, help="output to specified file")
+
+    ap.add_argument("file", type=str,
+                    help="Filename of YAML encoded devicetree input file")
+    args = ap.parse_args()
+
+    yamldata = yaml.load(open(args.file).read())
+    if args.output and args.output[0]:
+        f = open(args.output[0], 'w')
+    else:
+        f = open(args.file.replace('.yaml', '.json'), 'w')
+
+    json.dump(yamldata, f)
