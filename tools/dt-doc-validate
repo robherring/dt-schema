@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import yaml
 import jsonschema
@@ -14,6 +15,8 @@ if __name__ == "__main__":
     ap.add_argument("yamldt", type=str,
                     help="Filename of YAML encoded devicetree input file")
     args = ap.parse_args()
+
+    schema_path = os.getcwd()
 
     testtree = yaml.load(open(args.yamldt).read())
 
@@ -38,7 +41,7 @@ if __name__ == "__main__":
         print("Error(s) validating schema", exc)
         exit(-1)
 
-    resolver = jsonschema.RefResolver.from_schema(schema)
+    resolver = jsonschema.RefResolver('file://' + schema_path + '/schemas/', schema)
     validator = jsonschema.Draft6Validator(schema, resolver=resolver, format_checker=FormatChecker())
     errors = sorted(validator.iter_errors(testtree), key=lambda e: e.path)
     for error in errors:

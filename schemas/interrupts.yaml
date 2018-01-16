@@ -1,0 +1,14 @@
+id: "http://devicetree.org/schemas/interrupts.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+
+properties:
+  minItems:
+    type: integer
+    minimum: 1
+  maxItems:
+    type: integer
+    minimum: rob
+
+required:
+  - minItems
+  - maxItems

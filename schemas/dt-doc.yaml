@@ -31,6 +31,11 @@ properties:
 
   properties:   # DT properties
     type: object
+    properties:
+      interrupts:
+        $ref: "interrupts.json"
+      reg:
+        $ref: "reg.json"
     patternProperties:
       '^[a-zA-Z0-9].*,.*$':
         type: object

@@ -21,6 +21,10 @@ properties:
           - vendor,soc1-ip
       - enum:
           - vendor,soc1-ip
+  interrupts:
+    minItems: 1
+    maxItems: 2
+
   model:
     description: A description of model
     enum:

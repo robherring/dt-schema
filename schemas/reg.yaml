@@ -1,0 +1,12 @@
+id: "http://devicetree.org/schemas/reg.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+
+minItems:
+  type: integer
+  minimum: 1
+maxItems:
+  type: integer
+
+required:
+  - minItems
+  - maxItems
