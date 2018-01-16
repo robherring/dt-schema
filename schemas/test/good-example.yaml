@@ -1,0 +1,66 @@
+%YAML 1.2
+---
+id: "http://devicetree.org/schemas/test/good-example.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+version: 1
+
+title: A one line title for a good binding
+
+description: A more detailed description for a good binding example.
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+properties:
+  compatible:
+    allOf:
+      - enum:
+          - vendor,soc4-ip
+          - vendor,soc3-ip
+          - vendor,soc2-ip
+          - vendor,soc1-ip
+      - enum:
+          - vendor,soc1-ip
+  model:
+    description: A description of model
+    enum:
+      - "ARM Juno development board (r1)"
+      - "ARM Juno development board (r2)"
+
+required:
+  - model
+  - compatible
+
+examples:
+  - example-name: |
+      /dts-v1/;
+      /{
+              model = "ARM Juno development board (r0)";
+              compatible = "arm,juno", "arm,vexpress";
+              interrupt-parent = <&gic>;
+              #address-cells = <2>;
+              #size-cells = <2>;
+
+                      cpus {
+                      #address-cells = <2>;
+                      #size-cells = <0>;
+                      A57_0: cpu@0 {
+                              compatible = "arm,cortex-a57","arm,armv8";
+                              reg = <0x0 0x0>;
+                              device_type = "cpu";
+                              enable-method = "psci";
+                      };
+
+                      .....
+
+                      A53_0: cpu@100 {
+                              compatible = "arm,cortex-a53","arm,armv8";
+                              reg = <0x0 0x100>;
+                              device_type = "cpu";
+                              enable-method = "psci";
+                      };
+
+                      .....
+              };
+
+      };

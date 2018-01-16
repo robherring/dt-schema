@@ -1,0 +1,62 @@
+%YAML 1.2
+---
+id: "http://devicetree.org/schemas/dt-doc.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+description: "Schema for devicetree binding documentation"
+
+type: object
+properties:
+  # listing all properties here so additionalProperties works
+  id:
+    type: string
+
+  $schema:
+    type: string
+
+  title:
+    type: string
+
+  version:
+    type: integer
+    enum: [1]
+
+  maintainers:
+    type: array
+    items:
+      type: string
+      format: email
+
+  description:
+    type: string
+
+  properties:   # DT properties
+    type: object
+    patternProperties:
+      '^.*$':
+        type: object
+        properties:
+          description:
+            type: string
+        required:
+          - description
+
+  required:
+    type: array
+    items:
+      type: string
+
+  examples:
+    type: array
+
+required:
+  - id
+  - $schema
+  - version
+  - title
+  - maintainers
+  - description
+  - examples
+  - properties
+  - required
+
+additionalProperties: false

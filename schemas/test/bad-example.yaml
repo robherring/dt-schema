@@ -1,0 +1,33 @@
+%YAML 1.2
+---
+id: "http://devicetree.org/schemas/test/bad-example.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+version: 2
+
+title: 0
+
+maintainers:
+  - Bob
+
+description:
+  - The description should not be a sequence.
+  - A sequence is also called an array.
+
+properties:
+  compatible:
+    type: integer
+  model:
+    description: A description of model
+    enum:
+      - "ARM Juno development board (r1)"
+      - "ARM Juno development board (r2)"
+  another-property:
+    description: 0
+
+required:
+  - model
+  - psci
+  - cpus
+  - 0
+
+bad-key: Only known keys are allowed.

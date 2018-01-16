@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+import sys
+import yaml
+import jsonschema
+import argparse
+import glob
+
+from jsonschema import FormatChecker
+
+if __name__ == "__main__":
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("yamldt", type=str,
+                    help="Filename of YAML encoded devicetree input file")
+    args = ap.parse_args()
+
+    testtree = yaml.load(open(args.yamldt).read())
+
+    # first validate against JSON meta schema
+    try:
+        jsonschema.Draft6Validator.check_schema(testtree)
+    except jsonschema.SchemaError as error:
+        print("%s: in %s: %s" % (args.yamldt, list(error.path), error.message))
+
+
+    # Next, check against DT binding doc schema
+    try:
+        schema = yaml.load(open("schemas/dt-doc.yaml").read())
+    except yaml.YAMLError as exc:
+        print("Error in schema", filename, ": ", exc.path[-1], exc.message)
+        exit(-1)
+
+    # Check that the validation schema is valid
+    try:
+        jsonschema.Draft6Validator.check_schema(schema)
+    except jsonschema.SchemaError as exc:
+        print("Error(s) validating schema", exc)
+        exit(-1)
+
+    resolver = jsonschema.RefResolver.from_schema(schema)
+    validator = jsonschema.Draft6Validator(schema, resolver=resolver, format_checker=FormatChecker())
+    errors = sorted(validator.iter_errors(testtree), key=lambda e: e.path)
+    for error in errors:
+        print("%s: in %s: %s" % (args.yamldt, list(error.path), error.message))
