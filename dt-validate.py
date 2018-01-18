@@ -121,20 +121,3 @@ if __name__ == "__main__":
 
     testtree = yaml.load(open(args.yamldt).read())
     sg.check_trees(testtree)
-    exit(0)
-
-    schema = yaml.load(open("dt-schema-core.json").read())
-
-    errors = jsonschema.Draft4Validator.check_schema(schema)
-    if errors:
-        for error in errors:
-            print(error.path, error.message)
-        exit(-1);
-
-    v = jsonschema.Draft4Validator(schema)
-    errors = sorted(v.iter_errors(testtree), key=lambda e: e.path)
-
-    if errors:
-        for error in errors:
-            print(error.path, error.message)
-        exit(-1);
