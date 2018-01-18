@@ -7,7 +7,7 @@ properties:
     minimum: 1
   maxItems:
     type: integer
-    minimum: rob
+    minimum: 1
 
 required:
   - minItems
