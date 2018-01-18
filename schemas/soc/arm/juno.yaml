@@ -10,7 +10,6 @@ description: >
   A board binding example. Matches on a top-level compatible string and model.
 
 required:
-- model
 - psci
 - cpus
 
@@ -19,6 +18,7 @@ properties:
     items:
       - enum: ["arm,juno-r1", "arm,juno-r2", "arm,juno"]
       - enum: ["arm,vexpress"]
+    minItems: 2
     additionalItems: false
   model:
     enum:
