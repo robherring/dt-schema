@@ -51,14 +51,15 @@ class schema_group():
         try:
             schema = yaml.load(open(filename).read())
         except yaml.YAMLError as exc:
-            print("Error in schema", filename, exc)
+            print(filename + ": ignoring, error parsing file")
             return
 
         # Check that the validation schema is valid
         try:
             jsonschema.Draft4Validator.check_schema(schema)
         except jsonschema.SchemaError as exc:
-            print("Error(s) validating schema", filename, exc)
+            print(filename + ": ignoring, error in schema '%s'" % exc.path[-1])
+            #print(exc.message)
             return
 
         # Check that the selection schema is valid. The selection
@@ -71,30 +72,32 @@ class schema_group():
             except jsonschema.SchemaError as exc:
                 print("Error(s) validating schema", filename, exc)
                 return
-
-        schema["filename"] = filename
-
-        select = compatible_select(schema)
-        if select is not None:
-            print("no select")
-            schema["select"] = select
+        else:
+            select = compatible_select(schema)
+            if select is not None:
+                schema["select"] = select
 
         self.schemas.append(schema)
-        print("loaded schema", filename)
+
+        schema["filename"] = filename
+        print(filename + ": loaded")
 
     def check_node(self, dt, node, path):
-        #print("checking node", path, "against a schemas")
+        node_matched = False
         for schema in self.schemas:
             if "select" in schema.keys():
                 resolver = jsonschema.RefResolver.from_schema(schema)
                 v = jsonschema.Draft6Validator(schema["select"], resolver=resolver)
                 if v.is_valid(node):
-                    print("node", path, "matches", schema["filename"])
+                    node_matched = True
                     v2 = jsonschema.Draft6Validator(schema, resolver=resolver)
                     errors = sorted(v2.iter_errors(node), key=lambda e: e.path)
                     if (errors):
                         for error in errors:
-                            print(error.path, error.message)
+                            print("node '%s': in %s: %s (from %s)" % (path, list(error.path), error.message, schema["filename"]))
+        if not node_matched:
+            print(node)
+            print("node %s: failed to match any schema with compatible(s) %s" % (path, node["compatible"]))
 
     def check_subtree(self, dt, subtree, path="/"):
         self.check_node(dt, subtree, path)
