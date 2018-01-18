@@ -22,7 +22,11 @@ if __name__ == "__main__":
 
     schema_path = os.getcwd()
 
-    testtree = yaml.load(open(args.yamldt).read())
+    try:
+        testtree = yaml.load(open(args.yamldt).read())
+    except yaml.YAMLError as exc:
+        print(args.yamldt + ":", exc.path[-1], exc.message)
+        exit(-1)
 
     # first validate against JSON meta schema
     try:

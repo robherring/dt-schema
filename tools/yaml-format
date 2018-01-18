@@ -20,7 +20,11 @@ if __name__ == "__main__":
     yml.preserve_quotes=True
     yml.version=(1,2)
 
-    yamldata = yml.load(open(args.file).read())
+    try:
+        yamldata = yml.load(open(args.file).read())
+    except yaml.YAMLError as exc:
+        print(args.file + ":", exc)
+        exit(-1)
 
     if args.in_place:
         f = open(args.file, 'w')
