@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     # Next, check against DT binding doc schema
     try:
-        schema = yaml.load(open("schemas/doc/core.yaml").read())
+        schema = yaml.load(open("doc-schemas/core.yaml").read())
     except yaml.YAMLError as exc:
         print("Error in schema", filename, ": ", exc.path[-1], exc.message)
         exit(-1)
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         print("Error(s) validating schema", exc)
         exit(-1)
 
-    resolver = jsonschema.RefResolver('file://' + schema_path + '/schemas/doc/', schema, handlers={"file": yaml_handler})
+    resolver = jsonschema.RefResolver('file://' + schema_path + '/doc-schemas/', schema, handlers={"file": yaml_handler})
     validator = jsonschema.Draft6Validator(schema, resolver=resolver, format_checker=FormatChecker())
     errors = sorted(validator.iter_errors(testtree), key=lambda e: e.path)
     for error in errors:
