@@ -13,30 +13,30 @@ maintainers:
 
 properties:
   compatible:
-    allOf:
-      - enum:
-          - vendor,soc4-ip
-          - vendor,soc3-ip
-          - vendor,soc2-ip
-          - vendor,soc1-ip
-      - enum:
-          - vendor,soc1-ip
+    oneOf:
+      - items:
+        - enum:
+            - vendor,soc4-ip
+            - vendor,soc3-ip
+            - vendor,soc2-ip
+        - enum:
+            - vendor,soc1-ip
+        minItems: 2
+        additionalItems: false
+      - items:
+        - enum:
+            - vendor,soc1-ip
+        additionalItems: false
   interrupts:
     minItems: 1
     maxItems: 2
-
-  model:
-    description: A description of model
-    enum:
-      - "ARM Juno development board (r1)"
-      - "ARM Juno development board (r2)"
 
   vendor,property:
     description: Vendor specific properties must have a description
 
 required:
-  - model
   - compatible
+  - interrupts
 
 examples:
   - example-name: |
