@@ -9,11 +9,8 @@ id: "http://devicetree.org/alpha-01/schema-core#"
 $schema: "http://json-schema.org/draft-04/schema#"
 description: "Schema for core devicetree bindings"
 
-# this binding is selected when the compatible property constraint matches
-select:
-  required: [ $path ]
-  properties:
-    $path: { const: "/" }
+# always select the core schema
+select: true
 
 definitions:
     proptypes:
@@ -120,4 +117,3 @@ definitions:
 
 allOf:
 - { $ref: "#/definitions/node" }
-
