@@ -2,6 +2,7 @@
 
 import os
 import sys
+import subprocess
 import yaml
 import jsonschema
 import argparse
@@ -17,6 +18,9 @@ if __name__ == "__main__":
     args = ap.parse_args()
 
     schema_path = os.getcwd()
+
+    for filename in glob.iglob("schemas/doc/*.yaml", recursive=True):
+        subprocess.call(['./tools/yaml2json', filename])
 
     testtree = yaml.load(open(args.yamldt).read())
 
