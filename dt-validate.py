@@ -10,7 +10,10 @@ def item_generator(json_input, lookup_key):
     if isinstance(json_input, dict):
         for k, v in json_input.items():
             if k == lookup_key:
-                yield v
+                if isinstance(v, str):
+                    yield [v]
+                else:
+                    yield v
             else:
                 for child_val in item_generator(v, lookup_key):
                     yield child_val
@@ -26,9 +29,12 @@ def compatible_select(schema):
 
     if 'compatible' in schema['properties'].keys():
         for l in item_generator(schema['properties']['compatible'], 'enum'):
-            for _l in l:
-                if _l not in compatible_list:
-                    compatible_list.append(_l)
+            compatible_list.extend(l)
+
+        for l in item_generator(schema['properties']['compatible'], 'const'):
+            compatible_list.extend(l)
+
+        compatible_list = list(set(compatible_list))
 
         return { 'required' : ['compatible'], 'properties': {'compatible': {'contains': {'enum': compatible_list}}}}
 
