@@ -1,36 +1,28 @@
-%YAML 1.1
+%YAML 1.2
 ---
 type: object
 id: http://devicetree.org/schemas/root-node.yaml#
-$schema: http://json-schema.org/draft-04/schema#
+$schema: http://json-schema.org/draft-06/schema#
 
 version: 1
 
 title: Common root node
 
-maintainer:
-  name: Device Tree <dt@kernel.org>
-
-# this binding is selected when the compatible property constraint matches
-#  selected: "compatible"
+maintainers:
+  - Device Tree <dt@kernel.org>
 
 select:
   required: ["$path"]
   properties:
-    $path: { enum: ["/"] }
+    $path: {enum: ["/"]}
 
 properties:
-  compatible:
-    type: array
-    items:
-      - type: string
+  compatible: {}
   model:
     type: string
-    description: models that this board family supports
-  "#address-cells":
-    type: number
-  "#size-cells":
-    type: number
+  "#address-cells": {}
+  "#size-cells": {}
+  memory: {}
 
 required:
   - compatible
@@ -38,10 +30,3 @@ required:
   - "#address-cells"
   - "#size-cells"
   - memory
-
-example: |
-    / {
-        compatible = "example,evm", "example,base";
-        model = "Example EVM";
-    };
-
