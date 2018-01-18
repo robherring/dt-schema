@@ -33,9 +33,9 @@ properties:
     type: object
     properties:
       interrupts:
-        $ref: "interrupts.json"
+        $ref: "interrupts.yaml"
       reg:
-        $ref: "reg.json"
+        $ref: "reg.yaml"
     patternProperties:
       '^[a-zA-Z0-9].*,.*$':
         type: object

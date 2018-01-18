@@ -2,13 +2,16 @@
 
 import os
 import sys
-import subprocess
 import yaml
 import jsonschema
 import argparse
 import glob
 
 from jsonschema import FormatChecker
+from jsonschema.compat import urlopen
+
+def yaml_handler(uri):
+    return yaml.load(urlopen(uri).read().decode("utf-8"))
 
 if __name__ == "__main__":
 
@@ -18,9 +21,6 @@ if __name__ == "__main__":
     args = ap.parse_args()
 
     schema_path = os.getcwd()
-
-    for filename in glob.iglob("schemas/doc/*.yaml", recursive=True):
-        subprocess.call(['./tools/yaml2json', filename])
 
     testtree = yaml.load(open(args.yamldt).read())
 
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         print("Error(s) validating schema", exc)
         exit(-1)
 
-    resolver = jsonschema.RefResolver('file://' + schema_path + '/schemas/doc/', schema)
+    resolver = jsonschema.RefResolver('file://' + schema_path + '/schemas/doc/', schema, handlers={"file": yaml_handler})
     validator = jsonschema.Draft6Validator(schema, resolver=resolver, format_checker=FormatChecker())
     errors = sorted(validator.iter_errors(testtree), key=lambda e: e.path)
     for error in errors:
