@@ -1,0 +1,22 @@
+- $path: /
+  model: "ARM Juno development board (r0)"
+  compatible: [ "arm,vexpress" ]
+  interrupt-parent: $gic
+  "#address-cells": 2
+  "#size-cells": 2
+
+  good-test1:
+    compatible: [ "vendor,soc4-ip", "vendor,soc1-ip" ]
+    interrupts: [ [10], [11, 1, 0] ]
+
+  good-test2:
+    compatible: [ "vendor,soc1-ip" ]
+    interrupts: [ [10] ]
+
+  bad-test3:
+    compatible: [ "vendor,soc3-ip" ]
+    interrupts: [ [10], [11], [12] ]
+
+  bad-test3:
+    compatible: [ "vendor,soc3-ip" ]
+    interrupts: [ "string" ]

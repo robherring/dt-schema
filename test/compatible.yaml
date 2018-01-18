@@ -1,0 +1,24 @@
+- $path: /
+#  model: "ARM Juno development board (r0)"
+  compatible: [ "example,board-with-soc", "example,soc2" ]
+  interrupt-parent: $gic
+  "#address-cells": 2
+  "#size-cells": 2
+
+  good-test1:
+    compatible: [ "vendor,soc4-ip", "vendor,soc1-ip" ]
+
+  good-test2:
+    compatible: [ "vendor,soc1-ip" ]
+
+  bad-test3:
+    compatible: [ "vendor,soc4-ip", "vendor,soc3-ip" ]
+
+  bad-test4:
+    compatible: [ "vendor,soc1-ip", "vendor,soc3-ip" ]
+
+  bad-test5:
+    compatible: [ "vendor,soc3-ip" ]
+
+  bad-test6:
+    compatible: [ "vendor,undocumented-compatible string" ]
