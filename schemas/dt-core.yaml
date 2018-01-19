@@ -6,7 +6,7 @@
 #   Should it be disallowed, and always enforce the correct array wrapping?
 
 $id: "http://devicetree.org/alpha-01/schema-core#"
-$schema: "http://json-schema.org/draft-04/schema#"
+$schema: "http://json-schema.org/draft-06/schema#"
 description: "Schema for core devicetree bindings"
 
 # always select the core schema
