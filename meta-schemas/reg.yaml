@@ -1,4 +1,6 @@
-id: "http://devicetree.org/schemas/reg.yaml#"
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/reg.yaml#"
 $schema: "http://json-schema.org/draft-06/schema#"
 
 minItems:
