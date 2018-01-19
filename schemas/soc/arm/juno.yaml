@@ -1,6 +1,6 @@
 %YAML 1.1
 ---
-id: "http://devicetree.org/schemas/soc/example.yaml#"
+$id: "http://devicetree.org/schemas/soc/example.yaml#"
 $schema: "http://json-schema.org/draft-06/schema#"
 version: 1
 

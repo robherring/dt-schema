@@ -5,7 +5,7 @@
 #   This is nicer for humans, but makes things more complicated to parse.
 #   Should it be disallowed, and always enforce the correct array wrapping?
 
-id: "http://devicetree.org/alpha-01/schema-core#"
+$id: "http://devicetree.org/alpha-01/schema-core#"
 $schema: "http://json-schema.org/draft-04/schema#"
 description: "Schema for core devicetree bindings"
 

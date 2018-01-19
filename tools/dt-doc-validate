@@ -11,7 +11,11 @@ from jsonschema import FormatChecker
 from jsonschema.compat import urlopen
 
 def yaml_handler(uri):
-    return yaml.load(urlopen(uri).read().decode("utf-8"))
+    if "http://devicetree.org/" in uri:
+        yamlfile = open(uri.replace("http://devicetree.org", os.getcwd())).read()
+    else:
+        yamlfile = urlopen(uri).read().decode("utf-8")
+    return yaml.load(yamlfile)
 
 if __name__ == "__main__":
 
@@ -35,9 +39,9 @@ if __name__ == "__main__":
         print("%s: in %s: %s" % (args.yamldt, list(error.path), error.message))
 
 
-    # Next, check against DT binding doc schema
+    # Next, check against DT binding meta schema
     try:
-        schema = yaml.load(open("doc-schemas/core.yaml").read())
+        schema = yaml.load(open("meta-schemas/core.yaml").read())
     except yaml.YAMLError as exc:
         print("Error in schema", filename, ": ", exc.path[-1], exc.message)
         exit(-1)
@@ -49,7 +53,7 @@ if __name__ == "__main__":
         print("Error(s) validating schema", exc)
         exit(-1)
 
-    resolver = jsonschema.RefResolver('file://' + schema_path + '/doc-schemas/', schema, handlers={"file": yaml_handler})
+    resolver = jsonschema.RefResolver.from_schema(schema, handlers={"http": yaml_handler})
     validator = jsonschema.Draft6Validator(schema, resolver=resolver, format_checker=FormatChecker())
     errors = sorted(validator.iter_errors(testtree), key=lambda e: e.path)
     for error in errors:
