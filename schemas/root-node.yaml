@@ -30,3 +30,4 @@ required:
   - "#address-cells"
   - "#size-cells"
   - memory
+  - "$path"
