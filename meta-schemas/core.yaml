@@ -8,10 +8,9 @@ type: object
 properties:
   # listing all properties here so additionalProperties works
   $id:
-    type: string
-
+    pattern: 'http://devicetree.org/schemas/.*\.yaml#'
   $schema:
-    type: string
+    const: "http://json-schema.org/draft-06/schema#"
 
   title:
     type: string
