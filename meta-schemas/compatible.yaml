@@ -1,0 +1,39 @@
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/compatible.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+type: object
+
+properties:
+  description: {}
+  minItems:
+    minimum: 1
+  maxItems:
+    minimum: 1
+  items:
+    type: array
+    items:
+      allOf:
+        - $ref: '#'
+        - properties:
+            enum: {}
+            const: {}
+          additionalProperties: false
+  enum:
+    type: array
+    items:
+      type: string
+  const:
+    type: string
+
+  oneOf:
+    type: array
+    items:
+      $ref: '#'
+
+  additionalItems:
+    type: boolean
+    const: false
+
+additionalProperties:
+  $ref: '#'

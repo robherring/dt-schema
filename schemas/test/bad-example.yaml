@@ -16,6 +16,26 @@ description:
 properties:
   compatible:
     type: integer
+    description: Compatible strings for the board example.
+    enum:
+      - 123
+    oneOf:
+      - items:
+          - unknown: {}
+          - enum:
+              - 456
+              - "example,board1-with-soc1"
+              - "example,board2-with-soc1"
+          - const: 789
+        additionalItems: false
+      - items:
+          - enum:
+              - 987
+              - "example,board-with-soc2"
+          - const: "example,soc2"
+        additionalItems: false
+    minItems: 0
+    maxItems: 2
 
   interrupts:
     minItems: 0
