@@ -12,8 +12,8 @@ properties:
   $schema:
     const: "http://json-schema.org/draft-06/schema#"
 
-  title:
-    type: string
+  title: {}
+  description: {}
 
   version:
     type: integer
@@ -24,9 +24,6 @@ properties:
     items:
       type: string
       format: email
-
-  description:
-    type: string
 
   properties:   # DT properties
     type: object
@@ -44,10 +41,7 @@ properties:
         required:
           - description
 
-  required:
-    type: array
-    items:
-      type: string
+  required: {}
 
   examples:
     type: array
