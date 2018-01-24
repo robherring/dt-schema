@@ -1,6 +1,6 @@
 %YAML 1.2
 ---
-$id: "http://devicetree.org/meta-schemas/reg.yaml#"
+$id: "http://devicetree.org/meta-schemas/cell-array.yaml#"
 $schema: "http://json-schema.org/draft-06/schema#"
 
 minItems:

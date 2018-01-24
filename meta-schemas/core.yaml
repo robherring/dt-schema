@@ -31,9 +31,9 @@ properties:
       interrupts:
         $ref: "interrupts.yaml"
       reg:
-        $ref: "reg.yaml"
+        $ref: "cell-array.yaml"
       compatible:
-        $ref: "compatible.yaml"
+        $ref: "string-array.yaml"
     patternProperties:
       '^[a-zA-Z0-9].*,.*$':
         type: object
