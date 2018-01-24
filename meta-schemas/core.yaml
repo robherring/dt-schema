@@ -55,8 +55,7 @@ properties:
 
   required: {}
 
-  examples:
-    type: array
+  examples: {}
 
 required:
   - $id
