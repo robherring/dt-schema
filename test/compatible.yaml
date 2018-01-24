@@ -1,6 +1,6 @@
 - $path: /
 #  model: "ARM Juno development board (r0)"
-  compatible: [ "example,board-with-soc", "example,soc2" ]
+  compatible: [ "example,board-with-soc2", "example,soc2" ]
   interrupt-parent: $gic
   "#address-cells": 2
   "#size-cells": 2
