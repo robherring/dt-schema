@@ -17,26 +17,18 @@ def yaml_handler(uri):
         yamlfile = urlopen(uri).read().decode("utf-8")
     return yaml.load(yamlfile)
 
-if __name__ == "__main__":
-
-    ap = argparse.ArgumentParser()
-    ap.add_argument("yamldt", type=str,
-                    help="Filename of YAML encoded devicetree input file")
-    args = ap.parse_args()
-
-    schema_path = os.getcwd()
-
+def check_doc(filename):
     try:
-        testtree = yaml.load(open(args.yamldt).read())
+        testtree = yaml.load(open(filename).read())
     except yaml.YAMLError as exc:
-        print(args.yamldt + ":", exc.path[-1], exc.message)
-        exit(-1)
+        print(filename + ":", exc.path[-1], exc.message)
+        return
 
     # first validate against JSON meta schema
     try:
         jsonschema.Draft6Validator.check_schema(testtree)
     except jsonschema.SchemaError as error:
-        print("%s: in %s: %s" % (args.yamldt, list(error.path), error.message))
+        print("%s: in %s: %s" % (filename, list(error.path), error.message))
 
 
     # Next, check against DT binding meta schema
@@ -44,17 +36,31 @@ if __name__ == "__main__":
         schema = yaml.load(open("meta-schemas/core.yaml").read())
     except yaml.YAMLError as exc:
         print("Error in schema", filename, ": ", exc.path[-1], exc.message)
-        exit(-1)
+        return
 
     # Check that the validation schema is valid
     try:
         jsonschema.Draft6Validator.check_schema(schema)
     except jsonschema.SchemaError as exc:
         print("Error(s) validating schema", exc)
-        exit(-1)
+        return
 
     resolver = jsonschema.RefResolver.from_schema(schema, handlers={"http": yaml_handler})
     validator = jsonschema.Draft6Validator(schema, resolver=resolver, format_checker=FormatChecker())
     errors = sorted(validator.iter_errors(testtree), key=lambda e: e.path)
     for error in errors:
-        print("%s: in %s: %s" % (args.yamldt, list(error.path), error.message))
+        print("%s: in %s: %s" % (filename, list(error.path), error.message))
+
+
+if __name__ == "__main__":
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("yamldt", type=str,
+                    help="Filename of YAML encoded devicetree input file")
+    args = ap.parse_args()
+
+    if os.path.isdir(args.yamldt):
+        for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
+            check_doc(filename)
+    else:
+        check_doc(args.yamldt)
