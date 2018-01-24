@@ -12,6 +12,7 @@ properties:
     minimum: 1
   items:
     type: array
+    minItems: 1
     items:
       allOf:
         - $ref: '#'
