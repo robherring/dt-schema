@@ -27,9 +27,29 @@ properties:
         - enum:
             - vendor,soc1-ip
         additionalItems: false
-  interrupts:
-    minItems: 1
+
+  reg:
+    minItems: 2
     maxItems: 2
+
+  reg-names:
+    items:
+      - const: "core"
+      - const: "aux"
+
+  interrupts:
+    minItems: 0
+    maxItems: 2
+
+  interrupt-names:
+    items:
+      - const: "tx irq"
+      - const: "rx irq"
+
+  '#interrupt-cells':
+    const: 2
+
+  interrupt-controller: {}
 
   vendor,property:
     description: Vendor specific properties must have a description
@@ -37,6 +57,7 @@ properties:
 required:
   - compatible
   - interrupts
+  - interrupt-controller
 
 examples:
   - example-name: |

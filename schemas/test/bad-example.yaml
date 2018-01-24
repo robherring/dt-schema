@@ -37,8 +37,26 @@ properties:
     minItems: 0
     maxItems: 2
 
+  reg:
+    minItems: 2
+    maxItems: 1
+
   interrupts:
     minItems: 0
+
+  interrupt-names:
+    rob: {}
+    minItems: 3
+    items:
+      - "rob"
+      - const: "irq1"
+      - const: 0
+
+  interrupt-controller:
+    type: integer
+
+  '#interrupt-cells':
+    const: 'foo'
 
   model:
     description: A description of model
