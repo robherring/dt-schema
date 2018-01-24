@@ -1,7 +1,7 @@
 %YAML 1.2
 ---
-$id: "http://devicetree.org/schemas/test/bad-example.yaml#"
-$schema: "http://json-schema.org/draft-06/schema#"
+$id: "http://devicetree.org/schemas/test/bad-example.yaml"
+$schema: "http://jsn-schema.org/draft-06/schema#"
 version: 2
 
 title: 0
