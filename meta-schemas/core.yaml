@@ -50,6 +50,9 @@ properties:
         required:
           - description
 
+      '.*-names$':
+        $ref: "string-array.yaml"
+
   required: {}
 
   examples:
