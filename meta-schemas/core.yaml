@@ -53,6 +53,9 @@ properties:
       '.*-names$':
         $ref: "string-array.yaml"
 
+    # No other properties allowed so we know which ones aren't checked
+    additionalProperties: false
+
   required: {}
 
   examples: {}
