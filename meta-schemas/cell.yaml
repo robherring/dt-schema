@@ -1,0 +1,25 @@
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/cell.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+
+array:
+  properties:
+    minItems:
+      minimum: 1
+    maxItems:
+      minimum: 1
+
+    required:
+      - minItems
+      - maxItems
+
+single:
+  properties:
+    description: {}
+    const:
+      type: integer
+
+  required:
+    - const
+  additionalProperties: false

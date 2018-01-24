@@ -31,7 +31,7 @@ properties:
       interrupts:
         $ref: "interrupts.yaml"
       reg:
-        $ref: "cell-array.yaml"
+        $ref: "cell.yaml#array"
       compatible:
         $ref: "string-array.yaml"
     patternProperties:
