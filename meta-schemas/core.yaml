@@ -5,6 +5,26 @@ $schema: "http://json-schema.org/draft-06/schema#"
 description: "Schema for devicetree binding documentation"
 
 type: object
+
+definitions:
+  core-properties:
+    properties:
+      reg:
+        $ref: "cell.yaml#array"
+      compatible:
+        $ref: "string-array.yaml"
+    patternProperties:
+      '^[a-zA-Z0-9].*,.*$':
+        type: object
+        properties:
+          description:
+            type: string
+        required:
+          - description
+
+      '.*-names$':
+        $ref: "string-array.yaml"
+
 properties:
   # listing all properties here so additionalProperties works
   $id:
@@ -25,36 +45,10 @@ properties:
       type: string
       format: email
 
-  properties:   # DT properties
-    type: object
-    properties:
-      reg:
-        $ref: "cell.yaml#array"
-      compatible:
-        $ref: "string-array.yaml"
-      interrupts:
-        $ref: "cell.yaml#array"
-      interrupts-extended:
-        $ref: "cell.yaml#array"
-      interrupt-controller:
-        $ref: "boolean.yaml"
-      '#interrupt-cells':
-        $ref: "cell.yaml#single"
-
-    patternProperties:
-      '^[a-zA-Z0-9].*,.*$':
-        type: object
-        properties:
-          description:
-            type: string
-        required:
-          - description
-
-      '.*-names$':
-        $ref: "string-array.yaml"
-
-    # No other properties allowed so we know which ones aren't checked
-    additionalProperties: false
+  properties:
+    allOf:
+      - $ref: "#definitions/core-properties"
+      - $ref: "interrupts.yaml#"
 
   required: {}
 

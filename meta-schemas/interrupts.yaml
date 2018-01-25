@@ -1,0 +1,14 @@
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/interrupts.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+
+properties:
+  interrupts:
+    $ref: "cell.yaml#array"
+  interrupts-extended:
+    $ref: "cell.yaml#array"
+  interrupt-controller:
+    $ref: "boolean.yaml"
+  '#interrupt-cells':
+    $ref: "cell.yaml#single"
