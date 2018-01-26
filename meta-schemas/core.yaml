@@ -51,6 +51,7 @@ properties:
   properties:
     allOf:
       - $ref: "#definitions/core-properties"
+      - $ref: "clocks.yaml#"
       - $ref: "interrupts.yaml#"
 
   required: {}

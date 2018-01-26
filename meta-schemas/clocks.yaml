@@ -1,0 +1,38 @@
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/gpios.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+
+properties:
+  clocks:
+    $ref: "cell.yaml#array"
+  clock-ranges:
+    $ref: "boolean.yaml"
+  clock-indices:
+    $ref: "cell.yaml#array"
+  assigned-clocks:
+    $ref: "cell.yaml#array"
+  assigned-clock-parents:
+    $ref: "cell.yaml#array"
+  assigned-clock-rates:
+    $ref: "cell.yaml#array"
+
+  clock-frequency:
+    $ref: "cell.yaml#single"
+    properties:
+      default: {}
+    required: [default]
+  bus-frequency:
+    $ref: "cell.yaml#single"
+    properties:
+      default: {}
+    required: [default]
+
+dependencies:
+  clock-output-names: ['#clock-cells']
+  clock-indices: ['#clock-cells']
+  clocks: [clock-names]
+  clock-ranges: [clocks]
+  assigned-clocks: [clocks]
+  assigned-clock-parents: [assigned-clocks]
+  assigned-clock-rates: [assigned-clocks]
