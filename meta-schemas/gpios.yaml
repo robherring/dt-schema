@@ -1,0 +1,27 @@
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/gpios.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+
+properties:
+  gpio-controller:
+    $ref: "boolean.yaml"
+  gpio-line-names:
+    $ref: "string-array.yaml"
+  ngpios:
+    $ref: "cell.yaml#single"
+  gpio-ranges:
+    $ref: "cell.yaml#array"
+  gpios:
+    $ref: "cell.yaml#array"
+
+patternProperties:
+  '.*-gpio$': false
+  '.*-gpios$':
+    $ref: "cell.yaml#array"
+
+dependencies:
+  gpio-controller: ['#gpio-cells']
+  '#gpio-cells': [gpio-controller]
+  gpio-ranges: [gpio-controller]
+  ngpios: [gpio-controller]
