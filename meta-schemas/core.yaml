@@ -25,6 +25,9 @@ definitions:
       '.*-names$':
         $ref: "string-array.yaml"
 
+      '^#.*-cells$':
+        $ref: "cell.yaml#single"
+
 properties:
   # listing all properties here so additionalProperties works
   $id:

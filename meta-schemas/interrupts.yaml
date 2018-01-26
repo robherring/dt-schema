@@ -10,5 +10,3 @@ properties:
     $ref: "cell.yaml#array"
   interrupt-controller:
     $ref: "boolean.yaml"
-  '#interrupt-cells':
-    $ref: "cell.yaml#single"
