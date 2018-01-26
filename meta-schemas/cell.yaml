@@ -10,9 +10,9 @@ array:
     maxItems:
       minimum: 1
 
-    required:
-      - minItems
-      - maxItems
+  required:
+    - minItems
+    - maxItems
 
 single:
   properties:
