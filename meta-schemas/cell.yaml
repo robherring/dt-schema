@@ -19,7 +19,16 @@ single:
     description: {}
     const:
       type: integer
+    enum:
+      items:
+        type: integer
+    minimum: {}
+    maximum: {}
+    default:
+      type: integer
 
-  required:
-    - const
+  dependencies:
+    minimum: [maximum]
+    maximum: [minimum]
+
   additionalProperties: false
