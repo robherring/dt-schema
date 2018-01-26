@@ -27,7 +27,6 @@ properties:
               - "example,board1-with-soc1"
               - "example,board2-with-soc1"
           - const: 789
-        additionalItems: false
       - items:
           - enum:
               - 987
@@ -42,6 +41,7 @@ properties:
     maxItems: 1
 
   interrupts:
+    description: 0
     minItems: 0
 
   interrupt-names:
@@ -49,7 +49,7 @@ properties:
     minItems: 3
     items:
       - "rob"
-      - const: "irq1"
+      - const: "string_with_illegal characters #?"
       - const: 0
 
   interrupt-controller:
@@ -57,6 +57,19 @@ properties:
 
   '#interrupt-cells':
     const: 'foo'
+    description: 0
+
+  clock-output-names:
+    const: "clk1"
+
+  gpio-controller:
+    const: 'foo'
+
+  some-gpio:
+    minItems: 0
+
+  some-gpios:
+    description: 0
 
   model:
     description: A description of model

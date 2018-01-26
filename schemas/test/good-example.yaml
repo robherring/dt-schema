@@ -15,33 +15,38 @@ properties:
   compatible:
     oneOf:
       - items:
-        - enum:
-            - vendor,soc4-ip
-            - vendor,soc3-ip
-            - vendor,soc2-ip
-        - enum:
-            - vendor,soc1-ip
+          - enum:
+              - vendor,soc4-ip
+              - vendor,soc3-ip
+              - vendor,soc2-ip
+          - enum:
+              - vendor,soc1-ip
         minItems: 2
         additionalItems: false
       - items:
-        - enum:
-            - vendor,soc1-ip
+          - enum:
+              - vendor,soc1-ip
         additionalItems: false
+        minItems: 1
 
   reg:
     minItems: 2
     maxItems: 2
 
   reg-names:
+    minItems: 2
+    additionalItems: false
     items:
-      - const: "core"
+      - const: "coreAAA"
       - const: "aux"
 
   interrupts:
-    minItems: 0
+    minItems: 1
     maxItems: 2
 
   interrupt-names:
+    minItems: 2
+    additionalItems: false
     items:
       - const: "tx irq"
       - const: "rx irq"
@@ -50,6 +55,29 @@ properties:
     const: 2
 
   interrupt-controller: {}
+
+  clock-frequency:
+    minimum: 100
+    maximum: 400000
+
+  clocks:
+    minItems: 1
+    maxItems: 2
+
+  clock-names:
+    minItems: 1
+    maxItems: 2
+
+  '#clock-cells':
+    const: 1
+
+  clock-output-names:
+    minItems: 1
+    maxItems: 2
+
+  some-gpios:
+    minItems: 2
+    maxItems: 2
 
   vendor,property:
     description: Vendor specific properties must have a description
