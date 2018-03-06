@@ -34,9 +34,10 @@ properties:
     pattern: 'http://devicetree.org/schemas/.*\.yaml#'
   $schema:
     const: "http://json-schema.org/draft-06/schema#"
-
-  title: {}
-  description: {}
+  title: true
+  description: true
+  examples: true
+  required: true
 
   version:
     type: integer
@@ -54,10 +55,6 @@ properties:
       - $ref: "clocks.yaml#"
       - $ref: "gpios.yaml#"
       - $ref: "interrupts.yaml#"
-
-  required: {}
-
-  examples: {}
 
 required:
   - $id
