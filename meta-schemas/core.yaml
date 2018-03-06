@@ -2,7 +2,7 @@
 ---
 $id: "http://devicetree.org/meta-schemas/core.yaml#"
 $schema: "http://json-schema.org/draft-06/schema#"
-description: "Schema for devicetree binding documentation"
+description: "Metaschema for devicetree binding documentation"
 
 allOf: [ { $ref: "http://json-schema.org/draft-06/schema#" } ]
 
