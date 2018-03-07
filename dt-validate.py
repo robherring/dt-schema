@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 import sys
+import os
+basedir = os.path.dirname(__file__)
 import yaml
+sys.path.insert(0, os.path.join(basedir, "jsonschema-draft6"))
 import jsonschema
 import argparse
 import glob
