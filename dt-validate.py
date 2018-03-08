@@ -67,8 +67,7 @@ class schema_group():
 
         # Check that the selection schema is valid. The selection
         # schema determines when a binding should get applied
-        resolver = jsonschema.RefResolver.from_schema(schema)
-        validator = jsonschema.Draft6Validator(schema, resolver=resolver)
+        validator = jsonschema.Draft6Validator(schema)
         if "select" in schema.keys():
             try:
                 validator.check_schema(schema["select"])
@@ -89,11 +88,10 @@ class schema_group():
         node_matched = False
         for schema in self.schemas:
             if "select" in schema.keys():
-                resolver = jsonschema.RefResolver.from_schema(schema)
-                v = jsonschema.Draft6Validator(schema["select"], resolver=resolver)
+                v = jsonschema.Draft6Validator(schema["select"])
                 if v.is_valid(node):
                     node_matched = True
-                    v2 = jsonschema.Draft6Validator(schema, resolver=resolver)
+                    v2 = jsonschema.Draft6Validator(schema)
                     errors = sorted(v2.iter_errors(node), key=lambda e: e.path)
                     if (errors):
                         for error in errors:
