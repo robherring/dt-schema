@@ -59,7 +59,7 @@ class schema_group():
 
         # Check that the validation schema is valid
         try:
-            jsonschema.Draft4Validator.check_schema(schema)
+            jsonschema.Draft6Validator.check_schema(schema)
         except jsonschema.SchemaError as exc:
             print(filename + ": ignoring, error in schema '%s'" % exc.path[-1])
             #print(exc.message)
