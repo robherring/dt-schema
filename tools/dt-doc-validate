@@ -6,18 +6,13 @@ basedir = os.path.dirname(__file__)
 import yaml
 sys.path.insert(0, os.path.join(basedir, "../jsonschema-draft6"))
 import jsonschema
+sys.path.insert(0, os.path.join(basedir, ".."))
+import dtschema
 import argparse
 import glob
 
 from jsonschema import FormatChecker
 from jsonschema.compat import urlopen
-
-def yaml_handler(uri):
-    if "http://devicetree.org/" in uri:
-        yamlfile = open(uri.replace("http://devicetree.org", os.getcwd())).read()
-    else:
-        yamlfile = urlopen(uri).read().decode("utf-8")
-    return yaml.load(yamlfile)
 
 def check_doc(filename):
     try:
@@ -47,7 +42,7 @@ def check_doc(filename):
         print("Error(s) validating schema", exc)
         return
 
-    resolver = jsonschema.RefResolver.from_schema(schema, handlers={"http": yaml_handler})
+    resolver = jsonschema.RefResolver.from_schema(schema, handlers=dtschema.handlers)
     validator = jsonschema.Draft6Validator(schema, resolver=resolver, format_checker=FormatChecker())
     errors = sorted(validator.iter_errors(testtree), key=lambda e: e.path)
     for error in errors:

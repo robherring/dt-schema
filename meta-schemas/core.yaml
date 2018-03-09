@@ -31,9 +31,9 @@ definitions:
 properties:
   # listing all properties here so additionalProperties works
   $id:
-    pattern: 'http://devicetree.org/schemas/.*\.yaml#'
+    pattern: 'http://devicetree.org/.*/schemas/.*\.yaml#'
   $schema:
-    const: "http://json-schema.org/draft-06/schema#"
+    const: "http://devicetree.org/meta-schemas/core.yaml#"
   title: true
   description: true
   examples: true
