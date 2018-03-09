@@ -71,7 +71,7 @@ class schema_group():
         validator = jsonschema.Draft6Validator(schema, resolver=resolver)
         if "select" in schema.keys():
             try:
-                validator.check_schema(schema)
+                validator.check_schema(schema["select"])
             except jsonschema.SchemaError as exc:
                 print("Error(s) validating schema", filename, exc)
                 return
