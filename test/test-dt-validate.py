@@ -8,19 +8,14 @@ sys.path.insert(0, os.path.join(basedir, "../jsonschema-draft6"))
 import jsonschema
 sys.path.insert(0, os.path.join(basedir, ".."))
 import dtschema
+import pkgutil
 
 #validator = dtschema.DTValidator()
 
 class TestDTMetaSchema(unittest.TestCase):
     def setUp(self):
-        f = open("test/schemas/good-example.yaml")
-        self.schema = yaml.load(f.read())
-        f.close()
-
-        f = open("test/schemas/bad-example.yaml")
-        self.bad_schema = yaml.load(f.read())
-        f.close()
-
+        self.schema = yaml.load(pkgutil.get_data("dtschema", "test/schemas/good-example.yaml").decode("utf-8"))
+        self.bad_schema = yaml.load(pkgutil.get_data("dtschema", "test/schemas/bad-example.yaml").decode("utf-8"))
         self.validator = dtschema.DTMetaValidator()
 
     def test_required_properties(self):

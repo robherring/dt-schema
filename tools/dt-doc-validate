@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.join(basedir, ".."))
 import dtschema
 import argparse
 import glob
+import pkgutil
 
 from jsonschema import FormatChecker
 from jsonschema.compat import urlopen
@@ -30,7 +31,7 @@ def check_doc(filename):
 
     # Next, check against DT binding meta schema
     try:
-        schema = yaml.load(open("meta-schemas/core.yaml").read())
+        schema = yaml.load(pkgutil.get_data("dtschema", "meta-schemas/core.yaml"))
     except yaml.YAMLError as exc:
         print("Error in schema", filename, ": ", exc.path[-1], exc.message)
         return
