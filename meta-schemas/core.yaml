@@ -2,9 +2,9 @@
 ---
 $id: "http://devicetree.org/meta-schemas/core.yaml#"
 $schema: "http://json-schema.org/draft-06/schema#"
-description: "Schema for devicetree binding documentation"
+description: "Metaschema for devicetree binding documentation"
 
-type: object
+allOf: [ { $ref: "http://json-schema.org/draft-06/schema#" } ]
 
 definitions:
   core-properties:
@@ -31,12 +31,15 @@ definitions:
 properties:
   # listing all properties here so additionalProperties works
   $id:
-    pattern: 'http://devicetree.org/schemas/.*\.yaml#'
+    pattern: 'http://devicetree.org/(test/)?schemas/.*\.yaml#'
   $schema:
-    const: "http://json-schema.org/draft-06/schema#"
-
-  title: {}
-  description: {}
+    const: "http://devicetree.org/meta-schemas/core.yaml#"
+  title: true
+  description: true
+  examples: true
+  required: true
+  allOf: true
+  definitions: true
 
   version:
     type: integer
@@ -55,9 +58,7 @@ properties:
       - $ref: "gpios.yaml#"
       - $ref: "interrupts.yaml#"
 
-  required: {}
-
-  examples: {}
+  select: { $ref: "http://json-schema.org/draft-06/schema#" }
 
 required:
   - $id
@@ -66,8 +67,5 @@ required:
   - title
   - maintainers
   - description
-  - examples
-  - properties
-  - required
 
 additionalProperties: false

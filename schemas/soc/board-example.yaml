@@ -1,7 +1,7 @@
 %YAML 1.2
 ---
-$id: "http://devicetree.org/schemas/soc/arm/board-example.yaml#"
-$schema: "http://json-schema.org/draft-06/schema#"
+$id: http://devicetree.org/schemas/soc/arm/board-example.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
 version: 1
 
 title: A board example using compatible and model properties
@@ -13,32 +13,23 @@ description: An SoC binding example. Matches on a top-level compatible string an
   model.
 
 properties:
-  $path:
-    type: string
-    const: "/"
   compatible:
-    description: Compatible strings for the board example.
     oneOf:
       - items:
           - enum:
               - "example,board1-with-soc1"
               - "example,board2-with-soc1"
           - const: "example,soc1"
+        minItems: 1
+        maxItems: 2
         additionalItems: false
       - items:
           - enum:
               - "example,board-with-soc2"
           - const: "example,soc2"
+        minItems: 1
+        maxItems: 2
         additionalItems: false
-    minItems: 2
-    maxItems: 2
-
-  model:
-    type: string
-
-required:
-  - $path
-  - compatible
 
 examples:
   - example: |

@@ -1,13 +1,12 @@
 %YAML 1.2
 ---
-$id: "http://devicetree.org/schemas/test/bad-example.yaml"
+$id: "http://devicetree.org/test/schemas/bad-example.yaml"
 $schema: "http://jsn-schema.org/draft-06/schema#"
 version: 2
 
 title: 0
 
-maintainers:
-  - Bob
+maintainers: Bob
 
 description:
   - The description should not be a sequence.
@@ -38,7 +37,7 @@ properties:
 
   reg:
     minItems: 2
-    maxItems: 1
+    maxItems: 0
 
   interrupts:
     description: 0
@@ -59,9 +58,6 @@ properties:
     const: 'foo'
     description: 0
 
-  clock-output-names:
-    const: "clk1"
-
   gpio-controller:
     const: 'foo'
 
@@ -71,11 +67,6 @@ properties:
   some-gpios:
     description: 0
 
-  model:
-    description: A description of model
-    enum:
-      - "ARM Juno development board (r1)"
-      - "ARM Juno development board (r2)"
   another-property:
     description: 0
 

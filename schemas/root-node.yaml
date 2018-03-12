@@ -1,12 +1,13 @@
 %YAML 1.2
 ---
-type: object
 $id: http://devicetree.org/schemas/root-node.yaml#
-$schema: http://json-schema.org/draft-06/schema#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
 
 version: 1
 
 title: Common root node
+description: |
+  Common properties always required in the root node of the tree
 
 maintainers:
   - Device Tree <dt@kernel.org>
@@ -30,4 +31,17 @@ required:
   - "#address-cells"
   - "#size-cells"
   - memory
-  - "$path"
+  - $path
+
+examples:
+  simple-board: |
+    / {
+        compatible = "acme,boogieboard";
+        model = "Acme Ltd. Boogieboard developer system";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        memory@0 {
+            reg = <0 0x10000000>;
+        };
+        $path = "/";
+    }

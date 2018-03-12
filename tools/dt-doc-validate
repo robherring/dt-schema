@@ -2,20 +2,16 @@
 
 import os
 import sys
+basedir = os.path.dirname(__file__)
 import yaml
+sys.path.insert(0, os.path.join(basedir, "../jsonschema-draft6"))
 import jsonschema
+sys.path.insert(0, os.path.join(basedir, ".."))
+import dtschema
 import argparse
 import glob
 
 from jsonschema import FormatChecker
-from jsonschema.compat import urlopen
-
-def yaml_handler(uri):
-    if "http://devicetree.org/" in uri:
-        yamlfile = open(uri.replace("http://devicetree.org", os.getcwd())).read()
-    else:
-        yamlfile = urlopen(uri).read().decode("utf-8")
-    return yaml.load(yamlfile)
 
 def check_doc(filename):
     try:
@@ -24,30 +20,13 @@ def check_doc(filename):
         print(filename + ":", exc.path[-1], exc.message)
         return
 
-    # first validate against JSON meta schema
+    # Make sure the document validates against the DT metaschema
     try:
-        jsonschema.Draft6Validator.check_schema(testtree)
+        dtschema.DTValidator.check_schema(testtree)
     except jsonschema.SchemaError as error:
         print("%s: in %s: %s" % (filename, list(error.path), error.message))
 
-
-    # Next, check against DT binding meta schema
-    try:
-        schema = yaml.load(open("meta-schemas/core.yaml").read())
-    except yaml.YAMLError as exc:
-        print("Error in schema", filename, ": ", exc.path[-1], exc.message)
-        return
-
-    # Check that the validation schema is valid
-    try:
-        jsonschema.Draft6Validator.check_schema(schema)
-    except jsonschema.SchemaError as exc:
-        print("Error(s) validating schema", exc)
-        return
-
-    resolver = jsonschema.RefResolver.from_schema(schema, handlers={"http": yaml_handler})
-    validator = jsonschema.Draft6Validator(schema, resolver=resolver, format_checker=FormatChecker())
-    errors = sorted(validator.iter_errors(testtree), key=lambda e: e.path)
+    errors = sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.path)
     for error in errors:
         print("%s: in %s: %s" % (filename, list(error.path), error.message))
 
