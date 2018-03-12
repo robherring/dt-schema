@@ -20,12 +20,22 @@ def http_handler(uri):
 
 handlers = {"http": http_handler}
 
-def DTValidator(schema):
-    resolver = jsonschema.RefResolver.from_schema(schema, handlers=handlers)
-    return jsonschema.Draft6Validator(schema, resolver=resolver)
+class DTValidator(jsonschema.Draft6Validator):
+    '''Custom Validator for Devicetree Schemas
 
-def DTMetaValidator():
-    schema = yaml.load(pkgutil.get_data("dtschema", "meta-schemas/core.yaml").decode("utf-8"))
+    Overrides the Draft6 metaschema with the devicetree metaschema. This
+    validator is used in exactly the same way as the Draft6Validator. Schema
+    files can be validated with the .check_schema() method, and .validate()
+    will check the data in a devicetree file.
+    '''
+    META_SCHEMA = load_schema('meta-schemas/core.yaml')
 
-    resolver = jsonschema.RefResolver.from_schema(schema, handlers=handlers)
-    return jsonschema.Draft6Validator(schema, resolver=resolver)
+    def __init__(self, schema, types=(), format_checker=None):
+        resolver = jsonschema.RefResolver.from_schema(schema, handlers=handlers)
+        jsonschema.Draft6Validator.__init__(self, schema, types, resolver=resolver,
+                                            format_checker=format_checker)
+
+    @classmethod
+    def iter_schema_errors(cls, schema):
+        return cls(cls.META_SCHEMA).iter_errors(schema)
+

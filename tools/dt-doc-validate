@@ -20,30 +20,13 @@ def check_doc(filename):
         print(filename + ":", exc.path[-1], exc.message)
         return
 
-    # first validate against JSON meta schema
+    # Make sure the document validates against the DT metaschema
     try:
-        jsonschema.Draft6Validator.check_schema(testtree)
+        dtschema.DTValidator.check_schema(testtree)
     except jsonschema.SchemaError as error:
         print("%s: in %s: %s" % (filename, list(error.path), error.message))
 
-
-    # Next, check against DT binding meta schema
-    try:
-        schema = dtschema.load_schema('meta-schemas/core.yaml')
-    except yaml.YAMLError as exc:
-        print("Error in schema", filename, ": ", exc.path[-1], exc.message)
-        return
-
-    # Check that the validation schema is valid
-    try:
-        jsonschema.Draft6Validator.check_schema(schema)
-    except jsonschema.SchemaError as exc:
-        print("Error(s) validating schema", exc)
-        return
-
-    resolver = jsonschema.RefResolver.from_schema(schema, handlers=dtschema.handlers)
-    validator = jsonschema.Draft6Validator(schema, resolver=resolver, format_checker=FormatChecker())
-    errors = sorted(validator.iter_errors(testtree), key=lambda e: e.path)
+    errors = sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.path)
     for error in errors:
         print("%s: in %s: %s" % (filename, list(error.path), error.message))
 
