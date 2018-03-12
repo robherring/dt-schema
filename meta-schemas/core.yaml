@@ -31,13 +31,15 @@ definitions:
 properties:
   # listing all properties here so additionalProperties works
   $id:
-    pattern: 'http://devicetree.org/.*/schemas/.*\.yaml#'
+    pattern: 'http://devicetree.org/(test/)?schemas/.*\.yaml#'
   $schema:
     const: "http://devicetree.org/meta-schemas/core.yaml#"
   title: true
   description: true
   examples: true
   required: true
+  allOf: true
+  definitions: true
 
   version:
     type: integer
@@ -56,6 +58,8 @@ properties:
       - $ref: "gpios.yaml#"
       - $ref: "interrupts.yaml#"
 
+  select: { $ref: "http://json-schema.org/draft-06/schema#" }
+
 required:
   - $id
   - $schema
@@ -63,8 +67,5 @@ required:
   - title
   - maintainers
   - description
-  - examples
-  - properties
-  - required
 
 additionalProperties: false

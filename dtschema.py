@@ -9,13 +9,14 @@ import pkgutil
 
 schema_base_url = "http://devicetree.org/"
 
+def load_schema(schema):
+    return yaml.load(pkgutil.get_data('dtschema', schema).decode('utf-8'))
+
 def http_handler(uri):
     '''Custom handler for http://devicetre.org YAML references'''
     if schema_base_url in uri:
-        yamlfile = pkgutil.get_data("dtschema", uri.replace(schema_base_url, ""))
-    else:
-        yamlfile = jsonschema.compat.urlopen(uri).read()
-    return yaml.load(yamlfile.decode("utf-8"))
+        return load_schema(uri.replace(schema_base_url, ''))
+    return yaml.load(jsonschema.compat.urlopen(uri).read().decode('utf-8'))
 
 handlers = {"http": http_handler}
 

@@ -7,7 +7,12 @@
 
 $id: "http://devicetree.org/schemas/dt-core.yaml#"
 $schema: "http://devicetree.org/meta-schemas/core.yaml#"
+title: Core devicetree node schema which applies to all nodes
 description: "Schema for core devicetree bindings"
+maintainers:
+  - Grant Likely <grant.likely@arm.com>
+  - Rob Herring <robh@kernel.org>
+version: 1
 
 # always select the core schema
 select: true
