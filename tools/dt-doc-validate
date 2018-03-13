@@ -20,19 +20,12 @@ def check_doc(filename):
         print(filename + ":", exc.path[-1], exc.message)
         return
 
-    # Make sure the document validates against the DT metaschema
-    try:
-        dtschema.DTValidator.check_schema(testtree)
-    except jsonschema.SchemaError as error:
-        print("%s: in %s: %s" % (filename, list(error.path), error.message))
-
     errors = sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.path)
     for error in errors:
         print("%s: in %s: %s" % (filename, list(error.path), error.message))
 
 
 if __name__ == "__main__":
-
     ap = argparse.ArgumentParser()
     ap.add_argument("yamldt", type=str,
                     help="Filename of YAML encoded devicetree input file")
