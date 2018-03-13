@@ -3,12 +3,14 @@
 import sys
 import os
 basedir = os.path.dirname(__file__)
-import yaml
+import ruamel.yaml
 sys.path.insert(0, os.path.join(basedir, "jsonschema-draft6"))
 import jsonschema
 import argparse
 import glob
 import dtschema
+
+yaml = ruamel.yaml.YAML()
 
 def item_generator(json_input, lookup_key):
     if isinstance(json_input, dict):

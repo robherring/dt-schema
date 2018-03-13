@@ -1,13 +1,15 @@
 # Python library for Devicetree schema validation
 import sys
 import os
-import yaml
+import ruamel.yaml
 sys.path.insert(0, os.path.join(os.path.dirname(__file__),
                                 "jsonschema-draft6"))
 import jsonschema
 import pkgutil
 
 schema_base_url = "http://devicetree.org/"
+
+yaml = ruamel.yaml.YAML()
 
 def load_schema(schema):
     return yaml.load(pkgutil.get_data('dtschema', schema).decode('utf-8'))
