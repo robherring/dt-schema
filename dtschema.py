@@ -50,8 +50,9 @@ class DTValidator(jsonschema.Draft6Validator):
     '''
     META_SCHEMA = load_schema('meta-schemas/core.yaml')
 
-    def __init__(self, schema, types=(), format_checker=None):
+    def __init__(self, schema, types=()):
         resolver = jsonschema.RefResolver.from_schema(schema, handlers=handlers)
+        format_checker = jsonschema.FormatChecker()
         jsonschema.Draft6Validator.__init__(self, schema, types, resolver=resolver,
                                             format_checker=format_checker)
 
