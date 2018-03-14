@@ -14,13 +14,12 @@ yaml = ruamel.yaml.YAML()
 def check_doc(filename):
     try:
         testtree = yaml.load(open(filename).read())
-    except yaml.YAMLError as exc:
+    except ruamel.yaml.YAMLError as exc:
         print(filename + ":", exc.path[-1], exc.message)
         return
 
-    errors = sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.path)
-    for error in errors:
-        print("%s: in %s: %s" % (filename, list(error.path), error.message))
+    for error in sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.linecol):
+        print(dtschema.format_error(filename, error, verbose=False))
 
 
 if __name__ == "__main__":
