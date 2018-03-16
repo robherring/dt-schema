@@ -1,8 +1,49 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import argparse
+import glob
+
 from ruamel import yaml
+
+def eprint(filename, *args, **kwargs):
+    print(filename + ": warning:", *args, file=sys.stderr, **kwargs)
+
+def yaml_format(file, in_place):
+    yml = yaml.YAML()
+    # Setup formatting settings
+    yml.indent(mapping=2, sequence=4, offset=2)
+    yml.explicit_start=True
+    yml.preserve_quotes=True
+    yml.version=(1,2)
+
+    rawfile = open(file).read()
+    top_comment = rawfile.partition('%YAML')[0]
+    print(top_comment, file=sys.stderr)
+
+    try:
+        yamldata = yml.load(rawfile)
+    except yaml.YAMLError as exc:
+        print(file + ":", exc)
+        exit(-1)
+
+    # Check that keys are in a defined order
+    key_order = [ "$id", "$schema", "version", "title", "maintainers",
+        "description", "properties", "required", "examples" ];
+    i = 0
+    for k in yamldata:
+        if k != key_order[i]:
+            eprint(file, "Expected " + key_order[i] + " for key {0}, found ".format(i) + k)
+        i += 1
+
+    if in_place:
+        f = open(file, 'w')
+    else:
+        f = sys.stdout
+
+    print(top_comment, file=f, end="")
+    yml.dump(yamldata, f)
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
@@ -13,22 +54,8 @@ if __name__ == "__main__":
                     help="Filename of YAML encoded devicetree input file")
     args = ap.parse_args()
 
-    yml = yaml.YAML()
-    # Setup formatting settings
-    yml.indent(mapping=2, sequence=4, offset=2)
-    yml.explicit_start=True
-    yml.preserve_quotes=True
-    yml.version=(1,2)
-
-    try:
-        yamldata = yml.load(open(args.file).read())
-    except yaml.YAMLError as exc:
-        print(args.file + ":", exc)
-        exit(-1)
-
-    if args.in_place:
-        f = open(args.file, 'w')
+    if os.path.isdir(args.file):
+        for filename in glob.iglob(args.file + "/**/*.yaml", recursive=True):
+            yaml_format(filename, args.in_place)
     else:
-        f = sys.stdout
-
-    yml.dump(yamldata, f)
+        yaml_format(args.file, args.in_place)
