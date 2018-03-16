@@ -72,7 +72,7 @@ Devicetree Meta-Schema files are normal YAML files using the jsonschema vocabula
 ## Usage
 The tool in this repo can be run by simply executing the dt-validate.py script
 at the top level. It requires Python 3 to be installed, as well as the
-jsonschema and pyyaml libraries.
+jsonschema and ruamel.yaml libraries.
 
 Please note: this is prototype code and is in no way officially supported or
 fit for use.
@@ -83,7 +83,13 @@ This code depends on Python 3 with the yaml and jsonschema libraries
 On Debian, the dependencies can be installed with:
 
 ```
-apt-get install python3 python-yaml
+apt-get install python3 python-ruamel.yaml
+```
+
+Alternately dependencies can be installed with pip:
+
+```
+pip3 install ruamel.yaml
 ```
 
 ### jsonschema Draft6

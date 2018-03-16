@@ -3,36 +3,26 @@
 import os
 import sys
 basedir = os.path.dirname(__file__)
-import yaml
-sys.path.insert(0, os.path.join(basedir, "../jsonschema-draft6"))
-import jsonschema
+import ruamel.yaml
 sys.path.insert(0, os.path.join(basedir, ".."))
 import dtschema
 import argparse
 import glob
 
-from jsonschema import FormatChecker
+yaml = ruamel.yaml.YAML()
 
 def check_doc(filename):
     try:
         testtree = yaml.load(open(filename).read())
-    except yaml.YAMLError as exc:
+    except ruamel.yaml.YAMLError as exc:
         print(filename + ":", exc.path[-1], exc.message)
         return
 
-    # Make sure the document validates against the DT metaschema
-    try:
-        dtschema.DTValidator.check_schema(testtree)
-    except jsonschema.SchemaError as error:
-        print("%s: in %s: %s" % (filename, list(error.path), error.message))
-
-    errors = sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.path)
-    for error in errors:
-        print("%s: in %s: %s" % (filename, list(error.path), error.message))
+    for error in sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.linecol):
+        print(dtschema.format_error(filename, error, verbose=False))
 
 
 if __name__ == "__main__":
-
     ap = argparse.ArgumentParser()
     ap.add_argument("yamldt", type=str,
                     help="Filename of YAML encoded devicetree input file")

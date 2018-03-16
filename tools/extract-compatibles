@@ -2,8 +2,10 @@
 
 import os
 import sys
-import yaml
+import ruamel.yaml
 import argparse
+
+yaml = ruamel.yaml.YAML()
 
 def item_generator(json_input, lookup_key):
     if isinstance(json_input, dict):

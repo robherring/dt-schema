@@ -6,7 +6,10 @@ version: 2
 
 title: 0
 
-maintainers: Bob
+maintainers:
+  - Bob
+  - 12
+  - will.e@acme.co.uk
 
 description:
   - The description should not be a sequence.
