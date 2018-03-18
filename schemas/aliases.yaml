@@ -1,0 +1,54 @@
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/root-node.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+version: 1
+
+title: /aliases Node
+description: |
+  A devicetree may have an aliases node (``/aliases``) that defines one or more
+  alias properties.
+  The aliases node shall be at the root of the devicetree and have the node name
+  ``/aliases``.
+
+  Each property of the ``/aliases`` node defines an alias,
+  which can be used as a shorthand name for a node in the tree.
+  The property name is the alias name, and the property value contains the full
+  path to a node encoded as a string.
+  For example, the property ``serial0 = "/simple-bus@fe000000/serial@11c500";``
+  defines the alias ``serial0``.
+
+  An alias name must be a lowercase text string of 1 to 31 characters from the
+  following character set.
+
+  .. tabularcolumns:: | c p{8cm} |
+  .. table:: Valid characters for alias names
+
+
+     ========= ================
+     Character Description
+     ========= ================
+     0-9       digit
+     a-z       lowercase letter
+     \-        dash
+     ========= ================
+
+  A client program may use an alias property name to refer to a full
+  device path as all or part of its string value. A client program, when
+  considering a string as a device path, shall detect and use the alias.
+
+patternProperties:
+  "^[a-z][a-z0-9\\-]*$": { type: string }
+additionalProperties: false
+
+examples:
+  example1: |
+    aliases {
+      serial0 = "/simple-bus@fe000000/serial@11c500";
+      ethernet0 = "/simple-bus@fe000000/ethernet@31c000";
+    };
+
+maintainers:
+  - Devicetree Specification Mailing List <devicetree-spec@vger.kernel.org>
+

@@ -29,7 +29,11 @@ definitions:
         $ref: "cell.yaml#single"
 
 properties:
-  # listing all properties here so additionalProperties works
+  # listing all properties here to narrow the scope of what is allowed in
+  # devicetree schema files. This list can be relaxed in the future as we
+  # become more comfortable with the validation vocabulary.
+  # Also, being explicit about what properties are allowed helps to catch
+  # misspelled or unsupported tests.
   $id:
     pattern: 'http://devicetree.org/(test/)?schemas/.*\.yaml#'
   $schema:
@@ -40,6 +44,8 @@ properties:
   required: true
   allOf: true
   definitions: true
+  patternProperties: true
+  additionalProperties: true
 
   version:
     type: integer

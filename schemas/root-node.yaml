@@ -24,6 +24,7 @@ properties:
   "#address-cells": {}
   "#size-cells": {}
   memory: {}
+  aliases: { "$ref": "http://devicetree.org/schemas/aliases.yaml" }
 
 required:
   - compatible
