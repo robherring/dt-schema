@@ -19,7 +19,7 @@ select: true
 
 definitions:
     proptypes:
-        "#cells":
+        numcells:
             type: integer
             minimum: 0
             maximum: 8
@@ -78,10 +78,10 @@ definitions:
                     type: string
                     pattern: "^[a-zA-Z_][a-zA-Z0-9_]*$"
             $path: { type: string }
-            "#address-cells": { $ref: "#/definitions/proptypes/#cells" }
-            "#gpio-cells": { $ref: "#/definitions/proptypes/#cells" }
-            "#interrupt-cells": { $ref: "#/definitions/proptypes/#cells" }
-            "#size-cells": { $ref: "#/definitions/proptypes/#cells" }
+            "#address-cells": { $ref: "#/definitions/proptypes/numcells" }
+            "#gpio-cells": { $ref: "#/definitions/proptypes/numcells" }
+            "#interrupt-cells": { $ref: "#/definitions/proptypes/numcells" }
+            "#size-cells": { $ref: "#/definitions/proptypes/numcells" }
             compatible: { $ref: "#/definitions/proptypes/stringarray" }
             gpio-controller: { $ref: "#/definitions/proptypes/flag" }
             interrupt-controller: { $ref: "#/definitions/proptypes/flag" }
