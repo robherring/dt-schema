@@ -89,7 +89,7 @@ apt-get install python3 python-ruamel.yaml
 Alternately dependencies can be installed with pip:
 
 ```
-pip3 install ruamel.yaml
+pip3 install ruamel.yaml rfc3987
 ```
 
 ### jsonschema Draft6
