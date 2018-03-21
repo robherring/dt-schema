@@ -120,5 +120,11 @@ if __name__ == "__main__":
     args = ap.parse_args()
 
 
-    testtree = yaml.load(open(args.yamldt).read())
-    sg.check_trees(testtree)
+    if os.path.isdir(args.yamldt):
+        for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
+            testtree = dtschema.load(open(filename).read())
+            sg.check_trees(testtree)
+    else:
+        testtree = dtschema.load(open(args.yamldt).read())
+        sg.check_trees(testtree)
+
