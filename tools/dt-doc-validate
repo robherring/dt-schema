@@ -9,11 +9,9 @@ import dtschema
 import argparse
 import glob
 
-yaml = ruamel.yaml.YAML()
-
 def check_doc(filename):
     try:
-        testtree = yaml.load(open(filename).read())
+        testtree = dtschema.load(open(filename).read())
     except ruamel.yaml.YAMLError as exc:
         print(filename + ":", exc.path[-1], exc.message)
         return

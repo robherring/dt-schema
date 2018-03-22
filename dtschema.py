@@ -30,13 +30,18 @@ def get_line_col(tree, path, obj=None):
     return None
 
 def load_schema(schema):
-    return yaml.load(pkgutil.get_data('dtschema', schema).decode('utf-8'))
+    return ruamel.yaml.load(pkgutil.get_data('dtschema', schema).decode('utf-8'),
+                            Loader=ruamel.yaml.RoundTripLoader)
+
+def load(stream):
+    return ruamel.yaml.load(stream, Loader=ruamel.yaml.RoundTripLoader)
 
 def http_handler(uri):
     '''Custom handler for http://devicetre.org YAML references'''
     if schema_base_url in uri:
         return load_schema(uri.replace(schema_base_url, ''))
-    return yaml.load(jsonschema.compat.urlopen(uri).read().decode('utf-8'))
+    return ruamel.yaml.load(jsonschema.compat.urlopen(uri).read().decode('utf-8'),
+                            Loader=ruamel.yaml.RoundTripLoader)
 
 handlers = {"http": http_handler}
 
