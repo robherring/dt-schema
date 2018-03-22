@@ -76,6 +76,11 @@ class DTValidator(jsonschema.Draft6Validator):
             error.linecol = get_line_col(schema, error.path)
             yield error
 
+    def iter_errors(self, instance, _schema=None):
+        for error in jsonschema.Draft6Validator.iter_errors(self, instance, _schema):
+            error.linecol = get_line_col(instance, error.path)
+            yield error
+
 def format_error(filename, error, verbose=False):
     src = filename + ':'
     if error.linecol:

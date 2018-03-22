@@ -86,30 +86,30 @@ class schema_group():
         schema["$filename"] = filename
         print(filename + ": loaded")
 
-    def check_node(self, dt, node, path):
+    def check_node(self, tree, node, filename, path):
         node_matched = False
         for schema in self.schemas:
             if schema['$select_validator'].is_valid(node):
                 node_matched = True
-                errors = sorted(schema['$validator'].iter_errors(node), key=lambda e: e.path)
-                if (errors):
-                    for error in errors:
-                        print("node '%s': in %s: %s (from %s)" %
-                              (path, list(error.path), error.message, schema["$filename"]))
+                errors = sorted(schema['$validator'].iter_errors(node), key=lambda e: e.linecol)
+                for error in errors:
+                    print(dtschema.format_error(filename, error))
         if not node_matched:
-            print(node)
-            print("node %s: failed to match any schema with compatible(s) %s" % (path, node["compatible"]))
+            if 'compatible' in node:
+                print("%s:%i:%i: %s failed to match any schema with compatible(s) %s" % (filename, node.lc.line, node.lc.col, path, node["compatible"]))
+            else:
+                print("%s: node %s failed to match any schema" % (filename, path))
 
-    def check_subtree(self, dt, subtree, path="/"):
-        self.check_node(dt, subtree, path)
+    def check_subtree(self, tree, subtree, filename, path='/'):
+        self.check_node(tree, subtree, filename, path)
         for name,value in subtree.items():
             if type(value) == dict:
-                self.check_subtree(dt, value, '/'.join([path,name]))
+                self.check_subtree(tree, value, filename, path='/'.join([path,name]))
 
-    def check_trees(self, dt):
+    def check_trees(self, filename, dt):
         """Check the given DT against all schemas"""
         for subtree in dt:
-            self.check_subtree(dt, subtree)
+            self.check_subtree(subtree, subtree, filename)
 
 if __name__ == "__main__":
     sg = schema_group()
@@ -123,8 +123,8 @@ if __name__ == "__main__":
     if os.path.isdir(args.yamldt):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
             testtree = dtschema.load(open(filename).read())
-            sg.check_trees(testtree)
+            sg.check_trees(filename, testtree)
     else:
         testtree = dtschema.load(open(args.yamldt).read())
-        sg.check_trees(testtree)
+        sg.check_trees(args.yamldt, testtree)
 
