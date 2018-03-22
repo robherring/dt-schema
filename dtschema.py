@@ -9,7 +9,16 @@ import pkgutil
 
 schema_base_url = "http://devicetree.org/"
 
-yaml = ruamel.yaml.YAML()
+def scalar_constructor(loader, node):
+    return loader.construct_scalar(node)
+def sequence_constructor(loader, node):
+    return loader.construct_sequence(node)
+ruamel.yaml.RoundTripLoader.add_constructor(u'!u8', sequence_constructor)
+ruamel.yaml.RoundTripLoader.add_constructor(u'!u16', sequence_constructor)
+ruamel.yaml.RoundTripLoader.add_constructor(u'!u32', sequence_constructor)
+ruamel.yaml.RoundTripLoader.add_constructor(u'!u64', sequence_constructor)
+ruamel.yaml.RoundTripLoader.add_constructor(u'!phandle', scalar_constructor)
+ruamel.yaml.RoundTripLoader.add_constructor(u'!path', scalar_constructor)
 
 def path_to_obj(tree, path):
     for pc in path:
