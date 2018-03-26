@@ -83,7 +83,7 @@ class DTValidator(jsonschema.Draft6Validator):
             yield error
 
 def format_error(filename, error, verbose=False):
-    src = filename + ':'
+    src = os.path.abspath(filename) + ':'
     if error.linecol:
         src = src + '%i:%i:'%(error.linecol[0]+1, error.linecol[1]+1)
 
