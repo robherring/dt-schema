@@ -46,6 +46,7 @@ properties:
   definitions: true
   patternProperties: true
   additionalProperties: true
+  historical: true
 
   version:
     type: integer
