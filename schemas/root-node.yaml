@@ -19,8 +19,7 @@ select:
 
 properties:
   compatible: {}
-  model:
-    type: string
+  model: { "$ref" : "dt-core.yaml#definitions/proptypes/stringarray"}
   "#address-cells": {}
   "#size-cells": {}
   memory: {}
