@@ -19,10 +19,18 @@ select: true
 
 definitions:
     proptypes:
+        numcells-items:
+            type: array
+            maximum: 1
+            items:
+                type: integer
+                minimum: 0
+                maximum: 8
         numcells:
-            type: integer
-            minimum: 0
-            maximum: 8
+            oneOf:
+              - $ref: "#/definitions/proptypes/numcells-items"
+              - type: array
+                items: { $ref: "#/definitions/proptypes/numcells-items" }
         flag:
             type: boolean
             enum: [ true, "Null" ]
@@ -51,9 +59,9 @@ definitions:
           - { $ref: "#/definitions/labelref" }
           - { $ref: "#/definitions/int-spec" }
     gpio-spec: {}
-    labelref:
-        type: string
-        pattern: "^\\$[a-zA-Z_][a-zA-Z0-9_]*$"
+    labelref: true
+        #type: string
+        #pattern: "^\\$[a-zA-Z_][a-zA-Z0-9_]*$"
     address-spec:
         type: array
         length: ".../#address-cells"
