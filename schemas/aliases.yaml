@@ -5,6 +5,11 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
 
 version: 1
 
+select:
+  properties:
+    $nodename:
+      const: "aliases"
+
 title: /aliases Node
 description: |
   A devicetree may have an aliases node (``/aliases``) that defines one or more
