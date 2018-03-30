@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+# Copyright 2018 Arm Ltd.
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/memory.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+version: 1
+
+title: /memory nodes
+description: |
+  Common properties always required in /memory nodes
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+select:
+  required: ["$nodename"]
+  properties:
+    $nodename:
+      oneOf:
+        - pattern: "^memory@[0-9a-f]*"
+        - const: "memory" # 'memory' only allowed for selecting
+
+properties:
+  device_type: {}
+  reg:
+    minItems: 1
+    maxItems: 1024
+
+required:
+  - device_type
+  - reg

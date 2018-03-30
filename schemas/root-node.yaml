@@ -22,14 +22,13 @@ properties:
   model: { "$ref" : "dt-core.yaml#definitions/proptypes/stringarray"}
   "#address-cells": {}
   "#size-cells": {}
-  memory: {}
+  memory: false
 
 required:
   - compatible
   - model
   - "#address-cells"
   - "#size-cells"
-  - memory
 
 examples:
   simple-board: |
