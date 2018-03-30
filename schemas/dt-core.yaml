@@ -106,12 +106,13 @@ definitions:
                 # property and node namespace overlaps. Catch both here
                 "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,30}$":
                     oneOf:
-                      - { $ref: "#/definitions/node" }
+                      - type: object
                       - { $ref: "#/definitions/propdata" }
 
                 # Anything with a '@' is definitely a node
                 "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,30}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$":
-                    $ref: "#/definitions/node"
+                    type: object
+                    #$ref: "#/definitions/node"
 
                 # Anything with a '#' is definitely a property
                 "^#[a-zA-Z0-9,+\\-._]{0,30}$":
