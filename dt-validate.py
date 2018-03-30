@@ -110,7 +110,7 @@ class schema_group():
     def check_subtree(self, tree, subtree, filename, path='/'):
         self.check_node(tree, subtree, filename, path)
         for name,value in subtree.items():
-            if type(value) == dict:
+            if type(value) == ruamel.yaml.comments.CommentedMap:
                 self.check_subtree(tree, value, filename, path='/'.join([path,name]))
 
     def check_trees(self, filename, dt):
