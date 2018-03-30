@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+import signal
+
+def sigint_handler(signum, frame):
+    sys.exit(-2)
+
+signal.signal(signal.SIGINT, sigint_handler)
+
 import sys
 import os
 basedir = os.path.dirname(__file__)
