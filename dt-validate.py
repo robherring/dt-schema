@@ -66,8 +66,14 @@ def get_select_schema(schema):
 class schema_group():
     def __init__(self):
         self.schemas = list()
-        for filename in glob.iglob("schemas/**/*.yaml", recursive=True):
-            self.load_binding_schema(filename)
+        schema_path = os.path.dirname(os.path.realpath(__file__))
+        for filename in glob.iglob(os.path.join(schema_path, "schemas/**/*.yaml"), recursive=True):
+            self.load_binding_schema(os.path.relpath(filename, schema_path))
+
+        if not self.schemas:
+            print("error: no schema found in path: %s" % schema_path)
+            exit(-1)
+
 
     def load_binding_schema(self, filename):
         try:
@@ -91,7 +97,6 @@ class schema_group():
         self.schemas.append(schema)
 
         schema["$filename"] = filename
-        print(filename + ": loaded")
 
     def check_node(self, tree, node, filename, path):
         node_matched = False
