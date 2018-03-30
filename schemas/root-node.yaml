@@ -13,9 +13,9 @@ maintainers:
   - Device Tree <dt@kernel.org>
 
 select:
-  required: ["$path"]
+  required: ["$nodename"]
   properties:
-    $path: {enum: ["/"]}
+    $nodename: {enum: ["/"]}
 
 properties:
   compatible: {}
@@ -32,7 +32,6 @@ required:
   - "#address-cells"
   - "#size-cells"
   - memory
-  - $path
 
 examples:
   simple-board: |

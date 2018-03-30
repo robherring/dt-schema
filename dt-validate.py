@@ -94,11 +94,17 @@ class schema_group():
         # validator objects so the object doesn't need to be recreated on every node.
         schema["$validator"] = dtschema.DTValidator(schema)
         schema["$select_validator"] = jsonschema.Draft6Validator(get_select_schema(schema))
+
+        if not 'properties' in schema.keys():
+            schema['properties'] = ruamel.yaml.comments.CommentedMap()
+        schema['properties'].insert(0, '$nodename', True )
+
         self.schemas.append(schema)
 
         schema["$filename"] = filename
 
-    def check_node(self, tree, node, filename, path):
+    def check_node(self, tree, nodename, node, filename):
+        node['$nodename'] = nodename
         node_matched = False
         for schema in self.schemas:
             if schema['$select_validator'].is_valid(node):
@@ -108,20 +114,20 @@ class schema_group():
                     print(dtschema.format_error(filename, error))
         if not node_matched:
             if 'compatible' in node:
-                print("%s:%i:%i: %s failed to match any schema with compatible(s) %s" % (filename, node.lc.line, node.lc.col, path, node["compatible"]))
+                print("%s:%i:%i: %s failed to match any schema with compatible(s) %s" % (filename, node.lc.line, node.lc.col, nodename, node["compatible"]))
             else:
-                print("%s: node %s failed to match any schema" % (filename, path))
+                print("%s: node %s failed to match any schema" % (filename, nodename))
 
-    def check_subtree(self, tree, subtree, filename, path='/'):
-        self.check_node(tree, subtree, filename, path)
+    def check_subtree(self, tree, nodename, subtree, filename):
+        self.check_node(tree, nodename, subtree, filename)
         for name,value in subtree.items():
             if type(value) == ruamel.yaml.comments.CommentedMap:
-                self.check_subtree(tree, value, filename, path='/'.join([path,name]))
+                self.check_subtree(tree, name, value, filename)
 
     def check_trees(self, filename, dt):
         """Check the given DT against all schemas"""
         for subtree in dt:
-            self.check_subtree(subtree, subtree, filename)
+            self.check_subtree(subtree, "/", subtree, filename)
 
 if __name__ == "__main__":
     sg = schema_group()
