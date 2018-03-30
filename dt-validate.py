@@ -72,7 +72,7 @@ class schema_group():
     def load_binding_schema(self, filename):
         try:
             schema = dtschema.load_schema(filename)
-        except yaml.YAMLError as exc:
+        except ruamel.yaml.error.YAMLError as exc:
             print(filename + ": ignoring, error parsing file")
             return
 
