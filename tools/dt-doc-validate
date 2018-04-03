@@ -12,6 +12,9 @@ import glob
 def check_doc(filename):
     try:
         testtree = dtschema.load(open(filename).read())
+    except (ruamel.yaml.scanner.ScannerError, ruamel.yaml.parser.ParserError) as exc:
+        print(filename + ": ", exc)
+        return
     except ruamel.yaml.YAMLError as exc:
         print(filename + ":", exc.path[-1], exc.message)
         return
