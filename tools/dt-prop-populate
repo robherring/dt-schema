@@ -1,0 +1,171 @@
+#!/usr/bin/python3
+
+import argparse
+import os
+import sys
+import glob
+import re
+
+from ruamel import yaml
+
+basedir = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(basedir, ".."))
+import dtschema
+
+bindings_dir = 'Bindings'
+
+binding_file = {}
+
+class schema_group():
+    def process_node(self, tree, nodename, node, filename):
+        if not 'compatible' in node.keys():
+            return
+        if binding_file.get(node['compatible'][0]):
+            return
+
+        for compat in node['compatible']:
+            if compat in ['isa', 'simple-bus', 'cfi-flash']:
+                return
+
+        match_compat = node['compatible'][0]
+        best_file_match = ''
+        for root, dirs, files in os.walk(bindings_dir):
+            for file in files:
+                if os.path.splitext(os.path.basename(file))[0] in node['compatible']:
+                    best_file_match = os.path.join(root, file)
+                    break
+            if best_file_match:
+                break
+
+        if not best_file_match:
+            binding_file[match_compat] = []
+
+            for file,data in historical.items():
+                for line in data.splitlines():
+                    if not re.search(match_compat, line):
+                        continue
+                    binding_file[match_compat].append(file)
+
+
+            if binding_file[match_compat]:
+                best_file_match = max(set(binding_file[match_compat]), key=binding_file[match_compat].count)
+
+        if not best_file_match:
+#            print("not found: ", node['compatible'])
+            return
+
+        print(match_compat + ': ' + best_file_match)
+
+        f = open(best_file_match, 'r+')
+        rawfile = f.read()
+        top_comment = rawfile.partition('%YAML')[0]
+
+        try:
+            yamldata = yml.load(rawfile)
+        except (yaml.scanner.ScannerError, yaml.parser.ParserError) as exc:
+            print(best_file_match + ": ", exc)
+            return
+        except yaml.YAMLError as exc:
+            print(best_file_match + ":", exc)
+            return
+
+        for key in node.keys():
+            # skip child nodes
+            if isinstance(node[key], dict):
+                continue
+
+            if key in [ 'status', 'phandle' ]:
+                continue;
+            if key in yamldata['properties'].keys() and yamldata['properties'][key] != {}:
+                if key == 'compatible':
+                    if 'const' in yamldata['properties'][key]['items'][0]:
+                        if yamldata['properties'][key]['items'][0]['const'] != match_compat:
+                            yamldata['properties'][key]['items'][0] = { 'enum': [ match_compat, yamldata['properties'][key]['items'][0]['const'] ] }
+                            #print(yamldata['properties'][key]['items'][0])
+                    else:
+                        matched = False
+                        for c in yamldata['properties'][key]['items'][0]['enum']:
+                            if match_compat in c:
+                                matched = True
+                                break
+                        if matched:
+                            continue
+                        yamldata['properties'][key]['items'][0]['enum'].append(match_compat)
+                        #print(yamldata['properties'][key]['items'][0])
+
+                continue
+
+            yamldata['properties'][key] = {}
+            if isinstance(node[key], list) and isinstance(node[key][0], str):
+                count = len(node[key])
+                str_items = []
+                for val in node[key]:
+                    str_items.append({ 'const': val })
+                yamldata['properties'][key] = { 'items': str_items, 'minItems': count, 'maxItems': count, 'additionalItems': False }
+            if re.search('^[a-zA-Z].*,', key):
+                # vendor specific properties must have description
+                yamldata['properties'][key]['description'] = 'FIXME'
+                if isinstance(node[key], bool):
+                    yamldata['properties'][key]['type'] = 'boolean'
+            if re.search('^#.*-cells$', key):
+                yamldata['properties'][key]['const'] = node[key][0][0]
+            if key == 'reg' and isinstance(node[key][0], list):
+                count = len(node[key])
+                yamldata['properties'][key] = { 'minItems': count, 'maxItems': count, 'additionalItems': False }
+
+
+        f.seek(0)
+        print(top_comment, file=f, end="")
+        yml.dump(yamldata, f)
+        f.truncate()
+
+
+    def process_subtree(self, tree, nodename, subtree, filename):
+        self.process_node(tree, nodename, subtree, filename)
+        for name,value in subtree.items():
+            if type(value) == yaml.comments.CommentedMap:
+                self.process_subtree(tree, name, value, filename)
+
+    def process_tree(self, filename, dt):
+        for subtree in dt:
+            self.process_subtree(subtree, "/", subtree, filename)
+
+if __name__ == "__main__":
+    sg = schema_group()
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("yamldt", type=str,
+                    help="Filename of YAML encoded devicetree input file")
+    args = ap.parse_args()
+
+    yml = yaml.YAML()
+    # Setup formatting settings
+    yml.indent(mapping=2, sequence=4, offset=2)
+    yml.explicit_start=True
+    yml.preserve_quotes=True
+    yml.version=(1,2)
+
+
+    # assuming yaml docs have the old binding doc
+    historical = {}
+    for file in glob.iglob(bindings_dir + "/**/*.yaml", recursive=True):
+        if not os.path.isfile(file):
+            continue
+        # if the filename has a comma, then it's probably a compatible
+        # string and we should only match it with the algorithm above.
+        if ',' in os.path.basename(file):
+            continue
+
+        rawfile = open(file, 'r').read()
+        try:
+            historical[file] = yml.load(rawfile)['historical']
+        except:
+            continue
+
+    if os.path.isdir(args.yamldt):
+        for filename in glob.iglob(args.yamldt + "/**/*.dt.yaml", recursive=True):
+            testtree = dtschema.load(open(filename).read())
+            sg.process_tree(filename, testtree)
+    else:
+        testtree = dtschema.load(open(args.yamldt).read())
+        sg.process_tree(args.yamldt, testtree)
