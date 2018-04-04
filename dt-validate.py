@@ -137,18 +137,19 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument('-v', '--validate', action='store_true',
                     help="Validate schema(s) before using")
-    ap.add_argument("yamldt", type=str,
+    ap.add_argument("yamldt", nargs='*',
                     help="Filename of YAML encoded devicetree input file")
     args = ap.parse_args()
 
     if args.validate:
         sg.validate_schema = True
 
-    if os.path.isdir(args.yamldt):
+    if os.path.isdir(args.yamldt[0]):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
             testtree = dtschema.load(open(filename).read())
             sg.check_trees(filename, testtree)
     else:
-        testtree = dtschema.load(open(args.yamldt).read())
-        sg.check_trees(args.yamldt, testtree)
-
+        for filename in args.yamldt:
+            testtree = dtschema.load(open(filename).read())
+            print("  CHKDT  " + filename)
+            sg.check_trees(filename, testtree)
