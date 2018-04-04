@@ -65,6 +65,7 @@ def get_select_schema(schema):
 
 class schema_group():
     def __init__(self):
+        self.validate_schema = False
         self.schemas = list()
         schema_path = os.path.dirname(os.path.realpath(__file__))
         for filename in glob.iglob(os.path.join(schema_path, "schemas/**/*.yaml"), recursive=True):
@@ -83,12 +84,13 @@ class schema_group():
             return
 
         # Check that the validation schema is valid
-        try:
-            dtschema.DTValidator.check_schema(schema)
-        except jsonschema.SchemaError as exc:
-            print(filename + ": ignoring, error in schema '%s'" % exc.path[-1])
-            #print(exc.message)
-            return
+        if self.validate_schema:
+            try:
+                dtschema.DTValidator.check_schema(schema)
+            except jsonschema.SchemaError as exc:
+                print(filename + ": ignoring, error in schema '%s'" % exc.path[-1])
+                #print(exc.message)
+                return
 
         # $validator and $select_validator are special properties that cache the
         # validator objects so the object doesn't need to be recreated on every node.
@@ -133,10 +135,14 @@ if __name__ == "__main__":
     sg = schema_group()
 
     ap = argparse.ArgumentParser()
+    ap.add_argument('-v', '--validate', action='store_true',
+                    help="Validate schema(s) before using")
     ap.add_argument("yamldt", type=str,
                     help="Filename of YAML encoded devicetree input file")
     args = ap.parse_args()
 
+    if args.validate:
+        sg.validate_schema = True
 
     if os.path.isdir(args.yamldt):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
