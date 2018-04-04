@@ -139,10 +139,16 @@ if __name__ == "__main__":
                     help="Validate schema(s) before using")
     ap.add_argument("yamldt", nargs='*',
                     help="Filename of YAML encoded devicetree input file")
+    ap.add_argument('-s', '--schema', help="path to additional additional schema files")
     args = ap.parse_args()
 
     if args.validate:
         sg.validate_schema = True
+
+    schema_path = os.path.dirname(os.path.realpath(__file__))
+
+    for schema_file in glob.iglob(os.path.join(os.path.abspath(args.schema), "**/*.yaml"), recursive=True):
+        sg.load_binding_schema(os.path.relpath(schema_file, schema_path))
 
     if os.path.isdir(args.yamldt[0]):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
