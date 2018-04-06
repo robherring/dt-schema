@@ -130,7 +130,7 @@ class schema_group():
     def check_trees(self, filename, dt):
         """Check the given DT against all schemas"""
         for subtree in dt:
-            self.check_subtree(subtree, "/", subtree, filename)
+            self.check_subtree(dt, "/", subtree, filename)
 
 if __name__ == "__main__":
     sg = schema_group()
