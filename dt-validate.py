@@ -145,8 +145,9 @@ if __name__ == "__main__":
 
     schema_path = os.path.dirname(os.path.realpath(__file__))
 
-    for schema_file in glob.iglob(os.path.join(os.path.abspath(args.schema), "**/*.yaml"), recursive=True):
-        sg.load_binding_schema(os.path.relpath(schema_file, schema_path))
+    if args.schema:
+        for schema_file in glob.iglob(os.path.join(os.path.abspath(args.schema), "**/*.yaml"), recursive=True):
+            sg.load_binding_schema(os.path.relpath(schema_file, schema_path))
 
     if os.path.isdir(args.yamldt[0]):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
