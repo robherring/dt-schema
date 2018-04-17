@@ -5,6 +5,9 @@
 import sys
 import os
 import ruamel.yaml
+
+from ruamel.yaml.comments import CommentedMap
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__),
                                 "jsonschema-draft6"))
 import jsonschema
@@ -46,6 +49,46 @@ def load_schema(schema):
     return ruamel.yaml.load(pkgutil.get_data('dtschema', schema).decode('utf-8'),
                             Loader=ruamel.yaml.RoundTripLoader)
 
+def _fixup_scalar_to_array(subschema, match):
+    if isinstance(subschema, dict) and match in subschema.keys():
+        subschema.insert(0, 'items',
+            ([ CommentedMap([('items', [CommentedMap([(match, subschema[match])]) ]) ]) ]) )
+        subschema.pop(match, None)
+
+def _fixup_items_size(schema):
+    # Make items list fixed size-spec
+    if isinstance(schema, list):
+        for l in schema:
+            _fixup_items_size(l)
+    elif isinstance(schema, dict):
+        if 'items' in schema.keys() and isinstance(schema['items'], list):
+            if not schema.keys() & {'minItems', 'maxItems', 'additionalItems'}:
+                c = len(schema['items'])
+                schema.insert(0, 'minItems', c)
+                schema.insert(0, 'maxItems', c)
+                schema.insert(0, 'additionalItems', False)
+
+        for prop,val in schema.items():
+            _fixup_items_size(val)
+
+
+def fixup_schema(schema):
+    if not 'properties' in schema.keys():
+        return
+
+    props = schema[ 'properties' ]
+
+    # Convert a single value to a matrix
+    for prop,val in props.items():
+        _fixup_scalar_to_array(val, 'const')
+        _fixup_scalar_to_array(val, 'enum')
+
+    # Make items list fixed size-spec
+    _fixup_items_size(props)
+
+    #ruamel.yaml.dump(props, sys.stdout, Dumper=ruamel.yaml.RoundTripDumper)
+
+
 def load(stream):
     return ruamel.yaml.load(stream, Loader=ruamel.yaml.RoundTripLoader)
 
@@ -84,6 +127,13 @@ class DTValidator(jsonschema.Draft6Validator):
         for error in jsonschema.Draft6Validator.iter_errors(self, instance, _schema):
             error.linecol = get_line_col(instance, error.path)
             yield error
+
+    @classmethod
+    def check_schema(cls, schema):
+        for error in cls(cls.META_SCHEMA).iter_errors(schema):
+            raise jsonschema.SchemaError.create_from(error)
+        fixup_schema(schema)
+
 
 def format_error(filename, error, verbose=False):
     src = os.path.abspath(filename) + ':'
