@@ -23,8 +23,10 @@ select:
 properties:
   compatible: {}
   model: { "$ref" : "dt-core.yaml#definitions/proptypes/stringarray"}
-  "#address-cells": {}
-  "#size-cells": {}
+  "#address-cells":
+    enum: [1, 2]
+  "#size-cells":
+    enum: [1, 2]
   memory: false
 
 required:
