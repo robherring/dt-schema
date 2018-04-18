@@ -21,8 +21,6 @@ properties:
     items:
       - enum: ["arm,juno-r1", "arm,juno-r2", "arm,juno"]
       - enum: ["arm,vexpress"]
-    minItems: 2
-    additionalItems: false
   model:
     enum:
       - "ARM Juno development board (r1)"

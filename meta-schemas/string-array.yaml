@@ -41,10 +41,5 @@ properties:
     type: boolean
     const: false
 
-dependencies:
-  items:
-    - additionalItems
-    - minItems
-
 additionalProperties:
   $ref: '#'

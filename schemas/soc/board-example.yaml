@@ -23,16 +23,10 @@ properties:
               - "example,board1-with-soc1"
               - "example,board2-with-soc1"
           - const: "example,soc1"
-        minItems: 1
-        maxItems: 2
-        additionalItems: false
       - items:
           - enum:
               - "example,board-with-soc2"
           - const: "example,soc2"
-        minItems: 1
-        maxItems: 2
-        additionalItems: false
 
 examples:
   - example: |

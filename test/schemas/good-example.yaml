@@ -24,21 +24,15 @@ properties:
               - vendor,soc2-ip
           - enum:
               - vendor,soc1-ip
-        minItems: 2
-        additionalItems: false
       - items:
           - enum:
               - vendor,soc1-ip
-        additionalItems: false
-        minItems: 1
 
   reg:
     minItems: 2
     maxItems: 2
 
   reg-names:
-    minItems: 2
-    additionalItems: false
     items:
       - const: "coreAAA"
       - const: "aux"
@@ -48,8 +42,6 @@ properties:
     maxItems: 2
 
   interrupt-names:
-    minItems: 2
-    additionalItems: false
     items:
       - const: "tx irq"
       - const: "rx irq"
