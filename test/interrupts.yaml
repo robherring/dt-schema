@@ -1,12 +1,11 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
 # Copyright 2018 Arm Ltd.
-- $path: /
-  model: "ARM Juno development board (r0)"
-  compatible: [ "arm,vexpress" ]
-  interrupt-parent: $gic
-  "#address-cells": 2
-  "#size-cells": 2
+- model: [ "ARM Juno development board (r0)" ]
+  compatible: [ "arm,juno", "arm,vexpress" ]
+
+  "#address-cells": [[2]]
+  "#size-cells": [[2]]
 
   good-test1:
     compatible: [ "vendor,soc4-ip", "vendor,soc1-ip" ]
@@ -20,6 +19,6 @@
     compatible: [ "vendor,soc3-ip" ]
     interrupts: [ [10], [11], [12] ]
 
-  bad-test3:
+  bad-test4:
     compatible: [ "vendor,soc3-ip" ]
     interrupts: [ "string" ]
