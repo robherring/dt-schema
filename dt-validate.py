@@ -136,7 +136,6 @@ if __name__ == "__main__":
     sg = schema_group()
 
     ap = argparse.ArgumentParser()
-                    help="Validate schema(s) before using")
     ap.add_argument("yamldt", nargs='*',
                     help="Filename of YAML encoded devicetree input file")
     ap.add_argument('-s', '--schema', help="path to additional additional schema files")
