@@ -5,7 +5,6 @@
 ---
 $id: "http://devicetree.org/meta-schemas/boolean.yaml#"
 $schema: "http://json-schema.org/draft-06/schema#"
-type: object
 
 properties:
   type:
