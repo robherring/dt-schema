@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+# Copyright 2018 Arm Ltd.
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/reset.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+
+properties:
+  resets:
+    $ref: "cell.yaml#array"
+
+dependencies:
+  reset-names: [resets]
