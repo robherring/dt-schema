@@ -29,8 +29,7 @@ properties:
               - vendor,soc1-ip
 
   reg:
-    minItems: 2
-    maxItems: 2
+    maxItems: 1
 
   reg-names:
     items:
@@ -40,6 +39,9 @@ properties:
   interrupts:
     minItems: 1
     maxItems: 2
+    items:
+      - description: 1st irq
+      - description: 2nd irq
 
   interrupt-names:
     items:
@@ -58,6 +60,9 @@ properties:
   clocks:
     minItems: 1
     maxItems: 2
+    items:
+      - description: 1st clock
+      - description: 2nd clock
 
   clock-names:
     minItems: 1
@@ -71,10 +76,10 @@ properties:
     maxItems: 2
 
   some-gpios:
-    minItems: 2
-    maxItems: 2
+    maxItems: 1
 
   vendor,property:
+    type: boolean
     description: Vendor specific properties must have a description
 
 required:
