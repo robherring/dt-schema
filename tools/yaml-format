@@ -31,6 +31,8 @@ def yaml_format(file, in_place):
         print(file + ":", exc)
         exit(-1)
 
+    yamldata['description'] = yaml.scalarstring.PreservedScalarString(yamldata['description'])
+
     # Check that keys are in a defined order
     key_order = [ "$id", "$schema", "version", "title", "maintainers",
         "description", "properties", "required", "examples" ];
