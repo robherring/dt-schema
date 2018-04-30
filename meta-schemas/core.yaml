@@ -90,6 +90,5 @@ required:
   - version
   - title
   - maintainers
-  - description
 
 additionalProperties: false

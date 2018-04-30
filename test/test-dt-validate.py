@@ -32,7 +32,7 @@ class TestDTMetaSchema(unittest.TestCase):
 
     def test_required_property_missing(self):
         for key in self.schema.keys():
-            if key in ['$id', 'properties', 'required', 'examples']:
+            if key in ['properties', 'required', 'description', 'examples']:
                 continue
             with self.subTest(k=key):
                 schema_tmp = self.schema.copy()
