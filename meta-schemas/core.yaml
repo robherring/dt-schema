@@ -10,6 +10,14 @@ description: "Metaschema for devicetree binding documentation"
 allOf: [ { $ref: "http://json-schema.org/draft-06/schema#" } ]
 
 definitions:
+  all-properties:
+    allOf:
+      - $ref: "#definitions/core-properties"
+      - $ref: "clocks.yaml#"
+      - $ref: "gpios.yaml#"
+      - $ref: "interrupts.yaml#"
+      - $ref: "reset.yaml#"
+      - $ref: "mailbox.yaml#"
   core-properties:
     properties:
       reg:
@@ -31,6 +39,15 @@ definitions:
       '^#.*-cells$':
         $ref: "cell.yaml#single"
 
+      '^.*$':
+        properties:
+          properties:
+            $ref: "#/definitions/all-properties"
+        propertyNames:
+          enum: [properties, description, required, enum, const, oneOf, type,
+            items, patternProperties, minItems, maxItems, minimum, maximum,
+            $ref]
+
 properties:
   # listing all properties here to narrow the scope of what is allowed in
   # devicetree schema files. This list can be relaxed in the future as we
@@ -47,7 +64,6 @@ properties:
   required: true
   allOf: true
   definitions: true
-  patternProperties: true
   additionalProperties: true
   historical: true
 
@@ -61,12 +77,10 @@ properties:
       type: string
       format: email
 
+  patternProperties:
+    $ref: "#definitions/all-properties"
   properties:
-    allOf:
-      - $ref: "#definitions/core-properties"
-      - $ref: "clocks.yaml#"
-      - $ref: "gpios.yaml#"
-      - $ref: "interrupts.yaml#"
+    $ref: "#definitions/all-properties"
 
   select: { $ref: "http://json-schema.org/draft-06/schema#" }
 
