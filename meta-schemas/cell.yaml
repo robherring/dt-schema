@@ -7,19 +7,40 @@ $id: "http://devicetree.org/meta-schemas/cell.yaml#"
 $schema: "http://json-schema.org/draft-06/schema#"
 
 array:
-  properties:
-    minItems:
-      minimum: 1
-    maxItems:
-      minimum: 1
+  oneOf:
+    - allOf:
+        - properties:
+            maxItems:
+              const: 1
+          required: [maxItems]
+        - $ref: '#single-array'
+        - propertyNames:
+            anyOf:
+              - enum: [maxItems]
+              - $ref: '#single-array-names'
+    - properties:
+        minItems:
+          minimum: 1
+        maxItems:
+          minimum: 2
+        oneOf:
+          type: array
+          items:
+            $ref: '#array'
+        items:
+          type: array
+          items:
+            allOf:
+              - required: [description]
+              - $ref: '#single'
+        description: true
 
-  required:
-    - minItems
-    - maxItems
+      additionalProperties: false
 
-single:
+
+single-array:
   properties:
-    description: {}
+    description: true
     const:
       type: integer
     enum:
@@ -34,4 +55,12 @@ single:
     minimum: [maximum]
     maximum: [minimum]
 
-  additionalProperties: false
+single-array-names:
+  enum: [ description, const, enum, minimum, maximum, default ]
+
+
+single:
+  allOf:
+    - $ref: '#single-array'
+    - propertyNames:
+        $ref: '#single-array-names'
