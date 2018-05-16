@@ -44,9 +44,24 @@ definitions:
           properties:
             $ref: "#/definitions/all-properties"
         propertyNames:
-          enum: [properties, description, required, enum, const, oneOf, type,
-            items, patternProperties, minItems, maxItems, minimum, maximum,
-            $ref]
+          enum:
+            - $ref
+            - additionalItems
+            - const
+            - default
+            - dependencies
+            - description
+            - enum
+            - items
+            - minItems
+            - minimum
+            - maxItems
+            - maximum
+            - oneOf
+            - patternProperties
+            - properties
+            - required
+            - type
 
 properties:
   # listing all properties here to narrow the scope of what is allowed in
