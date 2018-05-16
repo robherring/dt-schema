@@ -145,8 +145,16 @@ if __name__ == "__main__":
     schema_path = os.path.dirname(os.path.realpath(__file__))
 
     if args.schema:
+        if not os.path.isdir(args.schema):
+            print("error: path '" + args.schema + "' is not found")
+            exit(-1)
+        schema_found = False
         for schema_file in glob.iglob(os.path.join(os.path.abspath(args.schema), "**/*.yaml"), recursive=True):
             sg.load_binding_schema(os.path.relpath(schema_file, schema_path))
+            schema_found = True
+        if not schema_found:
+            print("error: no schema found in path '" + args.schema + "'")
+            exit(-1)
 
     if os.path.isdir(args.yamldt[0]):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
