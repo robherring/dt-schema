@@ -39,7 +39,6 @@ properties:
 
   additionalItems:
     type: boolean
-    const: false
 
 additionalProperties:
   $ref: '#'
