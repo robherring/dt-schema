@@ -47,7 +47,9 @@ description: |
   considering a string as a device path, shall detect and use the alias.
 
 patternProperties:
-  "^[a-z][a-z0-9\\-]*$": { type: string }
+  "^[a-z][a-z0-9\\-]*$":
+    $ref: dt-core.yaml#definitions/proptypes/stringarray
+    maxItems: 1
 additionalProperties: false
 
 examples:
@@ -59,4 +61,3 @@ examples:
 
 maintainers:
   - Devicetree Specification Mailing List <devicetree-spec@vger.kernel.org>
-
