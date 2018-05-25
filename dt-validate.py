@@ -22,84 +22,17 @@ import dtschema
 
 yaml = ruamel.yaml.YAML()
 
-def item_generator(json_input, lookup_key):
-    if isinstance(json_input, dict):
-        for k, v in json_input.items():
-            if k == lookup_key:
-                if isinstance(v, str):
-                    yield [v]
-                else:
-                    yield v
-            else:
-                for child_val in item_generator(v, lookup_key):
-                    yield child_val
-    elif isinstance(json_input, list):
-        for item in json_input:
-            for item_val in item_generator(item, lookup_key):
-                yield item_val
-
-def get_select_schema(schema):
-    '''Get a schema to be used in select tests.
-
-    If the provided schema has a 'select' property, then use that as the select schema.
-    If it has a compatible property, then create a select schema from that.
-    If it has neither, then return a match-nothing schema
-    '''
-    compatible_list = [ ]
-    if "select" in schema.keys():
-        return schema["select"]
-
-    if not 'properties' in schema.keys():
-        return {"not": {}}
-
-    if not 'compatible' in schema['properties'].keys():
-        return {"not": {}}
-
-    for l in item_generator(schema['properties']['compatible'], 'enum'):
-        compatible_list.extend(l)
-
-    for l in item_generator(schema['properties']['compatible'], 'const'):
-        compatible_list.extend(l)
-
-    compatible_list = list(set(compatible_list))
-
-    return { 'required': ['compatible'],
-             'properties': {'compatible': {'contains': {'enum': compatible_list}}}}
 
 class schema_group():
-    def __init__(self):
+    def __init__(self, schema_file=None):
         self.schemas = list()
-        schema_path = os.path.dirname(os.path.realpath(__file__))
-        for filename in glob.iglob(os.path.join(schema_path, "schemas/**/*.yaml"), recursive=True):
-            self.load_binding_schema(os.path.relpath(filename, schema_path))
 
-        if not self.schemas:
-            print("error: no schema found in path: %s" % schema_path)
+        if os.path.isdir(schema_file):
+            self.schemas = dtschema.process_schemas(schema_file)
+        if os.path.isfile(schema_file):
+            self.schemas = yaml.load(open(schema_file).read())
+        else:
             exit(-1)
-
-
-    def load_binding_schema(self, filename):
-        try:
-            schema = dtschema.load_schema(filename)
-        except ruamel.yaml.error.YAMLError as exc:
-            print(filename + ": ignoring, error parsing file")
-            return
-
-        # Check that the validation schema is valid
-        try:
-            dtschema.DTValidator.check_schema(schema)
-        except jsonschema.SchemaError as exc:
-            print(filename + ": ignoring, error in schema '%s'" % exc.path[-1])
-            #print(exc.message)
-            return
-
-        if not 'properties' in schema.keys():
-            schema['properties'] = ruamel.yaml.comments.CommentedMap()
-        schema['properties'].insert(0, '$nodename', True )
-
-        self.schemas.append(schema)
-
-        schema["$filename"] = filename
 
     def check_node(self, tree, nodename, node, filename):
         node['$nodename'] = nodename
@@ -132,28 +65,20 @@ class schema_group():
             self.check_subtree(dt, "/", subtree, filename)
 
 if __name__ == "__main__":
-    sg = schema_group()
-
     ap = argparse.ArgumentParser()
     ap.add_argument("yamldt", nargs='*',
                     help="Filename of YAML encoded devicetree input file")
     ap.add_argument('-s', '--schema', help="path to additional additional schema files")
+    ap.add_argument('-p', '--preparse', help="preparsed schema file")
     args = ap.parse_args()
 
 
-    schema_path = os.path.dirname(os.path.realpath(__file__))
-
-    if args.schema:
-        if not os.path.isdir(args.schema):
-            print("error: path '" + args.schema + "' is not found")
-            exit(-1)
-        schema_found = False
-        for schema_file in glob.iglob(os.path.join(os.path.abspath(args.schema), "**/*.yaml"), recursive=True):
-            sg.load_binding_schema(os.path.relpath(schema_file, schema_path))
-            schema_found = True
-        if not schema_found:
-            print("error: no schema found in path '" + args.schema + "'")
-            exit(-1)
+    if args.preparse:
+        sg = schema_group(args.preparse)
+    elif args.schema:
+        sg = schema_group(args.schema)
+    else:
+        sg = schema_group()
 
     if os.path.isdir(args.yamldt[0]):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
