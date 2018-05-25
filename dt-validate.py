@@ -22,6 +22,7 @@ import dtschema
 
 yaml = ruamel.yaml.YAML()
 
+verbose = False
 
 class schema_group():
     def __init__(self, schema_file=None):
@@ -43,7 +44,7 @@ class schema_group():
                 errors = sorted(dtschema.DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
                 for error in errors:
                     print(dtschema.format_error(filename, error))
-        if not node_matched:
+        if not node_matched and verbose:
             if 'compatible' in node:
                 print("%s:%i:%i: %s failed to match any schema with compatible(s) %s" % (filename, node.lc.line, node.lc.col, nodename, node["compatible"]))
             else:
@@ -70,8 +71,10 @@ if __name__ == "__main__":
                     help="Filename of YAML encoded devicetree input file")
     ap.add_argument('-s', '--schema', help="path to additional additional schema files")
     ap.add_argument('-p', '--preparse', help="preparsed schema file")
+    ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     args = ap.parse_args()
 
+    verbose = args.verbose
 
     if args.preparse:
         sg = schema_group(args.preparse)
@@ -87,5 +90,6 @@ if __name__ == "__main__":
     else:
         for filename in args.yamldt:
             testtree = dtschema.load(open(filename).read())
-            print("  CHKDT  " + filename)
+            if verbose:
+                print("Check:  " + filename)
             sg.check_trees(filename, testtree)
