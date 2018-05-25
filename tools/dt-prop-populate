@@ -103,7 +103,7 @@ class schema_group():
                 str_items = []
                 for val in node[key]:
                     str_items.append({ 'const': val })
-                yamldata['properties'][key] = { 'items': str_items, 'minItems': count, 'maxItems': count, 'additionalItems': False }
+                yamldata['properties'][key] = { 'items': str_items }
             if re.search('^[a-zA-Z].*,', key):
                 # vendor specific properties must have description
                 yamldata['properties'][key]['description'] = 'FIXME'
@@ -113,7 +113,7 @@ class schema_group():
                 yamldata['properties'][key]['const'] = node[key][0][0]
             if key == 'reg' and isinstance(node[key][0], list):
                 count = len(node[key])
-                yamldata['properties'][key] = { 'minItems': count, 'maxItems': count, 'additionalItems': False }
+                yamldata['properties'][key] = { 'items': [ 'description' : 'FIXME' ] }
 
 
         f.seek(0)
