@@ -4,6 +4,7 @@
 # Python library for Devicetree schema validation
 import sys
 import os
+import glob
 import ruamel.yaml
 
 from ruamel.yaml.comments import CommentedMap
@@ -88,6 +89,105 @@ def fixup_schema(schema):
 
     #ruamel.yaml.dump(props, sys.stdout, Dumper=ruamel.yaml.RoundTripDumper)
 
+def item_generator(json_input, lookup_key):
+    if isinstance(json_input, dict):
+        for k, v in json_input.items():
+            if k == lookup_key:
+                if isinstance(v, str):
+                    yield [v]
+                else:
+                    yield v
+            else:
+                for child_val in item_generator(v, lookup_key):
+                    yield child_val
+    elif isinstance(json_input, list):
+        for item in json_input:
+            for item_val in item_generator(item, lookup_key):
+                yield item_val
+
+def add_select_schema(schema):
+    '''Get a schema to be used in select tests.
+
+    If the provided schema has a 'select' property, then use that as the select schema.
+    If it has a compatible property, then create a select schema from that.
+    If it has neither, then return a match-nothing schema
+    '''
+    if "select" in schema.keys():
+        return
+
+    if not 'compatible' in schema['properties'].keys():
+        schema['select'] = False
+        return
+
+    compatible_list = [ ]
+    for l in item_generator(schema['properties']['compatible'], 'enum'):
+        compatible_list.extend(l)
+
+    for l in item_generator(schema['properties']['compatible'], 'const'):
+        compatible_list.extend(l)
+
+    compatible_list = list(set(compatible_list))
+
+    if len(compatible_list) != 0:
+        schema['select'] = {
+            'required': ['compatible'],
+            'properties': {'compatible': {'contains': {'enum': compatible_list}}}}
+
+def process_schema(filename):
+    try:
+        schema = load_schema(filename)
+    except ruamel.yaml.error.YAMLError as exc:
+        print(filename + ": ignoring, error parsing file")
+        return
+
+    # Check that the validation schema is valid
+    try:
+        DTValidator.check_schema(schema)
+    except jsonschema.SchemaError as exc:
+        print(filename + ": ignoring, error in schema '%s'" % exc.path[-1])
+        #print(exc.message)
+        return
+
+    if not 'properties' in schema.keys():
+        return
+
+    # Remove parts not necessary for validation
+    schema.pop('examples', None)
+    schema.pop('maintainers', None)
+    schema.pop('historical', None)
+    schema.pop('description', None)
+
+    schema['properties'].insert(0, '$nodename', True )
+
+    add_select_schema(schema)
+    if not 'select' in schema.keys():
+        return
+
+    schema["$filename"] = filename
+    return schema
+
+def process_schemas(user_schema_path):
+    schemas = []
+
+    schema_path = os.path.dirname(os.path.realpath(__file__))
+    for filename in glob.iglob(os.path.join(schema_path, "schemas/**/*.yaml"), recursive=True):
+        sch = process_schema(os.path.relpath(filename, schema_path))
+        if sch:
+            schemas.append(sch)
+    count = len(schemas)
+    if count == 0:
+        print("error: no core schema found in path: %s/schemas" % schema_path)
+        return
+
+    for filename in glob.iglob(os.path.join(os.path.abspath(user_schema_path), "**/*.yaml"), recursive=True):
+        sch = process_schema(os.path.relpath(filename, schema_path))
+        if sch:
+            schemas.append(sch)
+
+    if count == len(schemas):
+        print("warning: no schema found in path: %s" % user_schema_path)
+
+    return schemas
 
 def load(stream):
     return ruamel.yaml.load(stream, Loader=ruamel.yaml.RoundTripLoader)
