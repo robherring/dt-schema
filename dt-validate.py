@@ -93,11 +93,6 @@ class schema_group():
             #print(exc.message)
             return
 
-        # $validator and $select_validator are special properties that cache the
-        # validator objects so the object doesn't need to be recreated on every node.
-        schema["$validator"] = dtschema.DTValidator(schema)
-        schema["$select_validator"] = jsonschema.Draft6Validator(get_select_schema(schema))
-
         if not 'properties' in schema.keys():
             schema['properties'] = ruamel.yaml.comments.CommentedMap()
         schema['properties'].insert(0, '$nodename', True )
@@ -112,7 +107,7 @@ class schema_group():
         for schema in self.schemas:
             if schema['$select_validator'].is_valid(node):
                 node_matched = True
-                errors = sorted(schema['$validator'].iter_errors(node), key=lambda e: e.linecol)
+                errors = sorted(dtschema.DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
                 for error in errors:
                     print(dtschema.format_error(filename, error))
         if not node_matched:
@@ -129,6 +124,10 @@ class schema_group():
 
     def check_trees(self, filename, dt):
         """Check the given DT against all schemas"""
+
+        for schema in self.schemas:
+            schema["$select_validator"] = jsonschema.Draft6Validator(schema['select'])
+
         for subtree in dt:
             self.check_subtree(dt, "/", subtree, filename)
 
