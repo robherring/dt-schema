@@ -67,7 +67,7 @@ class schema_group():
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("yamldt", nargs='*',
-                    help="Filename of YAML encoded devicetree input file")
+                    help="Filename or directory of YAML encoded devicetree input file(s)")
     ap.add_argument('-s', '--schema', help="path to additional additional schema files")
     ap.add_argument('-p', '--preparse', help="preparsed schema file")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
@@ -85,6 +85,8 @@ if __name__ == "__main__":
     if os.path.isdir(args.yamldt[0]):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
             testtree = dtschema.load(open(filename).read())
+            if verbose:
+                print("Check:  " + filename)
             sg.check_trees(filename, testtree)
     else:
         for filename in args.yamldt:
