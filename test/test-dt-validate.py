@@ -13,7 +13,6 @@ import os
 import glob
 import sys
 basedir = os.path.dirname(__file__)
-sys.path.insert(0, os.path.join(basedir, "../jsonschema-draft6"))
 import jsonschema
 sys.path.insert(0, os.path.join(basedir, ".."))
 import dtschema

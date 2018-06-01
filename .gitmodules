@@ -1,5 +1,0 @@
-[submodule "jsonschema"]
-	path = jsonschema-draft6
-	url = git@github.com:devicetree-org/jsonschema.git
-	branch = draft6
-	ignore = dirty

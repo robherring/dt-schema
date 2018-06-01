@@ -14,7 +14,6 @@ import sys
 import os
 basedir = os.path.dirname(__file__)
 import ruamel.yaml
-sys.path.insert(0, os.path.join(basedir, "jsonschema-draft6"))
 import jsonschema
 import argparse
 import glob

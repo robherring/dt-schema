@@ -9,8 +9,6 @@ import ruamel.yaml
 
 from ruamel.yaml.comments import CommentedMap
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__),
-                                "jsonschema-draft6"))
 import jsonschema
 import pkgutil
 import rfc3987  # Not used by this module, but include here to enforce dependency
