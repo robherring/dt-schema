@@ -78,19 +78,17 @@ Please note: this is prototype code and is in no way officially supported or
 fit for use.
 
 ## Dependencies
-This code depends on Python 3 with the yaml and jsonschema libraries
+This code depends on Python 3 with the ruamel.yaml, rfc3987, and jsonschema
+libraries.
 
-On Debian, the dependencies can be installed with:
+On Debian/Ubuntu, the dependencies can be installed with apt and/or pip. The
+rfc3987 module is not packaged, so pip must be used:
 
 ```
 apt-get install python3 python-ruamel.yaml
+pip3 install rfc3987
 ```
 
-Alternately dependencies can be installed with pip:
-
-```
-pip3 install ruamel.yaml rfc3987
-```
 
 ### jsonschema
 This code depends on the current 'master' branch of the
