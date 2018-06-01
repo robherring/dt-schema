@@ -24,12 +24,12 @@ yaml = ruamel.yaml.YAML()
 verbose = False
 
 class schema_group():
-    def __init__(self, schema_file=None):
+    def __init__(self, schema_file=""):
         self.schemas = list()
 
-        if os.path.isdir(schema_file):
+        if schema_file == "" or os.path.isdir(schema_file):
             self.schemas = dtschema.process_schemas(schema_file)
-        if os.path.isfile(schema_file):
+        elif os.path.isfile(schema_file):
             self.schemas = yaml.load(open(schema_file).read())
         else:
             exit(-1)
