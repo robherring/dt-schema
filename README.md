@@ -92,20 +92,13 @@ Alternately dependencies can be installed with pip:
 pip3 install ruamel.yaml rfc3987
 ```
 
-### jsonschema Draft6
-This code depends on the 'draft6' branch of the
-[Python jsonschema](https://github.com/Julian/jsonschema/tree/draft6)
-library.
-The draft6 branch is incomplete and unreleased, so you will need to get
-a local copy instead of using a packaged version.
-For convenience a [fork of the draft6 branch](https://github.com/devicetree-org/jsonschema/tree/draft6)
-is maintained in the devicetree.org GitHub page,
-and this repo includes it as a git submodule.
+### jsonschema
+This code depends on the current 'master' branch of the
+[Python jsonschema](https://github.com/Julian/jsonschema/tree/master)
+library for Draft 6 support.
 
-To fetch the submodule use the following commands:
+The module can be installed directly from github with pip:
 
 ```
-git submodule init
-git submodule update
-cd jsonschema-draft6 && python3 setup.py && cd ..
+pip3 install git+https://github.com/Julian/jsonschema.git
 ```
