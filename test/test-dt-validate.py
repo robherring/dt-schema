@@ -23,8 +23,15 @@ class TestDTMetaSchema(unittest.TestCase):
         self.bad_schema = dtschema.load_schema('test/schemas/bad-example.yaml')
 
     def test_metaschema_valid(self):
-        '''The metaschema must be a valid Draft6 schema'''
+        '''The DTValidator metaschema must be a valid Draft6 schema'''
         jsonschema.Draft6Validator.check_schema(dtschema.DTValidator.META_SCHEMA)
+
+    def test_all_metaschema_valid(self):
+        '''The metaschema must all be a valid Draft6 schema'''
+        for filename in glob.iglob('meta-schemas/**/*.yaml', recursive=True):
+            with self.subTest(schema=filename):
+                schema = dtschema.load_schema(filename)
+                jsonschema.Draft6Validator.check_schema(schema)
 
     def test_required_properties(self):
         dtschema.DTValidator.check_schema(self.schema)
