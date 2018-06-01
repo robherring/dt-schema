@@ -177,13 +177,14 @@ def process_schemas(user_schema_path):
         print("error: no core schema found in path: %s/schemas" % schema_path)
         return
 
-    for filename in glob.iglob(os.path.join(os.path.abspath(user_schema_path), "**/*.yaml"), recursive=True):
-        sch = process_schema(os.path.relpath(filename, schema_path))
-        if sch:
-            schemas.append(sch)
+    if os.path.isdir(user_schema_path):
+        for filename in glob.iglob(os.path.join(os.path.abspath(user_schema_path), "**/*.yaml"), recursive=True):
+            sch = process_schema(os.path.relpath(filename, schema_path))
+            if sch:
+                schemas.append(sch)
 
-    if count == len(schemas):
-        print("warning: no schema found in path: %s" % user_schema_path)
+        if count == len(schemas):
+            print("warning: no schema found in path: %s" % user_schema_path)
 
     return schemas
 
