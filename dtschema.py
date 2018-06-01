@@ -48,11 +48,27 @@ def load_schema(schema):
     return ruamel.yaml.load(pkgutil.get_data('dtschema', schema).decode('utf-8'),
                             Loader=ruamel.yaml.RoundTripLoader)
 
+def _value_is_type(subschema, key, type):
+    if not ( isinstance(subschema, dict) and key in subschema.keys() ):
+        return False
+
+    return isinstance(subschema[key][0], type)
+
+
+def _fixup_string_to_array(subschema, match):
+    if not _value_is_type(subschema, match, str):
+        return
+
+    subschema.insert(0, 'items', [CommentedMap([(match, subschema[match])]) ])
+    subschema.pop(match, None)
+
 def _fixup_scalar_to_array(subschema, match):
-    if isinstance(subschema, dict) and match in subschema.keys():
-        subschema.insert(0, 'items',
-            ([ CommentedMap([('items', [CommentedMap([(match, subschema[match])]) ]) ]) ]) )
-        subschema.pop(match, None)
+    if not _value_is_type(subschema, match, int):
+        return
+
+    subschema.insert(0, 'items',
+        ([ CommentedMap([('items', [CommentedMap([(match, subschema[match])]) ]) ]) ]) )
+    subschema.pop(match, None)
 
 def _fixup_items_size(schema):
     # Make items list fixed size-spec
@@ -79,6 +95,8 @@ def fixup_schema(schema):
 
     # Convert a single value to a matrix
     for prop,val in props.items():
+        _fixup_string_to_array(val, 'const')
+        _fixup_string_to_array(val, 'enum')
         _fixup_scalar_to_array(val, 'const')
         _fixup_scalar_to_array(val, 'enum')
 
