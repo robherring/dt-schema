@@ -10,8 +10,6 @@ import re
 
 from ruamel import yaml
 
-basedir = os.path.dirname(__file__)
-sys.path.insert(0, os.path.join(basedir, ".."))
 import dtschema
 
 bindings_dir = 'Bindings'

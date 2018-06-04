@@ -11,7 +11,6 @@ from ruamel.yaml.comments import CommentedMap
 
 import jsonschema
 import pkgutil
-import rfc3987  # Not used by this module, but include here to enforce dependency
 
 schema_base_url = "http://devicetree.org/"
 

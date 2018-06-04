@@ -14,13 +14,12 @@ import glob
 import sys
 basedir = os.path.dirname(__file__)
 import jsonschema
-sys.path.insert(0, os.path.join(basedir, ".."))
 import dtschema
 
 class TestDTMetaSchema(unittest.TestCase):
     def setUp(self):
-        self.schema = dtschema.load_schema('test/schemas/good-example.yaml')
-        self.bad_schema = dtschema.load_schema('test/schemas/bad-example.yaml')
+        self.schema = dtschema.load(open(os.path.join(basedir, 'schemas/good-example.yaml'), encoding='utf-8').read())
+        self.bad_schema = dtschema.load(open(os.path.join(basedir, 'schemas/bad-example.yaml'), encoding='utf-8').read())
 
     def test_metaschema_valid(self):
         '''The DTValidator metaschema must be a valid Draft6 schema'''
@@ -70,7 +69,7 @@ class TestDTMetaSchema(unittest.TestCase):
 class TestDTSchema(unittest.TestCase):
     def test_binding_schemas_valid(self):
         '''Test that all schema files under ./schemas/ validate against the DT metaschema'''
-        for filename in glob.iglob('schemas/**/*.yaml', recursive=True):
+        for filename in glob.iglob('../schemas/**/*.yaml', recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
                 dtschema.DTValidator.check_schema(schema)
@@ -80,7 +79,7 @@ class TestDTSchema(unittest.TestCase):
         The DT Metaschema is supposed to force all schemas to be valid against
         Draft6. This test makes absolutely sure that they are.
         '''
-        for filename in glob.iglob('schemas/**/*.yaml', recursive=True):
+        for filename in glob.iglob('../schemas/**/*.yaml', recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
                 jsonschema.Draft6Validator.check_schema(schema)

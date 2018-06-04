@@ -12,9 +12,7 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 import os
 import sys
-basedir = os.path.dirname(__file__)
 import ruamel.yaml
-sys.path.insert(0, os.path.join(basedir, ".."))
 import dtschema
 import argparse
 import glob
