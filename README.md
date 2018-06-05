@@ -70,12 +70,30 @@ As a developer you normally will not need to write metaschema files.
 Devicetree Meta-Schema files are normal YAML files using the jsonschema vocabulary.
 
 ## Usage
-The tool in this repo can be run by simply executing the dt-validate.py script
+The tool in this repo can be run by simply executing the tools/dt-validate script
 at the top level. It requires Python 3 to be installed, as well as the
 jsonschema and ruamel.yaml libraries.
 
 Please note: this is prototype code and is in no way officially supported or
 fit for use.
+
+## Installing
+The project and its dependencies can be installed with pip directly from git:
+
+```
+pip3 install git+https://github.com/robherring/yaml-bindings.git@master --process-dependency-links
+```
+
+All executables will be installed. Ensure ~/.local/bin is in the PATH.
+
+
+For development, clone the git repository manually and run setup.py script:
+
+```
+git clone https://github.com/robherring/yaml-bindings.git
+cd yaml-bindings
+./setup.py develop
+```
 
 ## Dependencies
 This code depends on Python 3 with the ruamel.yaml, rfc3987, and jsonschema
