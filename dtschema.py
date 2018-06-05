@@ -52,7 +52,12 @@ def _value_is_type(subschema, key, type):
     if not ( isinstance(subschema, dict) and key in subschema.keys() ):
         return False
 
-    return isinstance(subschema[key][0], type)
+    if isinstance(subschema[key], list):
+        val = subschema[key][0]
+    else:
+        val = subschema[key]
+
+    return isinstance(val, type)
 
 
 def _fixup_string_to_array(subschema, match):
