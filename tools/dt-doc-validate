@@ -21,7 +21,7 @@ import glob
 
 def check_doc(filename):
     try:
-        testtree = dtschema.load(open(filename).read())
+        testtree = dtschema.load(open(filename, encoding='utf-8').read())
     except (ruamel.yaml.scanner.ScannerError, ruamel.yaml.parser.ParserError) as exc:
         print(filename + ": ", exc)
         return

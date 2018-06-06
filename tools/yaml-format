@@ -21,7 +21,7 @@ def yaml_format(file, in_place):
     yml.preserve_quotes=True
     yml.version=(1,2)
 
-    rawfile = open(file).read()
+    rawfile = open(file, encoding='utf-8').read()
     top_comment = rawfile.partition('%YAML')[0]
     print(top_comment, file=sys.stderr)
 
@@ -43,7 +43,7 @@ def yaml_format(file, in_place):
         i += 1
 
     if in_place:
-        f = open(file, 'w')
+        f = open(file, 'w', encoding='utf-8')
     else:
         f = sys.stdout
 

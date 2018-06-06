@@ -18,10 +18,10 @@ if __name__ == "__main__":
                     help="Filename of YAML encoded devicetree input file")
     args = ap.parse_args()
 
-    yamldata = yaml.load(open(args.file).read())
+    yamldata = yaml.load(open(args.file, encoding='utf-8').read())
     if args.output and args.output[0]:
-        f = open(args.output[0], 'w')
+        f = open(args.output[0], 'w', encoding='utf-8')
     else:
-        f = open(args.file.replace('.yaml', '.json'), 'w')
+        f = open(args.file.replace('.yaml', '.json'), 'w', encoding='utf-8')
 
     json.dump(yamldata, f)

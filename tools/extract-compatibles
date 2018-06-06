@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     schema_path = os.getcwd()
 
-    testtree = yaml.load(open(args.yamlfile).read())
+    testtree = yaml.load(open(args.yamlfile, encoding='utf-8').read())
 
     compatible_list = [ ]
     for l in item_generator(testtree['properties']['compatible'], 'enum'):

@@ -39,7 +39,7 @@ if __name__ == "__main__":
         exit(-1)
 
     if args.outfile:
-        f = open(args.outfile, 'w')
+        f = open(args.outfile, 'w', encoding='utf-8')
     else:
         f = sys.stdout
 
