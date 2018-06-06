@@ -27,7 +27,7 @@ properties:
       - "ARM Juno development board (r2)"
 
 examples:
-  example: |
+  - |
     /dts-v1/;
     / {
         model = "ARM Juno development board (r0)";

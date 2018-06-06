@@ -53,7 +53,7 @@ patternProperties:
 additionalProperties: false
 
 examples:
-  example1: |
+  - |
     aliases {
       serial0 = "/simple-bus@fe000000/serial@11c500";
       ethernet0 = "/simple-bus@fe000000/ethernet@31c000";

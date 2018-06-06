@@ -36,7 +36,7 @@ required:
   - "#size-cells"
 
 examples:
-  simple-board: |
+  - |
     / {
         compatible = "acme,boogieboard";
         model = "Acme Ltd. Boogieboard developer system";
