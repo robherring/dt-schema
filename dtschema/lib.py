@@ -110,6 +110,9 @@ def fixup_props(props):
     # Make items list fixed size-spec
     _fixup_items_size(props)
 
+    for prop in props.keys():
+        fixup_schema(props[prop])
+
     #ruamel.yaml.dump(props, sys.stdout, Dumper=ruamel.yaml.RoundTripDumper)
 
 def item_generator(json_input, lookup_key):
