@@ -92,11 +92,14 @@ def _fixup_items_size(schema):
 
 
 def fixup_schema(schema):
-    if not 'properties' in schema.keys():
+    if not isinstance(schema, dict):
         return
+    if 'properties' in schema.keys():
+        fixup_props(schema[ 'properties' ])
+    if 'patternProperties' in schema.keys():
+        fixup_props(schema[ 'patternProperties' ])
 
-    props = schema[ 'properties' ]
-
+def fixup_props(props):
     # Convert a single value to a matrix
     for prop,val in props.items():
         _fixup_string_to_array(val, 'const')
