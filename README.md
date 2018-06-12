@@ -81,9 +81,22 @@ As a developer you normally will not need to write metaschema files.
 Devicetree Meta-Schema files are normal YAML files using the jsonschema vocabulary.
 
 ## Usage
-The tool in this repo can be run by simply executing the tools/dt-validate script
-at the top level. It requires Python 3 to be installed, as well as the
-jsonschema and ruamel.yaml libraries.
+There are several tools available in the *tools/* directory.
+
+tools/dt-doc-validate
+This tool takes a schema file(s) or directory of schema files and validates
+them against the DT meta-schema.
+
+tools/dt-mk-schema
+This tool takes user provided schema file(s) plus the core schema files in this
+repo, removed everything not needed for validation, applies fix-ups to the
+schemas, and outputs a single file with the processed schema. This is step is
+done separately to speed up subsequent validate of YAML Devicetrees.
+
+tools/dt-validate
+This tool takes user provided YAML Devicetree(s) and either a schema directory
+or pre-processed schema file and validates the YAML Devicetree against the schema.
+
 
 Please note: this is prototype code and is in no way officially supported or
 fit for use.
