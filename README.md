@@ -57,6 +57,17 @@ specification documents.
 
 Devicetree Schema files are normal YAML files using the jsonschema vocabulary.
 
+The Devicetree Schema files are simplified to make them more compact.
+
+The default for arrays in json-schema is they are variable sized. This can be
+restricted by defining 'minItems', 'maxItems', and 'additionalItems'. For
+DeviceTree Schemas, a fixed size is desired in most cases, so these properties
+are added based on the size of 'items' list.
+
+The YAML DeviceTree format also makes all string values an array and scalar
+values a matrix (in order to define groupings) even when only a single value
+is present. Single entries in schemas are fixed up to match this encoding.
+
 ### *Devicetree Meta-Schemas*
 
 Found in `./meta-schemas`
