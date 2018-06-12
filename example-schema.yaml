@@ -9,9 +9,6 @@
 $id: "http://devicetree.org/schemas/example-schema.yaml#"
 $schema: "http://devicetree.org/meta-schemas/core.yaml#"
 
-# Only 1 version supported for now
-version: 1
-
 title: An example schema annotated with jsonschema details
 
 maintainers:

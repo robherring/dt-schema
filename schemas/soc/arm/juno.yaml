@@ -2,7 +2,6 @@
 ---
 $id: http://devicetree.org/schemas/soc/example.yaml#
 $schema: http://devicetree.org/meta-schemas/core.yaml#
-version: 1
 
 title: ARM Juno boards
 

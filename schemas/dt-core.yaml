@@ -15,7 +15,6 @@ description: "Schema for core devicetree bindings"
 maintainers:
   - Grant Likely <grant.likely@arm.com>
   - Rob Herring <robh@kernel.org>
-version: 1
 
 # always select the core schema
 select: true

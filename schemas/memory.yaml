@@ -6,8 +6,6 @@
 $id: http://devicetree.org/schemas/memory.yaml#
 $schema: http://devicetree.org/meta-schemas/core.yaml#
 
-version: 1
-
 title: /memory nodes
 description: |
   Common properties always required in /memory nodes

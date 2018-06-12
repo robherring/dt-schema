@@ -83,10 +83,6 @@ properties:
   additionalProperties: true
   historical: true
 
-  version:
-    type: integer
-    enum: [1]
-
   maintainers:
     type: array
     items:
@@ -103,7 +99,6 @@ properties:
 required:
   - $id
   - $schema
-  - version
   - title
   - maintainers
 

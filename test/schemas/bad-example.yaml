@@ -5,7 +5,6 @@
 ---
 $id: "http://devicetree.org/test/schemas/bad-example.yaml"
 $schema: "http://jsn-schema.org/draft-06/schema#"
-version: 2
 
 title: 0
 
