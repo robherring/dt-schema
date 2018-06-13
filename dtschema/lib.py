@@ -177,14 +177,14 @@ def process_schema(filename):
         #print(exc.message)
         return
 
-    if not 'properties' in schema.keys():
-        return
-
     # Remove parts not necessary for validation
     schema.pop('examples', None)
     schema.pop('maintainers', None)
     schema.pop('historical', None)
     schema.pop('description', None)
+
+    if not 'properties' in schema.keys():
+        return schema
 
     schema['properties'].insert(0, '$nodename', True )
 
