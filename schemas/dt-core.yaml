@@ -42,12 +42,9 @@ definitions:
             minitems: 1
             uniqueItems: true
     cell:
-        oneOf:
-          - type: integer
-            minimum: 0
-            maximum: 0xffffffff
-          - type: string
-            pattern: "^[0-9<>()|/+\\- ]*$"
+      type: integer
+      minimum: 0
+      maximum: 0xffffffff
     uint8:
         type: integer
         minimum: 0
