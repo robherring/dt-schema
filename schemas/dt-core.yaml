@@ -49,6 +49,20 @@ definitions:
         type: integer
         minimum: 0
         maximum: 0xff
+    uint16:
+        type: integer
+        minimum: 0
+        maximum: 0xffff
+    uint32:
+      $ref: "#/definitions/cell"
+    uint64:
+      items:
+        - items:
+            - { $ref: "#/definitions/cell" }
+            - { $ref: "#/definitions/cell" }
+          minItems: 2
+          maxItems: 2
+          additionalItems: false
     int-spec:
         type: array
         items: { $ref: "#/definitions/cell" }
