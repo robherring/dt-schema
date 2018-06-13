@@ -6,6 +6,7 @@ import sys
 import os
 import glob
 import ruamel.yaml
+import re
 
 from ruamel.yaml.comments import CommentedMap
 
@@ -43,9 +44,11 @@ def get_line_col(tree, path, obj=None):
         return obj.lc.key(path[-1])
     return None
 
-def load_schema(schema):
-    return ruamel.yaml.load(pkgutil.get_data('dtschema', schema).decode('utf-8'),
-                            Loader=ruamel.yaml.RoundTripLoader)
+def load_schema(schema, preserve_comments=True):
+    data = pkgutil.get_data('dtschema', schema).decode('utf-8')
+    if not preserve_comments:
+        data = re.sub(r'^(\s|)*#.*\n', r'', data, flags=re.MULTILINE)
+    return ruamel.yaml.load(data, Loader=ruamel.yaml.RoundTripLoader)
 
 def _value_is_type(subschema, key, type):
     if not ( isinstance(subschema, dict) and key in subschema.keys() ):
@@ -161,7 +164,7 @@ def add_select_schema(schema):
 
 def process_schema(filename):
     try:
-        schema = load_schema(filename)
+        schema = load_schema(filename, preserve_comments=False)
     except ruamel.yaml.error.YAMLError as exc:
         print(filename + ": ignoring, error parsing file")
         return
