@@ -69,7 +69,7 @@ class TestDTMetaSchema(unittest.TestCase):
 class TestDTSchema(unittest.TestCase):
     def test_binding_schemas_valid(self):
         '''Test that all schema files under ./schemas/ validate against the DT metaschema'''
-        for filename in glob.iglob('../schemas/**/*.yaml', recursive=True):
+        for filename in glob.iglob('schemas/**/*.yaml', recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
                 dtschema.DTValidator.check_schema(schema)
@@ -79,7 +79,7 @@ class TestDTSchema(unittest.TestCase):
         The DT Metaschema is supposed to force all schemas to be valid against
         Draft6. This test makes absolutely sure that they are.
         '''
-        for filename in glob.iglob('../schemas/**/*.yaml', recursive=True):
+        for filename in glob.iglob('schemas/**/*.yaml', recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
                 jsonschema.Draft6Validator.check_schema(schema)
