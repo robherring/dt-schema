@@ -196,6 +196,7 @@ def process_schema(filename):
     return schema
 
 def process_schemas(user_schema_path):
+    ids = []
     schemas = []
 
     schema_path = os.path.dirname(os.path.realpath(__file__))
@@ -203,6 +204,10 @@ def process_schemas(user_schema_path):
         sch = process_schema(os.path.relpath(filename, schema_path))
         if sch:
             schemas.append(sch)
+            if ids.count(sch['$id']):
+                print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'")
+            ids.append(sch['$id'])
+
     count = len(schemas)
     if count == 0:
         print("error: no core schema found in path: %s/schemas" % schema_path)
@@ -213,6 +218,9 @@ def process_schemas(user_schema_path):
             sch = process_schema(os.path.relpath(filename, schema_path))
             if sch:
                 schemas.append(sch)
+                if ids.count(sch['$id']):
+                    print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'")
+                ids.append(sch['$id'])
 
         if count == len(schemas):
             print("warning: no schema found in path: %s" % user_schema_path)
