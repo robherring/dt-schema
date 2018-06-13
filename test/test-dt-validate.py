@@ -74,6 +74,15 @@ class TestDTSchema(unittest.TestCase):
                 schema = dtschema.load_schema(filename)
                 dtschema.DTValidator.check_schema(schema)
 
+    def test_binding_schemas_id_is_unique(self):
+        '''Test that all schema files under ./schemas/ validate against the DT metaschema'''
+        ids = []
+        for filename in glob.iglob('schemas/**/*.yaml', recursive=True):
+            with self.subTest(schema=filename):
+                schema = dtschema.load_schema(filename)
+                self.assertEqual(ids.count(schema['$id']), 0)
+                ids.append(schema['$id'])
+
     def test_binding_schemas_valid_draft6(self):
         '''Test that all schema files under ./schemas/ validate against the Draft6 metaschema
         The DT Metaschema is supposed to force all schemas to be valid against
