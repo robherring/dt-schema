@@ -81,6 +81,7 @@ properties:
   allOf: true
   definitions: true
   additionalProperties: true
+  dependencies: true
   historical: true
 
   maintainers:
