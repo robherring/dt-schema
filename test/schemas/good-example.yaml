@@ -28,7 +28,7 @@ properties:
               - vendor,soc1-ip
 
   reg:
-    maxItems: 1
+    maxItems: 2
 
   reg-names:
     items:
@@ -43,6 +43,7 @@ properties:
       - description: 2nd irq
 
   interrupt-names:
+    minItems: 1
     items:
       - const: "tx irq"
       - const: "rx irq"
