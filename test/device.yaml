@@ -1,0 +1,94 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+# Copyright 2018 Arm Ltd.
+- model: [ "none" ]
+  compatible: [ "none" ]
+
+  "#address-cells": [[1]]
+  "#size-cells": [[1]]
+
+  good-test1:
+    compatible: [ "vendor,soc4-ip", "vendor,soc1-ip" ]
+    reg: [ [0x0, 0x4], [0x8, 0x4] ]
+    reg-names: [ "coreAAA", "aux"]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupts: [ [10], [11, 1, 0] ]
+    some-gpios: [ [0, 32] ]
+    clocks: [ [0] ]
+
+  good-test2:
+    compatible: [ "vendor,soc1-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupts: [ [10] ]
+    interrupt-names: [ "tx irq" ]
+
+  bad-num-interrupts-test:
+    compatible: [ "vendor,soc1-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupts: [ [10], [11], [12] ]
+
+  bad-interrupt-type-test:
+    compatible: [ "vendor,soc1-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupts: [ "string" ]
+
+  bad-no-interrupt-cells-test:
+    compatible: [ "vendor,soc1-ip" ]
+    interrupt-controller: true
+    interrupts: [ [10] ]
+
+  bad-compatible-test:
+    compatible: [ "vendor,soc4-ip", "vendor,soc3-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupts: [ [10] ]
+
+  bad-compatible-order-test:
+    compatible: [ "vendor,soc1-ip", "vendor,soc3-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupts: [ [10] ]
+
+  bad-compatible-missing-test:
+    compatible: [ "vendor,soc3-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupts: [ [10] ]
+
+  bad-compatible-value-test:
+    compatible: [ "vendor,undocumented-compatible string", "vendor,soc1-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupts: [ [10] ]
+
+  bad-clock-freqency-test:
+    compatible: [ "vendor,soc1-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupts: [ [10] ]
+    clock-frequency: 1
+
+  bad-vendor-property-test:
+    compatible: [ "vendor,soc1-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupts: [ [10] ]
+    vendor,property: [ "true" ]
+
+  bad-interrupt-names-test1:
+    compatible: [ "vendor,soc1-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupt-names: [ "a irq" ]
+    interrupts: [ [10] ]
+
+  bad-interrupt-names-test2:
+    compatible: [ "vendor,soc1-ip" ]
+    interrupt-controller: true
+    '#interrupt-cells': [[2]]
+    interrupt-names: [ "tx irq", "rx irq", "bad irq" ]
+    interrupts: [ [10] ]

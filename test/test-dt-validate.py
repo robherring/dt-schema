@@ -93,5 +93,53 @@ class TestDTSchema(unittest.TestCase):
                 schema = dtschema.load_schema(filename)
                 jsonschema.Draft6Validator.check_schema(schema)
 
+
+class TestDTValidate(unittest.TestCase):
+    def setUp(self):
+        self.schemas = list()
+
+        self.schemas = dtschema.process_schemas("test/schemas/")
+
+        for schema in self.schemas:
+            schema["$select_validator"] = jsonschema.Draft6Validator(schema['select'])
+
+    def check_node(self, nodename, node):
+        if nodename == "/":
+            return
+
+        node['$nodename'] = nodename
+        node_matched = True
+        if "bad" in nodename:
+            node_matched = False
+            with self.assertRaises(jsonschema.ValidationError, msg=nodename):
+                for schema in self.schemas:
+                    if schema['$select_validator'].is_valid(node):
+                        node_matched = True
+                        dtschema.DTValidator(schema).validate(node)
+
+        if "good" in nodename:
+            node_matched = False
+            for schema in self.schemas:
+                if schema['$select_validator'].is_valid(node):
+                    node_matched = True
+                    self.assertIsNone(dtschema.DTValidator(schema).validate(node))
+
+        self.assertTrue(node_matched, msg=nodename)
+
+    def check_subtree(self, nodename, subtree):
+        self.check_node(nodename, subtree)
+        for name,value in subtree.items():
+            if isinstance(value, dict):
+                self.check_subtree(name, value)
+
+
+    def test_dt_validation(self):
+        '''Test that all DT YAML files under ./test/ validate against the DT schema'''
+        for filename in glob.iglob('test/*.yaml'):
+            with self.subTest(schema=filename):
+                testtree = dtschema.load(open(filename, encoding='utf-8').read())[0]
+                self.check_subtree('/', testtree);
+
+
 if __name__ == '__main__':
     unittest.main()
