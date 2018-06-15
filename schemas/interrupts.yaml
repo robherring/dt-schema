@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+# Copyright 2018 Arm Ltd.
+# Notes:
+# - Extra work is being done to allow 'bare' single item properties,
+#   as well as arrays for multiple instances.
+#   ie. both "acme" and ["acme"] are accepted.
+#   This is nicer for humans, but makes things more complicated to parse.
+#   Should it be disallowed, and always enforce the correct array wrapping?
+
+$id: "http://devicetree.org/schemas/interrupts.yaml#"
+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+title: Interrupt devicetree node schema
+description: "Schema for interrupt devicetree bindings"
+maintainers:
+  - Grant Likely <grant.likely@arm.com>
+  - Rob Herring <robh@kernel.org>
+
+# always select the core schema
+select: true
+
+definitions:
+    int-spec:
+        type: array
+        items: { $ref: "dt-core.yaml#/definitions/cell" }
+    intext-spec:
+        type: array
+        items:
+          - { $ref: "dt-core.yaml#/definitions/labelref" }
+          - { $ref: "#/definitions/int-spec" }
+
+    interrupt-properties:
+        type: object
+        properties:
+            "#interrupt-cells": { $ref: "dt-core.yaml#/definitions/proptypes/numcells" }
+            interrupt-controller: { $ref: "dt-core.yaml#/definitions/proptypes/flag" }
+            interrupt-parent: { $ref: "dt-core.yaml#/definitions/labelref" }
+            interrupts:
+                type: array
+                items: { $ref: "#/definitions/int-spec" }
+            interrupts-extended:
+                type: array
+                items: { $ref: "#/definitions/intext-spec" }
+        dependencies:
+          interrupt-controller: ['#interrupt-cells']
+          interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
+          '#interrupt-cells':
+            oneOf:
+              - required:
+                  - interrupt-controller
+              - required:
+                  - interrupt-map
+
+allOf:
+- { $ref: "#/definitions/interrupt-properties" }

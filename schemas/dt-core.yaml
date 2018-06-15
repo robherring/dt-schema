@@ -63,14 +63,6 @@ definitions:
           minItems: 2
           maxItems: 2
           additionalItems: false
-    int-spec:
-        type: array
-        items: { $ref: "#/definitions/cell" }
-    intext-spec:
-        type: array
-        items:
-          - { $ref: "#/definitions/labelref" }
-          - { $ref: "#/definitions/int-spec" }
     gpio-spec: {}
     labelref: true
         #type: string
@@ -101,18 +93,9 @@ definitions:
             $path: { type: string }
             "#address-cells": { $ref: "#/definitions/proptypes/numcells" }
             "#gpio-cells": { $ref: "#/definitions/proptypes/numcells" }
-            "#interrupt-cells": { $ref: "#/definitions/proptypes/numcells" }
             "#size-cells": { $ref: "#/definitions/proptypes/numcells" }
             compatible: { $ref: "#/definitions/proptypes/stringarray" }
             gpio-controller: { $ref: "#/definitions/proptypes/flag" }
-            interrupt-controller: { $ref: "#/definitions/proptypes/flag" }
-            interrupt-parent: { $ref: "#/definitions/labelref" }
-            interrupts:
-                type: array
-                items: { $ref: "#/definitions/int-spec" }
-            interrupts-extended:
-                type: array
-                items: { $ref: "#/definitions/intext-spec" }
 
     propdata:
         type: [string, integer, array, boolean]
