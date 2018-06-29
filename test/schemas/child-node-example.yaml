@@ -1,0 +1,61 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+# Copyright 2018 Arm Ltd.
+%YAML 1.2
+---
+$id: "http://devicetree.org/test/schemas/child-node-example.yaml#"
+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+
+title: A one line title for a good binding
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+properties:
+  compatible:
+    items:
+      - const: vendor,node-with-child-node
+
+  foo:
+    const: 2
+  reg:
+    items:
+      - description: core regs
+      - description: aux regs
+
+  child-node-fixed-name:
+    properties:
+      vendor,required-property:
+        $ref: "/schemas/types.yaml#/definitions/uint32"
+        description: test
+      vendor,optional-property:
+        $ref: "/schemas/types.yaml#/definitions/uint32"
+        description: test
+    required:
+      - vendor,a-property
+
+patternProperties:
+  '^child-node@.*$':
+    description:
+      This is a child node.
+    properties:
+      compatible:
+        items:
+          - const: a-child-compatible
+      vendor,a-child-property:
+        allOf:
+          - $ref: "/schemas/types.yaml#/definitions/uint32"
+          - const: 2
+        description: test
+      reg:
+        maxItems: 1
+      child-property:
+        type: boolean
+    required:
+      - vendor,a-child-property
+      - reg
+
+
+required:
+  - compatible
+  - child-node-fixed-name
