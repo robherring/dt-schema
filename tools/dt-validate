@@ -35,7 +35,7 @@ class schema_group():
             exit(-1)
 
     def check_node(self, tree, nodename, node, filename):
-        node['$nodename'] = nodename
+        node['$nodename'] = [ nodename ]
         node_matched = False
         for schema in self.schemas:
             if schema['$select_validator'].is_valid(node):

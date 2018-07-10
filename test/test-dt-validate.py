@@ -107,7 +107,7 @@ class TestDTValidate(unittest.TestCase):
         if nodename == "/":
             return
 
-        node['$nodename'] = nodename
+        node['$nodename'] = [ nodename ]
         node_matched = True
         if "bad" in nodename:
             node_matched = False

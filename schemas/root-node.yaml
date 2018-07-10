@@ -13,12 +13,9 @@ description: |
 maintainers:
   - Device Tree <dt@kernel.org>
 
-select:
-  required: ["$nodename"]
-  properties:
-    $nodename: {enum: ["/"]}
-
 properties:
+  $nodename:
+    const: "/"
   compatible: {}
   model: { "$ref" : "dt-core.yaml#definitions/proptypes/stringarray"}
   "#address-cells":

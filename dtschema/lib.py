@@ -142,33 +142,58 @@ def item_generator(json_input, lookup_key):
             for item_val in item_generator(item, lookup_key):
                 yield item_val
 
+# Convert to standard types from ruamel's CommentedMap/Seq
+def convert_to_dict(schema):
+    if isinstance(schema, dict):
+        result = {}
+        for k, v in schema.items():
+            result[k] = convert_to_dict(v)
+    elif isinstance(schema, list):
+        result = []
+        for item in schema:
+            result.append(convert_to_dict(item))
+    else:
+        result = schema
+
+    return result
+
 def add_select_schema(schema):
     '''Get a schema to be used in select tests.
 
     If the provided schema has a 'select' property, then use that as the select schema.
     If it has a compatible property, then create a select schema from that.
-    If it has neither, then return a match-nothing schema
+    If it has a $nodename property, then create a select schema from that.
+    If it has none of those, then return a match-nothing schema
     '''
     if "select" in schema.keys():
         return
 
-    if not 'compatible' in schema['properties'].keys():
-        schema['select'] = False
+    if 'compatible' in schema['properties'].keys():
+        compatible_list = [ ]
+        for l in item_generator(schema['properties']['compatible'], 'enum'):
+            compatible_list.extend(l)
+
+        for l in item_generator(schema['properties']['compatible'], 'const'):
+            compatible_list.extend(l)
+
+        compatible_list = list(set(compatible_list))
+
+        if len(compatible_list) != 0:
+            schema['select'] = {
+                'required': ['compatible'],
+                'properties': {'compatible': {'contains': {'enum': compatible_list}}}}
+
+            return
+
+    if '$nodename' in schema['properties'].keys():
+        schema['select'] = {
+            'required': ['$nodename'],
+            'properties': {'$nodename': convert_to_dict(schema['properties']['$nodename']) }}
+
         return
 
-    compatible_list = [ ]
-    for l in item_generator(schema['properties']['compatible'], 'enum'):
-        compatible_list.extend(l)
+    schema['select'] = False
 
-    for l in item_generator(schema['properties']['compatible'], 'const'):
-        compatible_list.extend(l)
-
-    compatible_list = list(set(compatible_list))
-
-    if len(compatible_list) != 0:
-        schema['select'] = {
-            'required': ['compatible'],
-            'properties': {'compatible': {'contains': {'enum': compatible_list}}}}
 
 def process_schema(filename):
     try:
@@ -191,10 +216,14 @@ def process_schema(filename):
     schema.pop('historical', None)
     schema.pop('description', None)
 
-    if not 'properties' in schema.keys():
+    if not ('properties' in schema.keys() or 'patternProperties' in schema.keys()):
         return schema
 
-    schema['properties'].insert(0, '$nodename', True )
+    if not 'properties' in schema.keys():
+        schema['properties'] = {}
+
+    if not '$nodename' in schema['properties'].keys():
+        schema['properties']['$nodename'] = True
 
     add_select_schema(schema)
     if not 'select' in schema.keys():
