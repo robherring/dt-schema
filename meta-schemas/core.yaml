@@ -47,6 +47,7 @@ definitions:
           enum:
             - $ref
             - additionalItems
+            - allOf
             - const
             - contains
             - default

@@ -110,19 +110,27 @@ def fixup_schema(schema):
     if 'patternProperties' in schema.keys():
         fixup_props(schema[ 'patternProperties' ])
 
+def fixup_vals(subschema):
+    _fixup_string_to_array(subschema, 'const')
+    _fixup_string_to_array(subschema, 'enum')
+    _fixup_scalar_to_array(subschema, 'const')
+    _fixup_scalar_to_array(subschema, 'enum')
+
+    # Desend into tree
+    fixup_schema(subschema)
+
 def fixup_props(props):
     # Convert a single value to a matrix
     for prop,val in props.items():
-        _fixup_string_to_array(val, 'const')
-        _fixup_string_to_array(val, 'enum')
-        _fixup_scalar_to_array(val, 'const')
-        _fixup_scalar_to_array(val, 'enum')
+        if isinstance(val, dict) and 'allOf' in val.keys():
+            for l in val['allOf']:
+                fixup_vals(l)
+        else:
+            fixup_vals(val)
 
     # Make items list fixed size-spec
     _fixup_items_size(props)
 
-    for prop in props.keys():
-        fixup_schema(props[prop])
 
     #ruamel.yaml.dump(props, sys.stdout, Dumper=ruamel.yaml.RoundTripDumper)
 
