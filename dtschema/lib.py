@@ -15,14 +15,28 @@ import pkgutil
 
 schema_base_url = "http://devicetree.org/"
 
+
+class tagged_list(list):
+
+    tags = {u'!u8': 8, u'!u16': 16, u'!u32': 32, u'!u64': 64}
+
+    def __init__(self, int_list, tag, tags=tags):
+        super().__init__(int_list)
+        self.type_size = tags[tag]
+
+    @staticmethod
+    def constructor(loader, node):
+        return tagged_list(loader.construct_sequence(node), node.tag)
+
+ruamel.yaml.RoundTripLoader.add_constructor(u'!u8', tagged_list.constructor)
+ruamel.yaml.RoundTripLoader.add_constructor(u'!u16', tagged_list.constructor)
+ruamel.yaml.RoundTripLoader.add_constructor(u'!u32', tagged_list.constructor)
+ruamel.yaml.RoundTripLoader.add_constructor(u'!u64', tagged_list.constructor)
+
 def scalar_constructor(loader, node):
     return loader.construct_scalar(node)
 def sequence_constructor(loader, node):
     return loader.construct_sequence(node)
-ruamel.yaml.RoundTripLoader.add_constructor(u'!u8', sequence_constructor)
-ruamel.yaml.RoundTripLoader.add_constructor(u'!u16', sequence_constructor)
-ruamel.yaml.RoundTripLoader.add_constructor(u'!u32', sequence_constructor)
-ruamel.yaml.RoundTripLoader.add_constructor(u'!u64', sequence_constructor)
 ruamel.yaml.RoundTripLoader.add_constructor(u'!phandle', scalar_constructor)
 ruamel.yaml.RoundTripLoader.add_constructor(u'!path', scalar_constructor)
 
@@ -284,7 +298,17 @@ def http_handler(uri):
 
 handlers = {"http": http_handler}
 
-class DTValidator(jsonschema.Draft6Validator):
+def typeSize(validator, typeSize, instance, schema):
+    if (isinstance(instance[0], tagged_list)):
+        if typeSize != instance[0].type_size:
+            yield jsonschema.ValidationError("size is %r, expected %r" % (instance[0].type_size, typeSize))
+    else:
+        yield jsonschema.ValidationError("missing size tag in %r" % instance)
+
+
+DTVal = jsonschema.validators.extend(jsonschema.Draft6Validator, {'typeSize': typeSize})
+
+class DTValidator(DTVal):
     '''Custom Validator for Devicetree Schemas
 
     Overrides the Draft6 metaschema with the devicetree metaschema. This

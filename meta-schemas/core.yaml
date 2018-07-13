@@ -64,6 +64,7 @@ definitions:
             - properties
             - required
             - type
+            - typeSize
 
 properties:
   # listing all properties here to narrow the scope of what is allowed in
