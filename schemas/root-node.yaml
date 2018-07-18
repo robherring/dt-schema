@@ -17,7 +17,7 @@ properties:
   $nodename:
     const: "/"
   compatible: {}
-  model: { "$ref" : "dt-core.yaml#definitions/proptypes/stringarray"}
+  model: { "$ref" : "types.yaml#definitions/string-array"}
   "#address-cells":
     enum: [1, 2]
   "#size-cells":

@@ -22,7 +22,7 @@ select: true
 definitions:
     int-spec:
         type: array
-        items: { $ref: "dt-core.yaml#/definitions/cell" }
+        items: { $ref: "types.yaml#/definitions/cell" }
     intext-spec:
         type: array
         items:
@@ -33,7 +33,7 @@ definitions:
         type: object
         properties:
             "#interrupt-cells": { $ref: "dt-core.yaml#/definitions/proptypes/numcells" }
-            interrupt-controller: { $ref: "dt-core.yaml#/definitions/proptypes/flag" }
+            interrupt-controller: { $ref: "types.yaml#/definitions/flag" }
             interrupt-parent: { $ref: "dt-core.yaml#/definitions/labelref" }
             interrupts:
                 type: array

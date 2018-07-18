@@ -33,36 +33,11 @@ definitions:
               - $ref: "#/definitions/proptypes/numcells-items"
               - type: array
                 items: { $ref: "#/definitions/proptypes/numcells-items" }
-        flag:
-            type: boolean
-            enum: [ true, "Null" ]
-        stringarray:
-            type: array
-            items: { type: string }
-            minitems: 1
-            uniqueItems: true
     cell:
       type: integer
       minimum: 0
       maximum: 0xffffffff
-    uint8:
-        type: integer
-        minimum: 0
-        maximum: 0xff
-    uint16:
-        type: integer
-        minimum: 0
-        maximum: 0xffff
-    uint32:
-      $ref: "#/definitions/cell"
-    uint64:
-      items:
-        - items:
-            - { $ref: "#/definitions/cell" }
-            - { $ref: "#/definitions/cell" }
-          minItems: 2
-          maxItems: 2
-          additionalItems: false
+
     gpio-spec: {}
     labelref: true
         #type: string
@@ -94,11 +69,11 @@ definitions:
             "#address-cells": { $ref: "#/definitions/proptypes/numcells" }
             "#gpio-cells": { $ref: "#/definitions/proptypes/numcells" }
             "#size-cells": { $ref: "#/definitions/proptypes/numcells" }
-            compatible: { $ref: "#/definitions/proptypes/stringarray" }
-            gpio-controller: { $ref: "#/definitions/proptypes/flag" }
+            compatible: { $ref: "types.yaml#/definitions/string-array" }
+            gpio-controller: { $ref: "types.yaml#/definitions/flag" }
 
     propdata:
-        type: [string, integer, array, boolean]
+        type: [string, integer, array, boolean, 'null']
         items: { $ref: "#/definitions/propdata" }
 
     node:
