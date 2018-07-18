@@ -78,14 +78,71 @@ properties:
   some-gpios:
     maxItems: 1
 
-  vendor,property:
-    type: boolean
-    description: Vendor specific properties must have a description
+  vendor,bool-prop:
+    $ref: "/schemas/types.yaml#/definitions/flag"
+    description: A vendor specific boolean property
+
+  vendor,int-prop:
+    allOf:
+      - $ref: "/schemas/types.yaml#/definitions/uint32"
+      - enum: [ 1, 2, 3 ]
+    description: Vendor specific single cell integer property
+
+  vendor,string-prop:
+    allOf:
+      - $ref: "/schemas/types.yaml#/definitions/string"
+      - enum:
+          - foo
+          - bar
+    description: Vendor specific single string property
+
+  vendor,string-list-prop:
+    allOf:
+     - $ref: "/schemas/types.yaml#/definitions/string-array"
+     - minItems: 2
+       items:
+         - const: foobar
+         - const: foobaz
+    description: Vendor specific string list property
+
+  vendor,int8-prop:
+    $ref: /schemas/types.yaml#definitions/uint8
+    description: Vendor specific 8-bit integer property
+
+  vendor,int8-array-prop:
+    allOf:
+      - $ref: /schemas/types.yaml#definitions/uint8-array
+      - items:
+          - minItems: 2
+            maxItems: 3
+    description: A vendor specific uint8 array property with 2 or 3 entries
+
+  vendor,int16-prop:
+    allOf:
+      - $ref: /schemas/types.yaml#definitions/uint16
+      - enum: [ 1, 2, 3 ]
+    description: Vendor specific 16-bit integer property
+
+  vendor,int16-array-prop:
+    allOf:
+      - $ref: /schemas/types.yaml#definitions/uint16-array
+      - items:
+          - items:
+              - const: 1
+              - const: 2
+    description: Vendor specific 16-bit integer array property
+
+  vendor,int64-prop:
+    allOf:
+      - $ref: /schemas/types.yaml#definitions/uint64
+      - items:
+        - items:
+            - minimum: 0x1234
+
+    description: Vendor specific 16-bit integer property
 
 required:
   - compatible
-  - interrupts
-  - interrupt-controller
 
 examples:
   - example-name: |
