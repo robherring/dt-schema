@@ -191,12 +191,20 @@ def add_select_schema(schema):
         return
 
     if 'compatible' in schema['properties'].keys():
+        sch = schema['properties']['compatible']
         compatible_list = [ ]
-        for l in item_generator(schema['properties']['compatible'], 'enum'):
+        for l in item_generator(sch, 'enum'):
             compatible_list.extend(l)
 
-        for l in item_generator(schema['properties']['compatible'], 'const'):
+        for l in item_generator(sch, 'const'):
             compatible_list.extend(l)
+
+        if 'contains' in sch.keys():
+            for l in item_generator(sch['contains'], 'enum'):
+                compatible_list.extend(l)
+
+            for l in item_generator(sch['contains'], 'const'):
+                compatible_list.extend(l)
 
         compatible_list = list(set(compatible_list))
 
