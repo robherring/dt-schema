@@ -81,6 +81,7 @@ properties:
   examples: true
   required: true
   allOf: true
+  oneOf: true
   definitions: true
   additionalProperties: true
   dependencies: true
