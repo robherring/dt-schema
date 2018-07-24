@@ -27,7 +27,7 @@ definitions:
         type: array
         items:
           - { $ref: "dt-core.yaml#/definitions/labelref" }
-          - { $ref: "#/definitions/int-spec" }
+          - { $ref: "types.yaml#/definitions/cell" }
 
     interrupt-properties:
         type: object

@@ -10,7 +10,9 @@ properties:
   interrupts:
     $ref: "cell.yaml#array"
   interrupts-extended:
-    $ref: "cell.yaml#array"
+    properties:
+      # interrupts-extended should just refer back to interrupts
+      $ref: true
   interrupt-map:
     $ref: "cell.yaml#array"
   interrupt-map-mask:
