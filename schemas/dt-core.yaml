@@ -71,6 +71,12 @@ definitions:
             "#size-cells": { $ref: "#/definitions/proptypes/numcells" }
             compatible: { $ref: "types.yaml#/definitions/string-array" }
             gpio-controller: { $ref: "types.yaml#/definitions/flag" }
+            status:
+              allOf:
+                - $ref: "types.yaml#/definitions/string"
+                - items:
+                    - enum: [ okay, disabled ]
+
 
     propdata:
         type: [string, integer, array, boolean, 'null']
