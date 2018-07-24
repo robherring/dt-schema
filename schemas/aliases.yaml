@@ -45,9 +45,7 @@ properties:
 
 patternProperties:
   "^[a-z][a-z0-9\\-]*$":
-    allOf:
-      - $ref: dt-core.yaml#definitions/string-array
-      - maxItems: 1
+    $ref: dt-core.yaml#definitions/string
 additionalProperties: false
 
 examples:
