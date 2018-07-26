@@ -297,9 +297,19 @@ def process_schemas(user_schema_path):
 def load(stream):
     return ruamel.yaml.load(stream, Loader=ruamel.yaml.RoundTripLoader)
 
+schema_cache = []
+
+def set_schema(schemas):
+    global schema_cache
+    schema_cache = schemas
+
 def http_handler(uri):
+    global schema_cache
     '''Custom handler for http://devicetre.org YAML references'''
     if schema_base_url in uri:
+        for sch in schema_cache:
+            if uri in sch['$id']:
+                return sch
         return load_schema(uri.replace(schema_base_url, ''))
     return ruamel.yaml.load(jsonschema.compat.urlopen(uri).read().decode('utf-8'),
                             Loader=ruamel.yaml.RoundTripLoader)

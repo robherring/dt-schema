@@ -31,6 +31,7 @@ class schema_group():
             self.schemas = dtschema.process_schemas(schema_file)
         elif os.path.isfile(schema_file):
             self.schemas = yaml.load(open(schema_file, encoding='utf-8').read())
+            dtschema.set_schema(self.schemas)
         else:
             exit(-1)
 
