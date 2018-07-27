@@ -335,12 +335,12 @@ class DTValidator(DTVal):
     will check the data in a devicetree file.
     '''
     META_SCHEMA = load_schema('meta-schemas/core.yaml')
+    resolver = jsonschema.RefResolver('', None, handlers=handlers)
+    format_checker = jsonschema.FormatChecker()
 
     def __init__(self, schema, types=()):
-        resolver = jsonschema.RefResolver.from_schema(schema, handlers=handlers)
-        format_checker = jsonschema.FormatChecker()
-        jsonschema.Draft6Validator.__init__(self, schema, types, resolver=resolver,
-                                            format_checker=format_checker)
+        jsonschema.Draft6Validator.__init__(self, schema, types, resolver=self.resolver,
+                                            format_checker=self.format_checker)
 
     @classmethod
     def iter_schema_errors(cls, schema):
