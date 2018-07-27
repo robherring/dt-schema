@@ -19,7 +19,7 @@ import glob
 
 import dtschema
 
-yaml = ruamel.yaml.YAML()
+yaml = ruamel.yaml.YAML(typ='safe')
 
 verbose = False
 
