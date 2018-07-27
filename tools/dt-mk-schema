@@ -41,5 +41,5 @@ if __name__ == "__main__":
     else:
         f = sys.stdout
 
-    yaml = ruamel.yaml.YAML()
+    yaml = ruamel.yaml.YAML(typ='safe')
     yaml.dump(schemas, f)

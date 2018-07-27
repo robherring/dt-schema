@@ -58,11 +58,9 @@ def get_line_col(tree, path, obj=None):
         return obj.lc.key(path[-1])
     return None
 
-def load_schema(schema, preserve_comments=True):
+def load_schema(schema):
     data = pkgutil.get_data('dtschema', schema).decode('utf-8')
-    if not preserve_comments:
-        data = re.sub(r'^(\s|)*#.*\n', r'', data, flags=re.MULTILINE)
-    return ruamel.yaml.load(data, Loader=ruamel.yaml.RoundTripLoader)
+    return ruamel.yaml.load(data, Loader=ruamel.yaml.SafeLoader)
 
 def _value_is_type(subschema, key, type):
     if not ( isinstance(subschema, dict) and key in subschema.keys() ):
@@ -80,15 +78,14 @@ def _fixup_string_to_array(subschema, match):
     if not _value_is_type(subschema, match, str):
         return
 
-    subschema.insert(0, 'items', [CommentedMap([(match, subschema[match])]) ])
+    subschema['items'] = [ {match: subschema[match]} ]
     subschema.pop(match, None)
 
 def _fixup_scalar_to_array(subschema, match):
     if not _value_is_type(subschema, match, int):
         return
 
-    subschema.insert(0, 'items',
-        ([ CommentedMap([('items', [CommentedMap([(match, subschema[match])]) ]) ]) ]) )
+    subschema['items'] =  [ {'items': [{match: subschema[match]}] } ]
     subschema.pop(match, None)
 
 def _fixup_items_size(schema):
@@ -101,16 +98,16 @@ def _fixup_items_size(schema):
             c = len(schema['items'])
 
             if not 'minItems' in schema.keys():
-                schema.insert(0, 'minItems', c)
+                schema['minItems'] = c
             if not 'maxItems' in schema.keys():
-                schema.insert(0, 'maxItems', c)
+                schema['maxItems'] = c
 
             if not 'additionalItems' in schema.keys():
-                schema.insert(0, 'additionalItems', False)
+                schema['additionalItems'] = False
         elif 'maxItems' in schema.keys() and not 'minItems' in schema.keys():
-            schema.insert(0, 'minItems', schema['maxItems'])
+            schema['minItems'] = schema['maxItems']
         elif 'minItems' in schema.keys() and not 'maxItems' in schema.keys():
-            schema.insert(0, 'maxItems', schema['minItems'])
+            schema['maxItems'] = schema['minItems']
 
         for prop,val in schema.items():
             _fixup_items_size(val)
@@ -227,7 +224,7 @@ def add_select_schema(schema):
 
 def process_schema(filename):
     try:
-        schema = load_schema(filename, preserve_comments=False)
+        schema = load_schema(filename)
     except ruamel.yaml.error.YAMLError as exc:
         print(filename + ": ignoring, error parsing file")
         return
