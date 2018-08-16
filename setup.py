@@ -32,6 +32,8 @@ setuptools.setup(
 
     scripts=['tools/dt-validate', 'tools/dt-doc-validate', 'tools/dt-mk-schema'],
 
+    python_requires='>=3.5',
+
     install_requires=[
         'ruamel.yaml>=0.15.0',
         'jsonschema>2.6.0',
