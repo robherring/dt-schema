@@ -30,7 +30,12 @@ setuptools.setup(
     packages=['dtschema'],
     package_data={'dtschema': data_files},
 
-    scripts=['tools/dt-validate', 'tools/dt-doc-validate', 'tools/dt-mk-schema'],
+    scripts=[
+        'tools/dt-validate',
+        'tools/dt-doc-validate',
+        'tools/dt-mk-schema',
+        'tools/dt-extract-example'
+    ],
 
     python_requires='>=3.5',
 
