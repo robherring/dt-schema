@@ -141,6 +141,17 @@ properties:
 
     description: Vendor specific 16-bit integer property
 
+  vendor,phandle-prop:
+    $ref: "/schemas/types.yaml#/definitions/phandle"
+    description: Vendor specific single cell phandle property
+
+  vendor,phandle-array-prop:
+    allOf:
+      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
+      - minItems: 2
+    description: Vendor specific array of phandles property
+
+
 required:
   - compatible
 

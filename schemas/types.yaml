@@ -119,3 +119,23 @@ definitions:
             minItems: 1
             maxItems: 1
             additionalItems: false
+  phandle:
+    type: array
+    maxItems: 1
+    additionalItems: false
+    items:
+      - items:
+          - phandle: true
+            type: integer
+            maximum: 0xffffffff
+        minItems: 1
+        maxItems: 1
+        additionalItems: false
+        type: array
+  phandle-array:
+    type: array
+    items:
+      - items:
+          - phandle: true
+            type: integer
+            maximum: 0xffffffff

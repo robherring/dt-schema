@@ -28,16 +28,25 @@ class tagged_list(list):
     def constructor(loader, node):
         return tagged_list(loader.construct_sequence(node), node.tag)
 
+class phandle_int(int):
+
+    def __new__(cls, value):
+        return int.__new__(cls, value)
+
+    @staticmethod
+    def constructor(loader, node):
+        return phandle_int(loader.construct_yaml_int(node))
+
 ruamel.yaml.RoundTripLoader.add_constructor(u'!u8', tagged_list.constructor)
 ruamel.yaml.RoundTripLoader.add_constructor(u'!u16', tagged_list.constructor)
 ruamel.yaml.RoundTripLoader.add_constructor(u'!u32', tagged_list.constructor)
 ruamel.yaml.RoundTripLoader.add_constructor(u'!u64', tagged_list.constructor)
+ruamel.yaml.RoundTripLoader.add_constructor(u'!phandle', phandle_int.constructor)
 
 def scalar_constructor(loader, node):
     return loader.construct_scalar(node)
 def sequence_constructor(loader, node):
     return loader.construct_sequence(node)
-ruamel.yaml.RoundTripLoader.add_constructor(u'!phandle', scalar_constructor)
 ruamel.yaml.RoundTripLoader.add_constructor(u'!path', scalar_constructor)
 
 def path_to_obj(tree, path):
@@ -320,8 +329,11 @@ def typeSize(validator, typeSize, instance, schema):
     else:
         yield jsonschema.ValidationError("missing size tag in %r" % instance)
 
+def phandle(validator, phandle, instance, schema):
+    if not isinstance(instance, phandle_int):
+        yield jsonschema.ValidationError("missing phandle tag in %r" % instance)
 
-DTVal = jsonschema.validators.extend(jsonschema.Draft6Validator, {'typeSize': typeSize})
+DTVal = jsonschema.validators.extend(jsonschema.Draft6Validator, {'typeSize': typeSize, 'phandle': phandle})
 
 class DTValidator(DTVal):
     '''Custom Validator for Devicetree Schemas
