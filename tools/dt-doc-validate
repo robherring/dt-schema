@@ -18,18 +18,21 @@ import argparse
 import glob
 
 def check_doc(filename):
+    ret = 0
     try:
         testtree = dtschema.load(open(filename, encoding='utf-8').read())
     except (ruamel.yaml.scanner.ScannerError, ruamel.yaml.parser.ParserError) as exc:
         print(filename + ": ", exc)
-        return
+        return 1
     except ruamel.yaml.YAMLError as exc:
         print(filename + ":", exc.path[-1], exc.message)
-        return
+        return 1
 
     for error in sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.linecol):
         print(dtschema.format_error(filename, error, verbose=False))
+        ret = 1
 
+    return ret
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
@@ -39,6 +42,10 @@ if __name__ == "__main__":
 
     if os.path.isdir(args.yamldt):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
-            check_doc(filename)
+            ret = check_doc(filename)
+            if ret != 0:
+                break
     else:
-        check_doc(args.yamldt)
+        ret = check_doc(args.yamldt)
+
+    exit(ret)
