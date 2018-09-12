@@ -99,14 +99,23 @@ definitions:
         maxItems: 1
         additionalItems: false
   uint64:
-    minItems: 1
-    maxItems: 1
-    typeSize: 64
-    items:
-      - items:
-          - type: integer
-            minimum: 0
-            maximum: 0xffffffffffffffff
-        minItems: 1
+    oneOf:
+      - minItems: 1
         maxItems: 1
-        additionalItems: false
+        items:
+          - items:
+              - $ref: "#/definitions/cell"
+              - $ref: "#/definitions/cell"
+            minItems: 2
+            maxItems: 2
+            additionalItems: false
+      - minItems: 1
+        maxItems: 1
+        typeSize: 64
+        items:
+          - items:
+              - minimum: 0
+                maximum: 0xffffffffffffffff
+            minItems: 1
+            maxItems: 1
+            additionalItems: false
