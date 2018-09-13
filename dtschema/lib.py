@@ -140,13 +140,18 @@ def fixup_vals(subschema):
     fixup_schema(subschema)
 
 def fixup_props(props):
-    # Convert a single value to a matrix
     for prop,val in props.items():
-        if isinstance(val, dict) and 'allOf' in val.keys():
-            for l in val['allOf']:
-                fixup_vals(l)
-        else:
-            fixup_vals(val)
+        if isinstance(val, dict):
+            fixup_props(val)
+    # Convert a single value to a matrix
+    if 'allOf' in props.keys():
+        for l in props['allOf']:
+            fixup_props(l)
+    if 'oneOf' in props.keys():
+        for l in props['oneOf']:
+            fixup_props(l)
+
+    fixup_vals(props)
 
     # Make items list fixed size-spec
     _fixup_items_size(props)
