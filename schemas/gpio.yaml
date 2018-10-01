@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+$id: "http://devicetree.org/schemas/gpio.yaml#"
+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+title: GPIO devicetree schema
+description: "Schema for GPIO devicetree bindings"
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+# always select the core schema
+select: true
+
+definitions:
+  gpio-spec:
+    type: array
+    items:
+      - type: array
+        items:
+          - phandle: true
+          - $ref: "types.yaml#/definitions/cell"
+
+  gpio-properties:
+    type: object
+    properties:
+      "#gpio-cells":
+        $ref: "dt-core.yaml#/definitions/proptypes/numcells"
+      gpio-controller:
+        $ref: "types.yaml#/definitions/flag"
+    patternProperties:
+      ".*-gpios":
+        $ref: "#/definitions/gpio-spec"
+
+    dependencies:
+      gpio-controller: ['#gpio-cells']
+      '#gpio-cells': [ gpio-controller ]
+
+allOf:
+- { $ref: "#/definitions/gpio-properties" }

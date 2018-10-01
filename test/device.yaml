@@ -14,7 +14,7 @@
     interrupt-controller: true
     '#interrupt-cells': [[2]]
     interrupts: [ [10], [11, 1, 0] ]
-    some-gpios: [ [0, 32] ]
+    some-gpios: [ [ !phandle 0xdead, 0, 0 ], [ !phandle 0xdead, 1, 0 ] ]
     clocks: [ [0] ]
     vendor,bool-prop:
     vendor,int-prop: [[3]]

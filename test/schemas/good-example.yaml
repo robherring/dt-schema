@@ -76,7 +76,7 @@ properties:
     maxItems: 2
 
   some-gpios:
-    maxItems: 1
+    maxItems: 2
 
   vendor,bool-prop:
     $ref: "/schemas/types.yaml#/definitions/flag"
