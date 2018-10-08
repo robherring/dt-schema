@@ -40,7 +40,7 @@ setuptools.setup(
     python_requires='>=3.5',
 
     install_requires=[
-        'ruamel.yaml>0.15.0, <0.15.52', # .52 breaks CommentedMap being a dict
+        'ruamel.yaml>0.15.69',
         'jsonschema>2.6.0',
         'rfc3987',
     ],
