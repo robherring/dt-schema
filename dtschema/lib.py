@@ -15,6 +15,8 @@ import pkgutil
 
 schema_base_url = "http://devicetree.org/"
 
+yaml = ruamel.yaml.YAML(typ='safe')
+rtyaml = ruamel.yaml.YAML(typ='rt')
 
 class tagged_list(list):
 
@@ -37,17 +39,11 @@ class phandle_int(int):
     def constructor(loader, node):
         return phandle_int(loader.construct_yaml_int(node))
 
-ruamel.yaml.RoundTripLoader.add_constructor(u'!u8', tagged_list.constructor)
-ruamel.yaml.RoundTripLoader.add_constructor(u'!u16', tagged_list.constructor)
-ruamel.yaml.RoundTripLoader.add_constructor(u'!u32', tagged_list.constructor)
-ruamel.yaml.RoundTripLoader.add_constructor(u'!u64', tagged_list.constructor)
-ruamel.yaml.RoundTripLoader.add_constructor(u'!phandle', phandle_int.constructor)
-
-def scalar_constructor(loader, node):
-    return loader.construct_scalar(node)
-def sequence_constructor(loader, node):
-    return loader.construct_sequence(node)
-ruamel.yaml.RoundTripLoader.add_constructor(u'!path', scalar_constructor)
+rtyaml.Constructor.add_constructor(u'!u8', tagged_list.constructor)
+rtyaml.Constructor.add_constructor(u'!u16', tagged_list.constructor)
+rtyaml.Constructor.add_constructor(u'!u32', tagged_list.constructor)
+rtyaml.Constructor.add_constructor(u'!u64', tagged_list.constructor)
+rtyaml.Constructor.add_constructor(u'!phandle', phandle_int.constructor)
 
 def path_to_obj(tree, path):
     for pc in path:
@@ -69,7 +65,7 @@ def get_line_col(tree, path, obj=None):
 
 def load_schema(schema):
     data = pkgutil.get_data('dtschema', schema).decode('utf-8')
-    return ruamel.yaml.load(data, Loader=ruamel.yaml.SafeLoader)
+    return yaml.load(data)
 
 def _value_is_type(subschema, key, type):
     if not ( isinstance(subschema, dict) and key in subschema.keys() ):
@@ -306,7 +302,7 @@ def process_schemas(user_schema_path):
     return schemas
 
 def load(stream):
-    return ruamel.yaml.load(stream, Loader=ruamel.yaml.RoundTripLoader)
+    return rtyaml.load(stream)
 
 schema_cache = []
 
@@ -322,8 +318,7 @@ def http_handler(uri):
             if uri in sch['$id']:
                 return sch
         return load_schema(uri.replace(schema_base_url, ''))
-    return ruamel.yaml.load(jsonschema.compat.urlopen(uri).read().decode('utf-8'),
-                            Loader=ruamel.yaml.RoundTripLoader)
+    return yaml.load(jsonschema.compat.urlopen(uri).read().decode('utf-8'))
 
 handlers = {"http": http_handler}
 
