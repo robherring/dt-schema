@@ -1,0 +1,85 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/property-units.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: Standard Unit Suffixes for Property names
+
+maintainers:
+  - Devicetree Specification Mailing List <devicetree-spec@vger.kernel.org>
+
+description:
+  Properties which have a unit of measure are recommended to have a unit
+  suffix appended to the property name. The list below contains the
+  recommended suffixes. Other variations exist in bindings, but should not
+  be used in new bindings or added here. The inconsistency in the unit
+  prefixes is due to selecting the most commonly used variants.
+
+  It is also recommended to use the units listed here and not add additional
+  unit prefixes.
+
+select: true
+
+patternProperties:
+  # Time/Frequency
+  "^.*-mhz$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: megahertz
+  "^.*-hz$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: Hertz (preferred)
+  "^.*-sec$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: seconds
+  "^.*-ms$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: milliseconds
+  "^.*-us$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: microseconds
+  "^.*-ns$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: nanoseconds
+
+  # Distance
+  "^.*-mm$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: millimeters
+
+  # Electricity
+  "^.*-microamp$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: micro amps
+  "^.*-microamp-hours$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: micro amp-hours
+  "^.*-ohms$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: Ohms
+  "^.*-micro-ohms$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: micro Ohms
+  "^.*-microwatt-hours$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: micro Watt-hours
+  "^.*-microvolt$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: micro volts
+  "^.*-picofarads$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: picofarads
+
+  # Temperature
+  "^.*-celsius$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: Degrees Celsius
+  "^.*-millicelsius$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: Degreee milli-Celsius
+
+  # Pressure
+  "^.*-kpascal$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: kiloPascal
