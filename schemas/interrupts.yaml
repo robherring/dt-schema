@@ -20,27 +20,16 @@ maintainers:
 select: true
 
 definitions:
-    int-spec:
-        type: array
-        items: { $ref: "types.yaml#/definitions/cell" }
-    intext-spec:
-        type: array
-        items:
-          - { $ref: "dt-core.yaml#/definitions/labelref" }
-          - { $ref: "types.yaml#/definitions/cell" }
-
     interrupt-properties:
         type: object
         properties:
             "#interrupt-cells": true
             interrupt-controller: { $ref: "types.yaml#/definitions/flag" }
-            interrupt-parent: { $ref: "dt-core.yaml#/definitions/labelref" }
+            interrupt-parent:  { $ref: "types.yaml#/definitions/phandle" }
             interrupts:
-                type: array
-                items: { $ref: "#/definitions/int-spec" }
+              $ref: "types.yaml#/definitions/uint32-matrix"
             interrupts-extended:
-                type: array
-                items: { $ref: "#/definitions/intext-spec" }
+              $ref: "types.yaml#/definitions/phandle-array"
         dependencies:
           interrupt-controller: ['#interrupt-cells']
           interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
