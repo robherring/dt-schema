@@ -32,7 +32,7 @@ definitions:
     interrupt-properties:
         type: object
         properties:
-            "#interrupt-cells": { $ref: "dt-core.yaml#/definitions/proptypes/numcells" }
+            "#interrupt-cells": true
             interrupt-controller: { $ref: "types.yaml#/definitions/flag" }
             interrupt-parent: { $ref: "dt-core.yaml#/definitions/labelref" }
             interrupts:
