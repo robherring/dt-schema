@@ -11,28 +11,17 @@ maintainers:
 select: true
 
 definitions:
-  gpio-spec:
-    type: array
-    items:
-      - type: array
-        items:
-          - phandle: true
-          - $ref: "types.yaml#/definitions/cell"
+  properties:
+    "#gpio-cells": true
+    gpio-controller:
+      $ref: "types.yaml#/definitions/flag"
+  patternProperties:
+    ".*-gpios":
+      $ref: "types.yaml#/definitions/phandle-array"
 
-  gpio-properties:
-    type: object
-    properties:
-      "#gpio-cells":
-        $ref: "dt-core.yaml#/definitions/proptypes/numcells"
-      gpio-controller:
-        $ref: "types.yaml#/definitions/flag"
-    patternProperties:
-      ".*-gpios":
-        $ref: "#/definitions/gpio-spec"
+  dependencies:
+    gpio-controller: ['#gpio-cells']
+    '#gpio-cells': [ gpio-controller ]
 
-    dependencies:
-      gpio-controller: ['#gpio-cells']
-      '#gpio-cells': [ gpio-controller ]
-
-allOf:
-- { $ref: "#/definitions/gpio-properties" }
+# This avoids DT meta-schema checks
+$ref: "#/definitions"
