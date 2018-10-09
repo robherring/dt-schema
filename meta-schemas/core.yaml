@@ -76,6 +76,7 @@ properties:
     pattern: 'http://devicetree.org/(test/)?schemas/.*\.yaml#'
   $schema:
     const: "http://devicetree.org/meta-schemas/core.yaml#"
+  $ref: true
   title: true
   description: true
   examples: true
