@@ -17,6 +17,7 @@ schema_base_url = "http://devicetree.org/"
 
 yaml = ruamel.yaml.YAML(typ='safe')
 rtyaml = ruamel.yaml.YAML(typ='rt')
+rtyaml.allow_duplicate_keys = True
 
 class tagged_list(list):
 
