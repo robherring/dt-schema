@@ -7,9 +7,6 @@
   "#address-cells": [[1]]
   "#size-cells": [[1]]
 
-  chosen:
-    stdout-path: [ "/a/path/to/node:115200n" ]
-
   good-test1:
     compatible: [ "vendor,soc4-ip", "vendor,soc1-ip" ]
     reg: [ [0x0, 0x4], [0x8, 0x4] ]
@@ -18,7 +15,7 @@
     '#interrupt-cells': [[2]]
     interrupts: [ [10], [11, 1, 0] ]
     some-gpios: [ [ !phandle 0xdead, 0, 0 ], [ !phandle 0xdead, 1, 0 ] ]
-    clocks: [ [!phandle 0xdead, 0] ]
+    clocks: [ [0] ]
     vendor,bool-prop:
     vendor,int-prop: [[3]]
     vendor,string-prop: [ "foo" ]
@@ -144,12 +141,3 @@
     compatible: [ "vendor,soc1-ip" ]
     vendor,phandle-prop: [[1]]
     vendor,phandle-array-prop: [[1], [2]]
-
-  bad-prop-units-test:
-    compatible: [ "vendor,soc1-ip" ]
-    freq-hz: [ ["not a number"] ]
-
-  bad-phandle-prop-test:
-    compatible: [ "vendor,soc1-ip" ]
-    clocks: [ [!phandle 1], [!phandle 1, 0, "string"] ]
-    clock-names: [ clk1, clk2 ]
