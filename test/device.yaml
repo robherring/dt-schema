@@ -83,7 +83,7 @@
     interrupt-controller: true
     '#interrupt-cells': [[2]]
     interrupts: [ [10] ]
-    clock-frequency: 1
+    clock-frequency: [ [1] ]
 
   bad-interrupt-names-test1:
     compatible: [ "vendor,soc1-ip" ]
