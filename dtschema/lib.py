@@ -80,19 +80,39 @@ def _value_is_type(subschema, key, type):
     return isinstance(val, type)
 
 
-def _fixup_string_to_array(subschema, match):
-    if not _value_is_type(subschema, match, str):
+def _fixup_string_to_array(subschema):
+    tmpsch = {}
+
+    if 'items' in subschema.keys():
         return
 
-    subschema['items'] = [ {match: subschema[match]} ]
-    subschema.pop(match, None)
+    for match in ['const', 'enum']:
+        if not _value_is_type(subschema, match, str):
+            continue
 
-def _fixup_scalar_to_array(subschema, match):
-    if not _value_is_type(subschema, match, int):
+        tmpsch[match] = subschema[match]
+        subschema.pop(match, None)
+
+    if tmpsch != {}:
+        subschema.update({'type': 'array', 'minItems': 1, 'maxItems': 1})
+        subschema['items'] = tmpsch
+
+def _fixup_scalar_to_array(subschema):
+    tmpsch = {}
+
+    if 'items' in subschema.keys():
         return
 
-    subschema['items'] =  [ {'items': [{match: subschema[match]}] } ]
-    subschema.pop(match, None)
+    for match in ['const', 'enum', 'minimum', 'maximum']:
+        if not _value_is_type(subschema, match, int):
+            continue
+
+        tmpsch[match] = subschema[match]
+        subschema.pop(match, None)
+
+    if tmpsch != {}:
+        subschema.update({'type': 'array', 'minItems': 1, 'maxItems': 1})
+        subschema['items'] = { 'items': tmpsch, 'type': 'array', 'minItems': 1, 'maxItems': 1 }
 
 def _fixup_items_size(schema):
     # Make items list fixed size-spec
@@ -128,17 +148,15 @@ def fixup_schema(schema):
         fixup_props(schema[ 'patternProperties' ])
 
 def fixup_vals(subschema):
-    _fixup_string_to_array(subschema, 'const')
-    _fixup_string_to_array(subschema, 'enum')
-    _fixup_scalar_to_array(subschema, 'const')
-    _fixup_scalar_to_array(subschema, 'enum')
+    _fixup_string_to_array(subschema)
+    _fixup_scalar_to_array(subschema)
 
     # Desend into tree
     fixup_schema(subschema)
 
 def fixup_props(props):
     for prop,val in props.items():
-        if isinstance(val, dict):
+        if isinstance(val, dict) and not 'items' in val.keys() and not 'contains' in val.keys():
             fixup_props(val)
     # Convert a single value to a matrix
     if 'allOf' in props.keys():
