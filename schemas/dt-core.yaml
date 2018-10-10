@@ -1,13 +1,8 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
 # Copyright 2018 Arm Ltd.
-# Notes:
-# - Extra work is being done to allow 'bare' single item properties,
-#   as well as arrays for multiple instances.
-#   ie. both "acme" and ["acme"] are accepted.
-#   This is nicer for humans, but makes things more complicated to parse.
-#   Should it be disallowed, and always enforce the correct array wrapping?
-
+%YAML 1.2
+---
 $id: "http://devicetree.org/schemas/dt-core.yaml#"
 $schema: "http://devicetree.org/meta-schemas/core.yaml#"
 title: Core devicetree node schema which applies to all nodes
@@ -20,76 +15,54 @@ maintainers:
 select: true
 
 definitions:
-    cell:
-      type: integer
-      minimum: 0
-      maximum: 0xffffffff
-    address-spec:
-        type: array
-        length: ".../#address-cells"
-        items: { type: integer }
-    size-spec:
-        type: array
-        length: ".../#size-cells"
-        items: { type: integer }
-    addr-size-spec:
-        type: array
-        additionalItems: false
-        items:
-          - { $ref: "#/definitions/address-spec" }
-          - { $ref: "#/definitions/size-spec" }
-
-    std-properties:
-        type: object
-        properties:
-            $labels:
-                type: array
-                items:
-                    type: string
-                    pattern: "^[a-zA-Z_][a-zA-Z0-9_]*$"
-            $path: { type: string }
-            compatible: { $ref: "types.yaml#/definitions/string-array" }
-            status:
-              allOf:
-                - $ref: "types.yaml#/definitions/string"
-                - items:
-                    - enum: [ okay, disabled ]
-        patternProperties:
-          "^#.*-cells$":
-            allOf:
-              - $ref: "types.yaml#/definitions/uint32"
-              - items:
-                  - items:
-                      maximum: 8
-
-    propdata:
-        type: [string, integer, array, boolean, 'null']
-        items: { $ref: "#/definitions/propdata" }
-
-    node:
+  std-properties:
+    type: object
+    properties:
+      $nodename:
+        $ref: "types.yaml#/definitions/string"
+      compatible:
+        $ref: "types.yaml#/definitions/string-array"
+      status:
         allOf:
-          - { $ref: "#/definitions/std-properties" }
-          - type: object
-            additionalProperties: false
-            patternProperties:
-                # property and node namespace overlaps. Catch both here
-                "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$":
-                    oneOf:
-                      - type: object
-                      - { $ref: "#/definitions/propdata" }
+          - $ref: "types.yaml#/definitions/string"
+          - items:
+              - enum: [ okay, disabled ]
+    patternProperties:
+      "^#.*-cells$":
+        allOf:
+          - $ref: "types.yaml#/definitions/uint32"
+          - items:
+              - items:
+                  maximum: 8
 
-                # Anything with a '@' is definitely a node
-                "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$":
-                    type: object
-                    #$ref: "#/definitions/node"
+  propdata:
+    type: [string, integer, array, boolean, 'null']
+    items:
+      $ref: "#/definitions/propdata"
 
-                # Anything with a '#' is definitely a property
-                "^#[a-zA-Z0-9,+\\-._]{0,63}$":
-                    $ref: "#/definitions/propdata"
+  node:
+    allOf:
+      - $ref: "#/definitions/std-properties"
+      - type: object
+        additionalProperties: false
+        patternProperties:
+          # property and node namespace overlaps. Catch both here
+          "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$":
+            oneOf:
+              - type: object
+              - $ref: "#/definitions/propdata"
 
-                "^\\$path$": { }
-                "^\\$nodename$": { }
-                "^\\$labels$": { }
+          # Anything with a '@' is definitely a node
+          "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$":
+            type: object
+            $ref: "#/definitions/node"
 
-allOf:
-- { $ref: "#/definitions/node" }
+          # Anything with a '#' is definitely a property
+          "^#[a-zA-Z0-9,+\\-._]{0,63}$":
+            $ref: "#/definitions/propdata"
+
+          "^\\$nodename$": { }
+
+$ref: "#/definitions/node"
+
+...
