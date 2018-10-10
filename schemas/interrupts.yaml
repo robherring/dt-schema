@@ -1,12 +1,6 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
 # Copyright 2018 Arm Ltd.
-# Notes:
-# - Extra work is being done to allow 'bare' single item properties,
-#   as well as arrays for multiple instances.
-#   ie. both "acme" and ["acme"] are accepted.
-#   This is nicer for humans, but makes things more complicated to parse.
-#   Should it be disallowed, and always enforce the correct array wrapping?
 
 $id: "http://devicetree.org/schemas/interrupts.yaml#"
 $schema: "http://devicetree.org/meta-schemas/core.yaml#"
@@ -20,25 +14,26 @@ maintainers:
 select: true
 
 definitions:
-    interrupt-properties:
-        type: object
-        properties:
-            "#interrupt-cells": true
-            interrupt-controller: { $ref: "types.yaml#/definitions/flag" }
-            interrupt-parent:  { $ref: "types.yaml#/definitions/phandle" }
-            interrupts:
-              $ref: "types.yaml#/definitions/uint32-matrix"
-            interrupts-extended:
-              $ref: "types.yaml#/definitions/phandle-array"
-        dependencies:
-          interrupt-controller: ['#interrupt-cells']
-          interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
-          '#interrupt-cells':
-            oneOf:
-              - required:
-                  - interrupt-controller
-              - required:
-                  - interrupt-map
+  interrupt-properties:
+    type: object
+    properties:
+      "#interrupt-cells": true
+      interrupt-controller:
+        $ref: "types.yaml#/definitions/flag"
+      interrupt-parent:
+        $ref: "types.yaml#/definitions/phandle"
+      interrupts:
+        $ref: "types.yaml#/definitions/uint32-matrix"
+      interrupts-extended:
+        $ref: "types.yaml#/definitions/phandle-array"
+    dependencies:
+      interrupt-controller: ['#interrupt-cells']
+      interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
+      "#interrupt-cells":
+        oneOf:
+          - required:
+              - interrupt-controller
+          - required:
+              - interrupt-map
 
-allOf:
-- { $ref: "#/definitions/interrupt-properties" }
+$ref: "#/definitions/interrupt-properties"
