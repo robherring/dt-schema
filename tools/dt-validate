@@ -43,9 +43,7 @@ class schema_group():
                 node_matched = True
                 errors = sorted(dtschema.DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
                 for error in errors:
-                    if verbose:
-                        print(error)
-                    print(dtschema.format_error(filename, error))
+                    print(dtschema.format_error(filename, error, verbose=verbose))
         if not node_matched and verbose:
             if 'compatible' in node:
                 print("%s:%i:%i: %s failed to match any schema with compatible(s) %s" % (filename, node.lc.line, node.lc.col, nodename, node["compatible"]))
