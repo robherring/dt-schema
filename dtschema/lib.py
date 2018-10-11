@@ -7,6 +7,7 @@ import os
 import glob
 import ruamel.yaml
 import re
+import pprint
 
 from ruamel.yaml.comments import CommentedMap
 
@@ -395,14 +396,19 @@ def format_error(filename, error, verbose=False):
     if error.linecol[0] >= 0 :
         src = src + '%i:%i:'%(error.linecol[0]+1, error.linecol[1]+1)
 
+    src += ' '
     if error.path:
-        src += " " + error.path[0] + ":"
-        if len(error.path) > 1:
-            src += str(error.path[1]) + ":"
+        for path in error.path:
+            src += str(path) + ":"
+        src += ' '
 
     if verbose:
         msg = str(error)
     else:
         msg = error.message
+        # Failures under 'oneOf', 'allOf', or 'anyOf' schema don't give useful
+        # error messages, so dump the schema in those cases.
+        if not error.path and error.validator in ['oneOf', 'allOf', 'anyOf']:
+            msg += '\n' + pprint.pformat(error.schema, width=72)
 
-    return src + ' ' + msg
+    return src + msg
