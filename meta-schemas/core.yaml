@@ -24,6 +24,8 @@ definitions:
         $ref: "cell.yaml#array"
       compatible:
         $ref: "string-array.yaml"
+      $nodename:
+        $ref: "string-array.yaml"
     patternProperties:
       '^[a-zA-Z0-9].*,.*$':
         type: object
