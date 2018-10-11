@@ -15,10 +15,7 @@ maintainers:
 
 properties:
   $nodename:
-    items:
-      - oneOf:
-        - pattern: "^memory@[0-9a-f]*"
-        - const: "memory" # 'memory' only allowed for selecting
+    pattern: "^memory(@[0-9a-f]+)?$"
   device_type:
     const: memory
   reg:
