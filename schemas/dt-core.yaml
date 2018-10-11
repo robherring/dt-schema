@@ -22,6 +22,18 @@ definitions:
         $ref: "types.yaml#/definitions/string"
       compatible:
         $ref: "types.yaml#/definitions/string-array"
+      dma-coherent:
+        $ref: "types.yaml#/definitions/flag"
+      dma-ranges:
+        oneOf:
+          - $ref: "types.yaml#/definitions/flag"
+          - $ref: "types.yaml#/definitions/uint32-matrix"
+      ranges:
+        oneOf:
+          - $ref: "types.yaml#/definitions/flag"
+          - $ref: "types.yaml#/definitions/uint32-matrix"
+      reg:
+        $ref: "types.yaml#/definitions/uint32-matrix"
       status:
         allOf:
           - $ref: "types.yaml#/definitions/string"
