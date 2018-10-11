@@ -58,11 +58,13 @@ def get_line_col(tree, path, obj=None):
     if isinstance(obj, ruamel.yaml.comments.CommentedBase):
         return obj.lc.line, obj.lc.col
     if len(path) < 1:
-        return None
+        return -1, -1
     obj = path_to_obj(tree, list(path)[:-1])
     if isinstance(obj, ruamel.yaml.comments.CommentedBase):
+        if path[-1] == '$nodename':
+            return -1, -1
         return obj.lc.key(path[-1])
-    return None
+    return -1, -1
 
 def load_schema(schema):
     data = pkgutil.get_data('dtschema', schema).decode('utf-8')
@@ -390,7 +392,7 @@ class DTValidator(DTVal):
 
 def format_error(filename, error, verbose=False):
     src = os.path.abspath(filename) + ':'
-    if error.linecol:
+    if error.linecol[0] >= 0 :
         src = src + '%i:%i:'%(error.linecol[0]+1, error.linecol[1]+1)
 
     if error.path:
