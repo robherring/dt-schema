@@ -29,7 +29,7 @@ def check_doc(filename):
         return 1
 
     for error in sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.linecol):
-        print(dtschema.format_error(filename, error, verbose=False))
+        print(dtschema.format_error(filename, error, verbose=args.verbose))
         ret = 1
 
     return ret
@@ -38,6 +38,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("yamldt", type=str,
                     help="Filename of YAML encoded devicetree input file")
+    ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     args = ap.parse_args()
 
     if os.path.isdir(args.yamldt):
