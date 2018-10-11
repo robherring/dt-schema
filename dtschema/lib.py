@@ -88,7 +88,7 @@ def _fixup_string_to_array(subschema):
     if 'items' in subschema.keys():
         return
 
-    for match in ['const', 'enum']:
+    for match in ['const', 'enum', 'pattern']:
         if not _value_is_type(subschema, match, str):
             continue
 
