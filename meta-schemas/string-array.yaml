@@ -31,6 +31,8 @@ properties:
   const:
     type: string
     pattern: '^[a-zA-Z0-9,.\-_ #+/]+$'
+  pattern:
+    type: string
 
   oneOf:
     type: array

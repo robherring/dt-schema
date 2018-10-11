@@ -60,6 +60,7 @@ definitions:
             - maxItems
             - maximum
             - oneOf
+            - pattern
             - patternProperties
             - properties
             - required
