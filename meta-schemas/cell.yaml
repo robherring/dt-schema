@@ -28,7 +28,6 @@ array:
           items:
             $ref: '#array'
         items:
-          type: array
           items:
             allOf:
               - required: [description]
