@@ -93,7 +93,7 @@ definitions:
     # prop = <0x1234 0x5678>;
     # or
     # prop = <0x1234>, <0x5678>;
-    oneOf:
+    anyOf:
       - type: array
         minItems: 1
         maxItems: 1
