@@ -19,8 +19,6 @@ import glob
 
 import dtschema
 
-yaml = ruamel.yaml.YAML(typ='safe')
-
 verbose = False
 
 class schema_group():
@@ -30,7 +28,7 @@ class schema_group():
         if schema_file == "" or os.path.isdir(schema_file):
             self.schemas = dtschema.process_schemas(schema_file)
         elif os.path.isfile(schema_file):
-            self.schemas = yaml.load(open(schema_file, encoding='utf-8').read())
+            self.schemas = dtschema.load_schema(os.path.abspath(schema_file))
             dtschema.set_schema(self.schemas)
         else:
             exit(-1)
@@ -85,13 +83,13 @@ if __name__ == "__main__":
 
     if os.path.isdir(args.yamldt[0]):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
-            testtree = dtschema.load(open(filename, encoding='utf-8').read())
+            testtree = dtschema.load(filename)
             if verbose:
                 print("Check:  " + filename)
             sg.check_trees(filename, testtree)
     else:
         for filename in args.yamldt:
-            testtree = dtschema.load(open(filename, encoding='utf-8').read())
+            testtree = dtschema.load(filename)
             if verbose:
                 print("Check:  " + filename)
             sg.check_trees(filename, testtree)

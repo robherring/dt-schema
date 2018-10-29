@@ -323,8 +323,9 @@ def process_schemas(user_schema_path):
 
     return schemas
 
-def load(stream):
-    return rtyaml.load(stream)
+def load(filename):
+    with open(filename, 'r', encoding='utf-8') as f:
+        return rtyaml.load(f.read())
 
 schema_cache = []
 

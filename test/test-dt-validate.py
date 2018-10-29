@@ -18,8 +18,8 @@ import dtschema
 
 class TestDTMetaSchema(unittest.TestCase):
     def setUp(self):
-        self.schema = dtschema.load(open(os.path.join(basedir, 'schemas/good-example.yaml'), encoding='utf-8').read())
-        self.bad_schema = dtschema.load(open(os.path.join(basedir, 'schemas/bad-example.yaml'), encoding='utf-8').read())
+        self.schema = dtschema.load(os.path.join(basedir, 'schemas/good-example.yaml'))
+        self.bad_schema = dtschema.load(os.path.join(basedir, 'schemas/bad-example.yaml'))
 
     def test_metaschema_valid(self):
         '''The DTValidator metaschema must be a valid Draft6 schema'''
@@ -137,7 +137,7 @@ class TestDTValidate(unittest.TestCase):
         '''Test that all DT YAML files under ./test/ validate against the DT schema'''
         for filename in glob.iglob('test/*.yaml'):
             with self.subTest(schema=filename):
-                testtree = dtschema.load(open(filename, encoding='utf-8').read())[0]
+                testtree = dtschema.load(filename)[0]
                 self.check_subtree('/', testtree);
 
 
