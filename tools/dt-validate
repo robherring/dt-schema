@@ -26,7 +26,7 @@ class schema_group():
         self.schemas = list()
 
         if schema_file == "" or os.path.isdir(schema_file):
-            self.schemas = dtschema.process_schemas(schema_file)
+            self.schemas = dtschema.process_schemas([schema_file])
         elif os.path.isfile(schema_file):
             self.schemas = dtschema.load_schema(os.path.abspath(schema_file))
             dtschema.set_schema(self.schemas)

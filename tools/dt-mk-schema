@@ -24,15 +24,12 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("-o", "--outfile", type=str,
                     help="Filename of YAML encoded devicetree input file")
-    ap.add_argument("schemas", type=str,
+    ap.add_argument("schemas", nargs='*', type=str,
                     help="Filename of YAML encoded devicetree input file")
+    ap.add_argument('-u', '--useronly', help="Only process user schemas", action="store_true")
     args = ap.parse_args()
 
-    if not os.path.isdir(args.schemas):
-        print("error: path not found: %s" % args.schemas)
-        exit(-1)
-
-    schemas = dtschema.process_schemas(args.schemas)
+    schemas = dtschema.process_schemas(args.schemas, core_schema=(not args.useronly))
     if not schemas:
         exit(-1)
 

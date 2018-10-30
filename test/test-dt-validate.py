@@ -98,7 +98,7 @@ class TestDTValidate(unittest.TestCase):
     def setUp(self):
         self.schemas = list()
 
-        self.schemas = dtschema.process_schemas("test/schemas/")
+        self.schemas = dtschema.process_schemas([ os.path.join(os.path.abspath(basedir), "schemas/")])
 
         for schema in self.schemas:
             schema["$select_validator"] = jsonschema.Draft6Validator(schema['select'])

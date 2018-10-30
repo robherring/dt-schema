@@ -293,35 +293,41 @@ def process_schema(filename):
     schema["$filename"] = filename
     return schema
 
-def process_schemas(user_schema_path):
+def process_schemas(schema_paths, core_schema=True):
     ids = []
     schemas = []
 
-    schema_path = os.path.dirname(os.path.realpath(__file__))
-    for filename in glob.iglob(os.path.join(schema_path, "schemas/**/*.yaml"), recursive=True):
-        sch = process_schema(os.path.relpath(filename, schema_path))
+    for filename in schema_paths:
+        if not os.path.isfile(filename):
+            continue
+        sch = process_schema(os.path.abspath(filename))
         if sch:
             schemas.append(sch)
             if ids.count(sch['$id']):
-                print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'")
+                print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
             ids.append(sch['$id'])
+        else:
+            print("warning: no schema found in file: %s" % filename, file=sys.stderr)
 
-    count = len(schemas)
-    if count == 0:
-        print("error: no core schema found in path: %s/schemas" % schema_path)
-        return
+    if core_schema:
+        schema_paths.append(os.path.join(schema_basedir, 'schemas/'))
 
-    if os.path.isdir(user_schema_path):
-        for filename in glob.iglob(os.path.join(os.path.abspath(user_schema_path), "**/*.yaml"), recursive=True):
-            sch = process_schema(os.path.relpath(filename, schema_path))
+    for path in schema_paths:
+        count = 0
+        if not os.path.isdir(path):
+            continue
+
+        for filename in glob.iglob(os.path.join(os.path.abspath(path), "**/*.yaml"), recursive=True):
+            sch = process_schema(os.path.abspath(filename))
             if sch:
+                count += 1
                 schemas.append(sch)
                 if ids.count(sch['$id']):
-                    print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'")
+                    print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
                 ids.append(sch['$id'])
 
-        if count == len(schemas):
-            print("warning: no schema found in path: %s" % user_schema_path)
+        if count == 0:
+            print("warning: no schema found in path: %s" % path, file=sys.stderr)
 
     return schemas
 
