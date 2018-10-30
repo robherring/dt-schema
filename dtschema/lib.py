@@ -15,6 +15,7 @@ import jsonschema
 import pkgutil
 
 schema_base_url = "http://devicetree.org/"
+schema_basedir = os.path.dirname(os.path.abspath(__file__))
 
 yaml = ruamel.yaml.YAML(typ='safe')
 rtyaml = ruamel.yaml.YAML(typ='rt')
@@ -68,8 +69,9 @@ def get_line_col(tree, path, obj=None):
     return -1, -1
 
 def load_schema(schema):
-    data = pkgutil.get_data('dtschema', schema).decode('utf-8')
-    return yaml.load(data)
+    schema = os.path.join(schema_basedir, schema)
+    with open(schema, 'r', encoding='utf-8') as f:
+        return yaml.load(f.read())
 
 def _value_is_type(subschema, key, type):
     if not ( isinstance(subschema, dict) and key in subschema.keys() ):
