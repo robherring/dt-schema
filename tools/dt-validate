@@ -81,15 +81,19 @@ if __name__ == "__main__":
     else:
         sg = schema_group()
 
-    if os.path.isdir(args.yamldt[0]):
-        for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
+    for d in args.yamldt:
+        if not os.path.isdir(d):
+            continue
+        for filename in glob.iglob(d + "/**/*.yaml", recursive=True):
             testtree = dtschema.load(filename)
             if verbose:
                 print("Check:  " + filename)
             sg.check_trees(filename, testtree)
-    else:
-        for filename in args.yamldt:
-            testtree = dtschema.load(filename)
-            if verbose:
-                print("Check:  " + filename)
-            sg.check_trees(filename, testtree)
+
+    for filename in args.yamldt:
+        if not os.path.isfile(filename):
+            continue
+        testtree = dtschema.load(filename)
+        if verbose:
+            print("Check:  " + filename)
+        sg.check_trees(filename, testtree)
