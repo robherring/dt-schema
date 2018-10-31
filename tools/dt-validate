@@ -33,7 +33,7 @@ class schema_group():
         else:
             exit(-1)
 
-    def check_node(self, tree, nodename, node, filename):
+    def check_node(self, tree, node, nodename, fullname, filename):
         node['$nodename'] = [ nodename ]
         node_matched = False
         for schema in self.schemas:
@@ -44,15 +44,16 @@ class schema_group():
                     print(dtschema.format_error(filename, error, verbose=verbose))
         if not node_matched and verbose:
             if 'compatible' in node:
-                print("%s:%i:%i: %s failed to match any schema with compatible(s) %s" % (filename, node.lc.line, node.lc.col, nodename, node["compatible"]))
+                print("%s:%i:%i: %s failed to match any schema with compatible(s) %s" %
+                    (filename, node.lc.line, node.lc.col, fullname, node["compatible"]))
             else:
-                print("%s: node %s failed to match any schema" % (filename, nodename))
+                print("%s: node \"%s\" failed to match any schema" % (filename, fullname))
 
-    def check_subtree(self, tree, nodename, subtree, filename):
-        self.check_node(tree, nodename, subtree, filename)
+    def check_subtree(self, tree, subtree, nodename, fullname, filename):
+        self.check_node(tree, subtree, nodename, fullname, filename)
         for name,value in subtree.items():
             if type(value) == ruamel.yaml.comments.CommentedMap:
-                self.check_subtree(tree, name, value, filename)
+                self.check_subtree(tree, value, name, fullname + "/" + name, filename)
 
     def check_trees(self, filename, dt):
         """Check the given DT against all schemas"""
@@ -61,7 +62,7 @@ class schema_group():
             schema["$select_validator"] = jsonschema.Draft6Validator(schema['select'])
 
         for subtree in dt:
-            self.check_subtree(dt, "/", subtree, filename)
+            self.check_subtree(dt, subtree, "/", "", filename)
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
