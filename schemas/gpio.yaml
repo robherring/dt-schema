@@ -31,10 +31,16 @@ definitions:
     gpio-ranges:
       $ref: "types.yaml#/definitions/phandle-array"
 
+    gpio:
+      # 'gpio' can appear as a property or node name
+      oneOf:
+        - type: object
+        - $ref: "types.yaml#/definitions/phandle-array"
+
   patternProperties:
     ".*-gpios?$":
       $ref: "types.yaml#/definitions/phandle-array"
-    "^gpios?$":
+    "^gpios$":
       $ref: "types.yaml#/definitions/phandle-array"
 
   dependencies:
