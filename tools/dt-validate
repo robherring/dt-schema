@@ -20,6 +20,7 @@ import glob
 import dtschema
 
 verbose = False
+show_unmatched = False
 
 class schema_group():
     def __init__(self, schema_file=""):
@@ -38,11 +39,13 @@ class schema_group():
         node_matched = False
         for schema in self.schemas:
             if schema['$select_validator'].is_valid(node):
-                node_matched = True
+                # We have a match if a conditional schema is selected
+                if schema['select'] != True:
+                    node_matched = True
                 errors = sorted(dtschema.DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
                 for error in errors:
                     print(dtschema.format_error(filename, error, verbose=verbose))
-        if not node_matched and verbose:
+        if show_unmatched and not node_matched:
             if 'compatible' in node:
                 print("%s:%i:%i: %s failed to match any schema with compatible(s) %s" %
                     (filename, node.lc.line, node.lc.col, fullname, node["compatible"]))
@@ -70,10 +73,12 @@ if __name__ == "__main__":
                     help="Filename or directory of YAML encoded devicetree input file(s)")
     ap.add_argument('-s', '--schema', help="path to additional additional schema files")
     ap.add_argument('-p', '--preparse', help="preparsed schema file")
+    ap.add_argument('-m', '--show-unmatched', help="Print out nodes which don't match any schema", action="store_true")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     args = ap.parse_args()
 
     verbose = args.verbose
+    show_unmatched = args.show_unmatched
 
     if args.preparse:
         sg = schema_group(args.preparse)
