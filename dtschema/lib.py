@@ -255,6 +255,14 @@ def add_select_schema(schema):
 
     schema['select'] = False
 
+def remove_description(schema):
+    if isinstance(schema, list):
+        for s in schema:
+            remove_description(s)
+    if isinstance(schema, dict):
+        schema.pop('description', None)
+        for k,v in schema.items():
+            remove_description(v)
 
 def process_schema(filename):
     try:
@@ -275,7 +283,8 @@ def process_schema(filename):
     schema.pop('examples', None)
     schema.pop('maintainers', None)
     schema.pop('historical', None)
-    schema.pop('description', None)
+
+    remove_description(schema)
 
     if not ('properties' in schema.keys() or 'patternProperties' in schema.keys()):
         return schema
