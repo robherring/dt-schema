@@ -384,7 +384,10 @@ def http_handler(uri):
         for sch in schema_cache:
             if uri in sch['$id']:
                 return sch
-        return load_schema(uri.replace(schema_base_url, ''))
+        if 'meta-schemas' in uri:
+            return load_schema(uri.replace(schema_base_url, ''))
+        return process_schema(uri.replace(schema_base_url, ''))
+
     return yaml.load(jsonschema.compat.urlopen(uri).read().decode('utf-8'))
 
 handlers = {"http": http_handler}
