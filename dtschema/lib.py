@@ -270,6 +270,22 @@ def remove_description(schema):
         for k,v in schema.items():
             remove_description(v)
 
+def fixup_interrupts(schema):
+    # Supporting 'interrupts' implies 'interrupts-extended' is also supported.
+    if not 'interrupts' in schema['properties'].keys():
+        return
+
+    schema['properties']['interrupts-extended'] = { "$ref": "#/properties/interrupts" };
+
+    if not ('required' in schema.keys() and 'interrupts' in schema['required']):
+        return
+
+    # Currently no better way to express either 'interrupts' or 'interrupts-extended'
+    # is required. If this fails validation, the error reporting is the whole
+    # schema file fails validation
+    schema['oneOf'] = [ {'required': ['interrupts']}, {'required': ['interrupts-extended']} ]
+    schema['required'].remove('interrupts')
+
 def process_schema(filename):
     try:
         schema = load_schema(filename)
@@ -300,6 +316,8 @@ def process_schema(filename):
 
     if not '$nodename' in schema['properties'].keys():
         schema['properties']['$nodename'] = True
+
+    fixup_interrupts(schema)
 
     add_select_schema(schema)
     if not 'select' in schema.keys():
