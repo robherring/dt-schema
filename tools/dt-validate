@@ -47,15 +47,21 @@ class schema_group():
                     print(dtschema.format_error(filename, error, verbose=verbose))
         if show_unmatched and not node_matched:
             if 'compatible' in node:
+                if isinstance(node, ruamel.yaml.comments.CommentedBase):
+                    line = node.lc.line
+                    col = node.lc.col
+                else:
+                    line = 0
+                    col = 0
                 print("%s:%i:%i: %s failed to match any schema with compatible(s) %s" %
-                    (filename, node.lc.line, node.lc.col, fullname, node["compatible"]))
+                    (filename, line, col, fullname, node["compatible"]))
             else:
                 print("%s: node \"%s\" failed to match any schema" % (filename, fullname))
 
     def check_subtree(self, tree, subtree, nodename, fullname, filename):
         self.check_node(tree, subtree, nodename, fullname, filename)
         for name,value in subtree.items():
-            if type(value) == ruamel.yaml.comments.CommentedMap:
+            if isinstance(value, dict):
                 self.check_subtree(tree, value, name, fullname + "/" + name, filename)
 
     def check_trees(self, filename, dt):
@@ -74,6 +80,7 @@ if __name__ == "__main__":
     ap.add_argument('-s', '--schema', help="path to additional additional schema files")
     ap.add_argument('-p', '--preparse', help="preparsed schema file")
     ap.add_argument('-m', '--show-unmatched', help="Print out nodes which don't match any schema", action="store_true")
+    ap.add_argument('-n', '--line-number', help="Print line and column numbers (slower)", action="store_true")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     args = ap.parse_args()
 
@@ -91,7 +98,7 @@ if __name__ == "__main__":
         if not os.path.isdir(d):
             continue
         for filename in glob.iglob(d + "/**/*.yaml", recursive=True):
-            testtree = dtschema.load(filename)
+            testtree = dtschema.load(filename, line_number=args.line_number)
             if verbose:
                 print("Check:  " + filename)
             sg.check_trees(filename, testtree)
@@ -99,7 +106,7 @@ if __name__ == "__main__":
     for filename in args.yamldt:
         if not os.path.isfile(filename):
             continue
-        testtree = dtschema.load(filename)
+        testtree = dtschema.load(filename, line_number=args.line_number)
         if verbose:
             print("Check:  " + filename)
         sg.check_trees(filename, testtree)

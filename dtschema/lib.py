@@ -17,10 +17,6 @@ import pkgutil
 schema_base_url = "http://devicetree.org/"
 schema_basedir = os.path.dirname(os.path.abspath(__file__))
 
-yaml = ruamel.yaml.YAML(typ='safe')
-rtyaml = ruamel.yaml.YAML(typ='rt')
-rtyaml.allow_duplicate_keys = True
-
 class tagged_list(list):
 
     tags = {u'!u8': 8, u'!u16': 16, u'!u32': 32, u'!u64': 64}
@@ -42,11 +38,21 @@ class phandle_int(int):
     def constructor(loader, node):
         return phandle_int(loader.construct_yaml_int(node))
 
+rtyaml = ruamel.yaml.YAML(typ='rt')
+rtyaml.allow_duplicate_keys = True
 rtyaml.Constructor.add_constructor(u'!u8', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!u16', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!u32', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!u64', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!phandle', phandle_int.constructor)
+
+yaml = ruamel.yaml.YAML(typ='safe')
+yaml.allow_duplicate_keys = True
+yaml.Constructor.add_constructor(u'!u8', tagged_list.constructor)
+yaml.Constructor.add_constructor(u'!u16', tagged_list.constructor)
+yaml.Constructor.add_constructor(u'!u32', tagged_list.constructor)
+yaml.Constructor.add_constructor(u'!u64', tagged_list.constructor)
+yaml.Constructor.add_constructor(u'!phandle', phandle_int.constructor)
 
 def path_to_obj(tree, path):
     for pc in path:
@@ -340,9 +346,12 @@ def process_schemas(schema_paths, core_schema=True):
 
     return schemas
 
-def load(filename):
+def load(filename, line_number=False):
     with open(filename, 'r', encoding='utf-8') as f:
-        return rtyaml.load(f.read())
+        if line_number:
+            return rtyaml.load(f.read())
+        else:
+            return yaml.load(f.read())
 
 schema_cache = []
 
