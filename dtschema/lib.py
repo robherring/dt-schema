@@ -126,6 +126,23 @@ def _fixup_scalar_to_array(subschema):
         subschema.update({'type': 'array', 'minItems': 1, 'maxItems': 1})
         subschema['items'] = { 'items': tmpsch, 'type': 'array', 'minItems': 1, 'maxItems': 1 }
 
+def _fixup_int_array(subschema):
+
+    if not 'items' in subschema.keys():
+        return
+
+    # A string list or already a matrix?
+    for l in subschema['items']:
+        if isinstance(l, dict) and 'items' in l.keys():
+            return
+        for match in ['const', 'enum', 'minimum', 'maximum']:
+            if _value_is_type(l, match, int):
+                break
+        else:
+            return
+
+    subschema['items'] = [ {'items': subschema['items']} ]
+
 def _fixup_items_size(schema):
     # Make items list fixed size-spec
     if isinstance(schema, list):
@@ -153,6 +170,7 @@ def _fixup_items_size(schema):
 def fixup_vals(schema):
     # Now we should be a the schema level to do actual fixups
 #    print(schema)
+    _fixup_int_array(schema)
     _fixup_string_to_array(schema)
     _fixup_scalar_to_array(schema)
     _fixup_items_size(schema)

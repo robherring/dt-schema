@@ -127,9 +127,8 @@ properties:
     allOf:
       - $ref: /schemas/types.yaml#definitions/uint16-array
       - items:
-          - items:
-              - const: 1
-              - const: 2
+          - const: 1
+          - const: 2
     description: Vendor specific 16-bit integer array property
 
   vendor,int64-prop:
