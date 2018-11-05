@@ -65,8 +65,9 @@ properties:
       - description: 2nd clock
 
   clock-names:
-    minItems: 1
-    maxItems: 2
+    items:
+      - const: "clk1"
+      - const: "clk2"
 
   '#clock-cells':
     const: 1
