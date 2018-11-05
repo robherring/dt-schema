@@ -32,7 +32,7 @@ properties:
         $ref: "/schemas/types.yaml#/definitions/uint32"
         description: test
     required:
-      - vendor,a-property
+      - vendor,required-property
 
 patternProperties:
   '^child-node@.*$':
@@ -47,10 +47,23 @@ patternProperties:
           - $ref: "/schemas/types.yaml#/definitions/uint32"
           - const: 2
         description: test
+      vendor,a-child-property2:
+        allOf:
+          - $ref: "/schemas/types.yaml#/definitions/uint32"
+          - oneOf:
+              # Testing for 'oneOf', otherwise this could just be an enum
+              - const: 2
+              - const: 4
+        description: test
       reg:
         maxItems: 1
       child-property:
         type: boolean
+      vendor,a-child-string-property:
+        description: a child string property
+        allOf:
+          - $ref: "/schemas/types.yaml#/definitions/string"
+          - const: "a-string"
     required:
       - vendor,a-child-property
       - reg
