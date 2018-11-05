@@ -106,7 +106,6 @@ def _fixup_string_to_array(subschema):
         subschema.pop(match, None)
 
     if tmpsch != {}:
-        subschema.update({'type': 'array', 'minItems': 1, 'maxItems': 1})
         subschema['items'] = tmpsch
 
 def _fixup_scalar_to_array(subschema):
@@ -123,8 +122,7 @@ def _fixup_scalar_to_array(subschema):
         subschema.pop(match, None)
 
     if tmpsch != {}:
-        subschema.update({'type': 'array', 'minItems': 1, 'maxItems': 1})
-        subschema['items'] = { 'items': tmpsch, 'type': 'array', 'minItems': 1, 'maxItems': 1 }
+        subschema['items'] = { 'items': tmpsch }
 
 def _fixup_int_array(subschema):
 
@@ -149,8 +147,13 @@ def _fixup_items_size(schema):
         for l in schema:
             _fixup_items_size(l)
     elif isinstance(schema, dict):
-        if 'items' in schema.keys() and isinstance(schema['items'], list):
-            c = len(schema['items'])
+        if 'items' in schema.keys():
+            schema['type'] = 'array'
+
+            if isinstance(schema['items'], list):
+                c = len(schema['items'])
+            else:
+                c = 1
 
             if not 'minItems' in schema.keys():
                 schema['minItems'] = c
