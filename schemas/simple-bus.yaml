@@ -32,6 +32,8 @@ patternProperties:
         items:
           minItems: 2
           maxItems: 4
+        minItems: 1
+        maxItems: 1024
     required:
       - reg
 
