@@ -31,7 +31,12 @@ definitions:
     dependencies:
       interrupt-controller: ['#interrupt-cells']
       interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
-      interrupt-names: [ interrupts ]
+      interrupt-names:
+        oneOf:
+          - required:
+              - interrupts
+          - required:
+              - interrupts-extended
       "#interrupt-cells":
         oneOf:
           - required:
