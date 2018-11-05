@@ -26,6 +26,8 @@
     vendor,int64-prop: [ !u64 [0x100000000] ]
     vendor,phandle-prop: [[!phandle 1]]
     vendor,phandle-array-prop: [[!phandle 1], [!phandle 2]]
+    vendor,string-prop: [ foo ]
+    vendor,string-list-prop: [ foobar, foobaz ]
 
   good-test2:
     compatible: [ "vendor,soc1-ip" ]
