@@ -94,6 +94,7 @@ def _value_is_type(subschema, key, type):
 def _fixup_string_to_array(subschema):
     tmpsch = {}
 
+    # nothing to do if we already have an array
     if 'items' in subschema.keys():
         return
 
@@ -149,41 +150,42 @@ def _fixup_items_size(schema):
         for prop,val in schema.items():
             _fixup_items_size(val)
 
+def fixup_vals(schema):
+    # Now we should be a the schema level to do actual fixups
+#    print(schema)
+    _fixup_string_to_array(schema)
+    _fixup_scalar_to_array(schema)
+    _fixup_items_size(schema)
+#    print(schema)
+
+def walk_conditionals(schema):
+    # Recurse until we don't hit a conditional
+    # Note we expect to encounter conditionals first.
+    # For example, a conditional below 'items' is not supported
+    for cond in ['allOf', 'oneOf', 'anyOf']:
+        if cond in schema.keys():
+            for l in schema[cond]:
+                walk_conditionals(l)
+    else:
+        fixup_vals(schema)
+
+def walk_properties(props):
+    for prop in props:
+        if not isinstance(props[prop], dict):
+            continue
+
+        walk_conditionals(props[prop])
 
 def fixup_schema(schema):
     if not isinstance(schema, dict):
         return
-    if 'properties' in schema.keys():
-        fixup_props(schema[ 'properties' ])
-    if 'patternProperties' in schema.keys():
-        fixup_props(schema[ 'patternProperties' ])
-
-def fixup_vals(subschema):
-    _fixup_string_to_array(subschema)
-    _fixup_scalar_to_array(subschema)
-
-    # Desend into tree
-    fixup_schema(subschema)
-
-def fixup_props(props):
-    for prop,val in props.items():
-        if isinstance(val, dict) and not 'items' in val.keys() and not 'contains' in val.keys():
-            fixup_props(val)
-    # Convert a single value to a matrix
-    if 'allOf' in props.keys():
-        for l in props['allOf']:
-            fixup_props(l)
-    if 'oneOf' in props.keys():
-        for l in props['oneOf']:
-            fixup_props(l)
-
-    fixup_vals(props)
-
-    # Make items list fixed size-spec
-    _fixup_items_size(props)
-
-
-    #ruamel.yaml.dump(props, sys.stdout, Dumper=ruamel.yaml.RoundTripDumper)
+    for k,v in schema.items():
+        if not k in ['properties', 'patternProperties']:
+            continue
+        walk_properties(v)
+        for prop in v:
+            # Recurse to check for {properties,patternProperties} in each prop
+            fixup_schema(v[prop])
 
 def item_generator(json_input, lookup_key):
     if isinstance(json_input, dict):
