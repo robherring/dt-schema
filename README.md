@@ -105,21 +105,24 @@ fit for use.
 The project and its dependencies can be installed with pip directly from git:
 
 ```
-pip3 install git+https://github.com/robherring/yaml-bindings.git@master --process-dependency-links
+pip3 install git+https://github.com/robherring/yaml-bindings.git@master
 ```
 
 All executables will be installed. Ensure ~/.local/bin is in the PATH.
 
 
-For development, clone the git repository manually and run setup.py script:
+For development, clone the git repository manually and run pip on local tree::
 
 ```
 git clone https://github.com/robherring/yaml-bindings.git
 cd yaml-bindings
-./setup.py develop
+pip3 install -e .
 ```
 
 ## Dependencies
+Note: The above installation instructions handle all of the dependencies
+automatically.
+
 This code depends on Python 3 with the ruamel.yaml, rfc3987, and jsonschema
 libraries.
 

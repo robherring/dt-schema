@@ -41,12 +41,8 @@ setuptools.setup(
 
     install_requires=[
         'ruamel.yaml>0.15.69',
-        'jsonschema>2.6.0',
+        'jsonschema==3.0.0a3',
         'rfc3987',
-    ],
-
-    dependency_links=[
-        'git+https://github.com/Julian/jsonschema.git#egg=jsonschema-2.6.1',
     ],
 
     classifiers=(
