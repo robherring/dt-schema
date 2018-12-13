@@ -461,6 +461,28 @@ class DTValidator(DTVal):
             raise jsonschema.SchemaError.create_from(error)
         fixup_schema(schema)
 
+    @classmethod
+    def _check_schema_refs(self, schema):
+        if isinstance(schema, dict) and '$ref' in schema:
+            self.resolver.resolve(schema['$ref'])
+        elif isinstance(schema, dict):
+            for k, v in schema.items():
+                self._check_schema_refs(v)
+        elif isinstance(schema, (list, tuple)):
+            for i in range(len(schema)):
+                self._check_schema_refs(schema[i])
+
+    @classmethod
+    def check_schema_refs(self, err_msg, schema):
+        scope = self.ID_OF(schema)
+        if scope:
+            self.resolver.push_scope(scope)
+
+        try:
+            self._check_schema_refs(schema)
+        except jsonschema.RefResolutionError as exc:
+            print(err_msg, exc, file=sys.stderr)
+
 
 def format_error(filename, error, verbose=False):
     src = os.path.abspath(filename) + ':'

@@ -34,6 +34,8 @@ def check_doc(filename):
         print(dtschema.format_error(filename, error, verbose=args.verbose))
         ret = 1
 
+    dtschema.DTValidator.check_schema_refs(filename + ":", testtree)
+
     return ret
 
 if __name__ == "__main__":
