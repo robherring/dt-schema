@@ -1,0 +1,60 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+# Copyright 2018 Arm Ltd.
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/base.yaml#"
+$schema: "http://json-schema.org/draft-06/schema#"
+description: "Metaschema for devicetree binding documentation"
+
+allOf: [ { $ref: "http://json-schema.org/draft-06/schema#" } ]
+
+properties:
+  # listing all properties here to narrow the scope of what is allowed in
+  # devicetree schema files. This list can be relaxed in the future as we
+  # become more comfortable with the validation vocabulary.
+  # Also, being explicit about what properties are allowed helps to catch
+  # misspelled or unsupported tests.
+  $id:
+    pattern: 'http://devicetree.org/(test/)?schemas/.*\.yaml#'
+  $schema:
+    enum:
+      - "http://devicetree.org/meta-schemas/core.yaml#"
+      - "http://devicetree.org/meta-schemas/base.yaml#"
+  $ref: true
+  title: true
+  description: true
+  examples: true
+  required: true
+  allOf: true
+  oneOf: true
+  definitions: true
+  additionalProperties: true
+  dependencies: true
+  historical: true
+  patternProperties: true
+  properties: true
+
+  maintainers:
+    type: array
+    items:
+      type: string
+      format: email
+
+  select:
+    allOf:
+      - $ref: "http://json-schema.org/draft-06/schema#"
+      - oneOf:
+          - type: object
+            properties:
+              properties: true
+              required: true
+          - type: boolean
+
+required:
+  - $id
+  - $schema
+  - title
+  - maintainers
+
+additionalProperties: false
