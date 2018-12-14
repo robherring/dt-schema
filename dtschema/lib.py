@@ -436,7 +436,6 @@ class DTValidator(DTVal):
     files can be validated with the .check_schema() method, and .validate()
     will check the data in a devicetree file.
     '''
-    META_SCHEMA = load_schema('meta-schemas/core.yaml')
     resolver = jsonschema.RefResolver('', None, handlers=handlers)
     format_checker = jsonschema.FormatChecker()
 
@@ -446,7 +445,8 @@ class DTValidator(DTVal):
 
     @classmethod
     def iter_schema_errors(cls, schema):
-        for error in cls(cls.META_SCHEMA).iter_errors(schema):
+        meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
+        for error in cls(meta_schema).iter_errors(schema):
             error.linecol = get_line_col(schema, error.path)
             yield error
 
@@ -457,7 +457,8 @@ class DTValidator(DTVal):
 
     @classmethod
     def check_schema(cls, schema):
-        for error in cls(cls.META_SCHEMA).iter_errors(schema):
+        meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
+        for error in cls(meta_schema).iter_errors(schema):
             raise jsonschema.SchemaError.create_from(error)
         fixup_schema(schema)
 
