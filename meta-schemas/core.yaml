@@ -103,7 +103,15 @@ properties:
   properties:
     $ref: "#definitions/all-properties"
 
-  select: { $ref: "http://json-schema.org/draft-06/schema#" }
+  select:
+    allOf:
+      - $ref: "http://json-schema.org/draft-06/schema#"
+      - oneOf:
+          - type: object
+            properties:
+              properties: true
+              required: true
+          - type: boolean
 
 required:
   - $id
