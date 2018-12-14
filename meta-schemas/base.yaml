@@ -21,17 +21,24 @@ properties:
     enum:
       - "http://devicetree.org/meta-schemas/core.yaml#"
       - "http://devicetree.org/meta-schemas/base.yaml#"
-  $ref: true
-  title: true
+  title:
+    maxLength: 100
   description: true
-  examples: true
+  examples:
+    type: array
+    items:
+      type: string
   required: true
-  allOf: true
+  allOf:
+    items:
+      propertyNames:
+        enum:
+          - $ref
   oneOf: true
   definitions: true
-  additionalProperties: true
+  additionalProperties:
+    type: boolean
   dependencies: true
-  historical: true
   patternProperties: true
   properties: true
 
