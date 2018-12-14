@@ -28,7 +28,7 @@ properties:
           - const: "example,soc2"
 
 examples:
-  - example: |
+  - |
       /{
         compatible = "example,board-with-soc2", "example,soc2";
         model = "Example EVM";

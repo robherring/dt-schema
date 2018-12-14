@@ -156,7 +156,7 @@ required:
   - compatible
 
 examples:
-  - example-name: |
+  - |
       /dts-v1/;
       /{
               model = "ARM Juno development board (r0)";
