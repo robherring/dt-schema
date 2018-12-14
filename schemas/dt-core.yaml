@@ -14,67 +14,48 @@ maintainers:
 # always select the core schema
 select: true
 
-definitions:
-  std-properties:
-    type: object
-    properties:
-      $nodename:
-        $ref: "types.yaml#/definitions/string"
-      compatible:
-        $ref: "types.yaml#/definitions/string-array"
-      dma-coherent:
-        $ref: "types.yaml#/definitions/flag"
-      dma-ranges:
-        oneOf:
-          - $ref: "types.yaml#/definitions/flag"
-          - $ref: "types.yaml#/definitions/uint32-matrix"
-      ranges:
-        oneOf:
-          - $ref: "types.yaml#/definitions/flag"
-          - $ref: "types.yaml#/definitions/uint32-matrix"
-      reg:
-        $ref: "types.yaml#/definitions/uint32-matrix"
-      status:
-        allOf:
-          - $ref: "types.yaml#/definitions/string"
-          - items:
-              - enum: [ okay, disabled ]
-    patternProperties:
-      "^#.*-cells$":
-        allOf:
-          - $ref: "types.yaml#/definitions/uint32"
-          - items:
-              - items:
-                  maximum: 8
-
-  propdata:
-    type: [string, integer, array, boolean, 'null']
-    items:
-      $ref: "#/definitions/propdata"
-
-  node:
+properties:
+  $nodename:
+    $ref: "types.yaml#/definitions/string"
+  compatible:
+    $ref: "types.yaml#/definitions/string-array"
+  dma-coherent:
+    $ref: "types.yaml#/definitions/flag"
+  dma-ranges:
+    oneOf:
+      - $ref: "types.yaml#/definitions/flag"
+      - $ref: "types.yaml#/definitions/uint32-matrix"
+  ranges:
+    oneOf:
+      - $ref: "types.yaml#/definitions/flag"
+      - $ref: "types.yaml#/definitions/uint32-matrix"
+  reg:
+    $ref: "types.yaml#/definitions/uint32-matrix"
+  status:
     allOf:
-      - $ref: "#/definitions/std-properties"
-      - type: object
-        additionalProperties: false
-        patternProperties:
-          # property and node namespace overlaps. Catch both here
-          "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$":
-            oneOf:
-              - type: object
-              - $ref: "#/definitions/propdata"
+      - $ref: "types.yaml#/definitions/string"
+      - items:
+          - enum: [ okay, disabled ]
+patternProperties:
+  "^#.*-cells$":
+    allOf:
+      - $ref: "types.yaml#/definitions/uint32"
+      - items:
+          - items:
+              maximum: 8
 
-          # Anything with a '@' is definitely a node
-          "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$":
-            type: object
-            $ref: "#/definitions/node"
+  # property and node namespace overlaps. Catch both here
+  "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$":
+    type: [object, array, boolean, 'null']
 
-          # Anything with a '#' is definitely a property
-          "^#[a-zA-Z0-9,+\\-._]{0,63}$":
-            $ref: "#/definitions/propdata"
+  # Anything with a '@' is definitely a node
+  "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$":
+    type: object
 
-          "^\\$nodename$": { }
+  # Anything with a '#' is single cell number
+  "^#[a-zA-Z0-9,+\\-._]{0,63}$":
+    $ref: "types.yaml#/definitions/uint32"
 
-$ref: "#/definitions/node"
+additionalProperties: false
 
 ...
