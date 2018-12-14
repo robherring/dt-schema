@@ -77,3 +77,5 @@ properties:
   properties:
     $ref: "#definitions/all-properties"
 
+required:
+  - properties
