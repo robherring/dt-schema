@@ -37,7 +37,7 @@ class TestDTMetaSchema(unittest.TestCase):
 
     def test_required_property_missing(self):
         for key in self.schema.keys():
-            if key in ['properties', 'required', 'description', 'examples']:
+            if key in ['$schema', 'properties', 'required', 'description', 'examples']:
                 continue
             with self.subTest(k=key):
                 schema_tmp = self.schema.copy()
@@ -50,7 +50,7 @@ class TestDTMetaSchema(unittest.TestCase):
 
     def test_bad_properties(self):
         for key in self.bad_schema.keys():
-            if key == 'properties':
+            if key in ['$schema', 'properties']:
                 continue
 
             with self.subTest(k=key):
