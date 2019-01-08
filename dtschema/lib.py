@@ -325,6 +325,9 @@ def fixup_interrupts(schema):
     if not 'interrupts' in schema['properties'].keys():
         return
 
+    # Any node with 'interrupts' can have 'interrupt-parent'
+    schema['properties']['interrupt-parent'] = True
+
     schema['properties']['interrupts-extended'] = { "$ref": "#/properties/interrupts" };
 
     if not ('required' in schema.keys() and 'interrupts' in schema['required']):
@@ -335,6 +338,26 @@ def fixup_interrupts(schema):
     # schema file fails validation
     schema['oneOf'] = [ {'required': ['interrupts']}, {'required': ['interrupts-extended']} ]
     schema['required'].remove('interrupts')
+
+def fixup_node_props(schema):
+    if not ('properties' in schema.keys() or 'patternProperties' in schema.keys()):
+        return
+
+    if 'properties' in schema.keys():
+        for k,v in schema['properties'].items():
+            if isinstance(v, dict) and 'type' in v.keys() and v['type'] == 'object':
+                fixup_node_props(v)
+
+    if 'patternProperties' in schema.keys():
+        for k,v in schema['patternProperties'].items():
+            if isinstance(v, dict) and 'type' in v.keys() and v['type'] == 'object':
+                fixup_node_props(v)
+
+    if not 'properties' in schema.keys():
+        schema['properties'] = {}
+
+    schema['properties']['phandle'] = True
+    schema['properties']['status'] = True
 
 def process_schema(filename):
     try:
@@ -366,6 +389,9 @@ def process_schema(filename):
 
     if not '$nodename' in schema['properties'].keys():
         schema['properties']['$nodename'] = True
+
+    # Add any implicit properties
+    fixup_node_props(schema)
 
     fixup_interrupts(schema)
 
