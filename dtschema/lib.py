@@ -8,6 +8,7 @@ import glob
 import ruamel.yaml
 import re
 import pprint
+import copy
 
 from ruamel.yaml.comments import CommentedMap
 
@@ -108,6 +109,31 @@ def _fixup_string_to_array(subschema):
     if tmpsch != {}:
         subschema['items'] = tmpsch
 
+def _fixup_int_array_to_matrix(subschema):
+    is_int = False
+
+    if not 'items' in subschema.keys():
+        return
+
+    if (not isinstance(subschema['items'],dict)) or 'items' in subschema['items'].keys():
+        return
+
+    for match in ['const', 'enum', 'minimum', 'maximum']:
+        if not _value_is_type(subschema['items'], match, int):
+            continue
+
+        is_int = True
+
+    if not is_int:
+        return
+
+    subschema['items'] = copy.deepcopy(subschema)
+    for k in list(subschema.keys()):
+        if k == 'items':
+            continue
+        subschema.pop(k)
+
+
 def _fixup_scalar_to_array(subschema):
     tmpsch = {}
 
@@ -173,6 +199,7 @@ def _fixup_items_size(schema):
 def fixup_vals(schema):
     # Now we should be a the schema level to do actual fixups
 #    print(schema)
+    _fixup_int_array_to_matrix(schema)
     _fixup_int_array(schema)
     _fixup_string_to_array(schema)
     _fixup_scalar_to_array(schema)
