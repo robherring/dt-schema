@@ -4,8 +4,7 @@
 
 $id: "http://devicetree.org/schemas/interrupts.yaml#"
 $schema: "http://devicetree.org/meta-schemas/base.yaml#"
-title: Interrupt devicetree node schema
-description: "Schema for interrupt devicetree bindings"
+title: Interrupt consumer devicetree node schema
 maintainers:
   - Grant Likely <grant.likely@arm.com>
   - Rob Herring <robh@kernel.org>
@@ -14,9 +13,6 @@ maintainers:
 select: true
 
 properties:
-  "#interrupt-cells": true
-  interrupt-controller:
-    $ref: "types.yaml#/definitions/flag"
   interrupt-parent:
     $ref: "types.yaml#/definitions/phandle"
   interrupts:
@@ -26,17 +22,9 @@ properties:
   interrupts-extended:
     $ref: "types.yaml#/definitions/phandle-array"
 dependencies:
-  interrupt-controller: ['#interrupt-cells']
-  interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
   interrupt-names:
     oneOf:
       - required:
           - interrupts
       - required:
           - interrupts-extended
-  "#interrupt-cells":
-    oneOf:
-      - required:
-          - interrupt-controller
-      - required:
-          - interrupt-map

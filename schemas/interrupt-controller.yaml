@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+# Copyright 2018 Arm Ltd.
+$id: "http://devicetree.org/schemas/interrupt-controller.yaml#"
+$schema: "http://devicetree.org/meta-schemas/base.yaml#"
+title: Interrupt Controller devicetree node schema
+
+maintainers:
+  - Grant Likely <grant.likely@arm.com>
+  - Rob Herring <robh@kernel.org>
+
+properties:
+  $nodename:
+    pattern: "^interrupt-controller(@[0-9a-f,]+)*$"
+
+  "#interrupt-cells": true
+
+  "#address-cells": true
+
+  interrupt-controller:
+    $ref: "types.yaml#/definitions/flag"
+
+  interrupt-map:
+    true # FIXME
+
+  interrupt-map-mask:
+    $ref: "types.yaml#/definitions/uint32-array"
+
+dependencies:
+  interrupt-controller: ['#interrupt-cells']
+  interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
+  "#interrupt-cells":
+    oneOf:
+      - required:
+          - interrupt-controller
+      - required:
+          - interrupt-map
+
+...
