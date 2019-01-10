@@ -18,8 +18,10 @@ def yaml_format(file, in_place):
     # Setup formatting settings
     yml.indent(mapping=2, sequence=4, offset=2)
     yml.explicit_start=True
+    yml.explicit_end=True
     yml.preserve_quotes=True
     yml.version=(1,2)
+    yml.width=70
 
     rawfile = open(file, encoding='utf-8').read()
     top_comment = rawfile.partition('%YAML')[0]
@@ -35,12 +37,16 @@ def yaml_format(file, in_place):
 
     # Check that keys are in a defined order
     key_order = [ "$id", "$schema", "title", "maintainers",
-        "description", "properties", "required", "examples" ];
-    i = 0
-    for k in yamldata:
-        if k != key_order[i]:
-            eprint(file, "Expected " + key_order[i] + " for key {0}, found ".format(i) + k)
-        i += 1
+        "description", "allOf", "properties", "required", "patternProperties" "examples" ];
+    last_idx = 0
+    yaml_keys = list(yamldata.keys())
+    for k in key_order:
+        try:
+            if yaml_keys.index(k) < last_idx:
+                eprint(file, "Expected " + key_order[i] + " for key {0}, found ".format(i) + k)
+            last_idx = yaml_keys.index(k)
+        except:
+            continue
 
     if in_place:
         f = open(file, 'w', encoding='utf-8')
