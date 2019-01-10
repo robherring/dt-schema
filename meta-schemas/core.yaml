@@ -50,6 +50,7 @@ definitions:
           enum:
             - $ref
             - additionalItems
+            - additionalProperties
             - allOf
             - const
             - contains
