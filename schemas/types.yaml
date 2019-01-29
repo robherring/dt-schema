@@ -59,6 +59,39 @@ definitions:
         $ref: "#/definitions/uint8-item"
       minItems: 1
       maxItems: 1
+
+  int8-item:
+    type: integer
+    minimum: -128
+    maximum: 127
+  int8-matrix:
+    type: array
+    typeSize: 8
+    items:
+      type: array
+      items:
+        $ref: "#/definitions/int8-item"
+  int8-array:
+    type: array
+    typeSize: 8
+    minItems: 1
+    maxItems: 1
+    items:
+      type: array
+      items:
+        $ref: "#/definitions/int8-item"
+  int8:
+    type: array
+    typeSize: 8
+    minItems: 1
+    maxItems: 1
+    items:
+      type: array
+      items:
+        $ref: "#/definitions/int8-item"
+      minItems: 1
+      maxItems: 1
+
   uint16-item:
     type: integer
     minimum: 0
@@ -90,6 +123,39 @@ definitions:
         $ref: "#/definitions/uint16-item"
       minItems: 1
       maxItems: 1
+
+  int16-item:
+    type: integer
+    minimum: -8192
+    maximum: 8191
+  int16-matrix:
+    type: array
+    typeSize: 16
+    items:
+      type: array
+      items:
+        $ref: "#/definitions/int16-item"
+  int16-array:
+    type: array
+    typeSize: 16
+    minItems: 1
+    maxItems: 1
+    items:
+      type: array
+      items:
+        $ref: "#/definitions/int16-item"
+  int16:
+    type: array
+    typeSize: 16
+    minItems: 1
+    maxItems: 1
+    items:
+      type: array
+      items:
+        $ref: "#/definitions/int16-item"
+      minItems: 1
+      maxItems: 1
+
   cell:
     type: integer
     minimum: 0
@@ -132,6 +198,50 @@ definitions:
         $ref: "#/definitions/cell"
       minItems: 1
       maxItems: 1
+
+  int32-item:
+    type: integer
+    minimum: -2147483648
+    maximum: 2147483647
+
+  int32-matrix:
+    type: array
+    minItems: 1
+    items:
+      type: array
+      items:
+        $ref: "#/definitions/int32-item"
+  int32-array:
+    # For single cell arrays, we need to support encodings as either:
+    # prop = <0x1234 0x5678>;
+    # or
+    # prop = <0x1234>, <0x5678>;
+    anyOf:
+      - type: array
+        minItems: 1
+        maxItems: 1
+        items:
+          type: array
+          items:
+            $ref: "#/definitions/int32-item"
+      - type: array
+        items:
+          type: array
+          minItems: 1
+          maxItems: 1
+          items:
+            $ref: "#/definitions/int32-item"
+  int32:
+    type: array
+    minItems: 1
+    maxItems: 1
+    items:
+      type: array
+      items:
+        $ref: "#/definitions/int32-item"
+      minItems: 1
+      maxItems: 1
+
   uint64:
     oneOf:
       - type: array
