@@ -32,6 +32,13 @@ definitions:
     type: integer
     minimum: 0
     maximum: 0xff
+  uint8-matrix:
+    type: array
+    typeSize: 8
+    items:
+      type: array
+      items:
+        $ref: "#/definitions/uint8-item"
   uint8-array:
     type: array
     typeSize: 8
@@ -56,6 +63,13 @@ definitions:
     type: integer
     minimum: 0
     maximum: 0xffff
+  uint16-matrix:
+    type: array
+    typeSize: 16
+    items:
+      type: array
+      items:
+        $ref: "#/definitions/uint16-item"
   uint16-array:
     type: array
     typeSize: 16
