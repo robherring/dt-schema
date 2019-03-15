@@ -39,8 +39,11 @@ definitions:
 
       '^.*$':
         properties:
+          type: true
           properties:
             $ref: "#/definitions/all-properties"
+        dependencies:
+          properties: [ type ]
         propertyNames:
           enum:
             - $ref
