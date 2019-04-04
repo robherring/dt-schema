@@ -402,6 +402,22 @@ def process_schema(filename):
     schema["$filename"] = filename
     return schema
 
+def add_schema_by_path(schemas, ids, filename):
+    abspath = os.path.abspath(filename)
+
+    sch = process_schema(abspath)
+    if not sch:
+        return 0
+
+    schemas.append(sch)
+    if ids.count(sch['$id']):
+        print("%s: duplicate '$id' value '%s'" % (abspath, sch['$id']),
+              file = sys.stderr)
+
+    ids.append(sch['$id'])
+
+    return 1
+
 def process_schemas(schema_paths, core_schema=True):
     ids = []
     schemas = []
@@ -409,14 +425,11 @@ def process_schemas(schema_paths, core_schema=True):
     for filename in schema_paths:
         if not os.path.isfile(filename):
             continue
-        sch = process_schema(os.path.abspath(filename))
-        if sch:
-            schemas.append(sch)
-            if ids.count(sch['$id']):
-                print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
-            ids.append(sch['$id'])
-        else:
-            print("warning: no schema found in file: %s" % filename, file=sys.stderr)
+
+        cnt = add_schema_by_path(schemas, ids, filename)
+        if cnt == 0:
+            print("warning: no schema found in file: %s" % filename)
+
 
     if core_schema:
         schema_paths.append(os.path.join(schema_basedir, 'schemas/'))
@@ -426,14 +439,9 @@ def process_schemas(schema_paths, core_schema=True):
         if not os.path.isdir(path):
             continue
 
-        for filename in glob.iglob(os.path.join(os.path.abspath(path), "**/*.yaml"), recursive=True):
-            sch = process_schema(os.path.abspath(filename))
-            if sch:
-                count += 1
-                schemas.append(sch)
-                if ids.count(sch['$id']):
-                    print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
-                ids.append(sch['$id'])
+        for filename in glob.iglob(os.path.join(os.path.abspath(path), "**/*.yaml"),
+                                   recursive=True):
+            count = add_schema_by_path(schemas, ids, filename)
 
         if count == 0:
             print("warning: no schema found in path: %s" % path, file=sys.stderr)
