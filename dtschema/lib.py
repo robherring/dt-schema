@@ -364,7 +364,7 @@ def process_schema(filename):
         schema = load_schema(filename)
     except ruamel.yaml.error.YAMLError as exc:
         print(filename + ": ignoring, error parsing file")
-        return
+        return ()
 
     # Check that the validation schema is valid
     try:
@@ -372,7 +372,7 @@ def process_schema(filename):
     except jsonschema.SchemaError as exc:
         print(filename + ": ignoring, error in schema '%s'" % exc.path[-1])
         #print(exc.message)
-        return
+        return ()
 
     # Remove parts not necessary for validation
     schema.pop('examples', None)
@@ -382,7 +382,7 @@ def process_schema(filename):
     remove_description(schema)
 
     if not ('properties' in schema.keys() or 'patternProperties' in schema.keys()):
-        return schema
+        return (schema, )
 
     if not 'properties' in schema.keys():
         schema['properties'] = {}
@@ -397,24 +397,26 @@ def process_schema(filename):
 
     add_select_schema(schema)
     if not 'select' in schema.keys():
-        return
+        return ()
 
     schema["$filename"] = filename
-    return schema
+
+    return (schema, )
 
 def add_schema_by_path(schemas, ids, filename):
     abspath = os.path.abspath(filename)
 
     sch = process_schema(abspath)
-    if not sch:
+    if len(sch) == 0:
         return 0
 
-    schemas.append(sch)
-    if ids.count(sch['$id']):
-        print("%s: duplicate '$id' value '%s'" % (abspath, sch['$id']),
+    schemas.extend(sch)
+
+    if ids.count(sch[0]['$id']):
+        print("%s: duplicate '$id' value '%s'" % (abspath, sch[0]['$id']),
               file = sys.stderr)
 
-    ids.append(sch['$id'])
+    ids.append(sch[0]['$id'])
 
     return 1
 
