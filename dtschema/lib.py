@@ -359,6 +359,36 @@ def fixup_node_props(schema):
     schema['properties']['phandle'] = True
     schema['properties']['status'] = True
 
+def add_status_disabled(subschema):
+
+    if 'properties' not in subschema:
+        subschema['properties'] = dict()
+
+    if 'status' not in subschema['properties']:
+        subschema['properties']['status'] = dict()
+
+    if 'contains' not in subschema['properties']['status']:
+        subschema['properties']['status']['contains'] = dict()
+
+    subschema['properties']['status']['contains']['const'] = 'disabled'
+
+def fixup_schema_disabled(schema):
+
+    if schema['select'] is True or schema['select'] is False:
+        return (schema, )
+
+    disabled = copy.deepcopy(schema)
+
+    if 'not' not in schema['select']:
+        schema['select']['not'] = dict()
+    add_status_disabled(schema['select']['not'])
+
+    add_status_disabled(disabled['select'])
+    if 'required' in disabled:
+        del disabled['required']
+
+    return (schema, disabled)
+
 def process_schema(filename):
     try:
         schema = load_schema(filename)
@@ -401,7 +431,7 @@ def process_schema(filename):
 
     schema["$filename"] = filename
 
-    return (schema, )
+    return fixup_schema_disabled(schema)
 
 def add_schema_by_path(schemas, ids, filename):
     abspath = os.path.abspath(filename)
