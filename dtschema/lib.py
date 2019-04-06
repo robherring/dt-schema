@@ -359,6 +359,22 @@ def fixup_node_props(schema):
     schema['properties']['phandle'] = True
     schema['properties']['status'] = True
 
+    keys = list()
+    if 'properties' in schema:
+        keys.extend(schema['properties'])
+
+    if 'patternProperties' in schema:
+        keys.extend(schema['patternProperties'])
+
+    for key in keys:
+        if "pinctrl" in key:
+            break
+
+    else:
+        schema['properties']['pinctrl-names'] = True
+        schema.setdefault('patternProperties', dict())
+        schema['patternProperties']['pinctrl-[0-9]+'] = True
+
 def process_schema(filename):
     try:
         schema = load_schema(filename)
