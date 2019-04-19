@@ -495,13 +495,13 @@ def phandle(validator, phandle, instance, schema):
     if not isinstance(instance, phandle_int):
         yield jsonschema.ValidationError("missing phandle tag in %r" % instance)
 
-DTVal = jsonschema.validators.extend(jsonschema.Draft6Validator, {'typeSize': typeSize, 'phandle': phandle})
+DTVal = jsonschema.validators.extend(jsonschema.Draft7Validator, {'typeSize': typeSize, 'phandle': phandle})
 
 class DTValidator(DTVal):
     '''Custom Validator for Devicetree Schemas
 
-    Overrides the Draft6 metaschema with the devicetree metaschema. This
-    validator is used in exactly the same way as the Draft6Validator. Schema
+    Overrides the Draft7 metaschema with the devicetree metaschema. This
+    validator is used in exactly the same way as the Draft7Validator. Schema
     files can be validated with the .check_schema() method, and .validate()
     will check the data in a devicetree file.
     '''
@@ -509,7 +509,7 @@ class DTValidator(DTVal):
     format_checker = jsonschema.FormatChecker()
 
     def __init__(self, schema, types=()):
-        jsonschema.Draft6Validator.__init__(self, schema, types, resolver=self.resolver,
+        jsonschema.Draft7Validator.__init__(self, schema, types, resolver=self.resolver,
                                             format_checker=self.format_checker)
 
     @classmethod
@@ -520,7 +520,7 @@ class DTValidator(DTVal):
             yield error
 
     def iter_errors(self, instance, _schema=None):
-        for error in jsonschema.Draft6Validator.iter_errors(self, instance, _schema):
+        for error in jsonschema.Draft7Validator.iter_errors(self, instance, _schema):
             error.linecol = get_line_col(instance, error.path)
             yield error
 

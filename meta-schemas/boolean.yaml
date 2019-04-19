@@ -4,7 +4,7 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/boolean.yaml#"
-$schema: "http://json-schema.org/draft-06/schema#"
+$schema: "http://json-schema.org/draft-07/schema#"
 
 properties:
   type:
