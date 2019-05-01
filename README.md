@@ -1,10 +1,10 @@
-# Prototype tooling for devicetree validation using YAML and jsonschema
+# Tooling for devicetree validation using YAML and jsonschema
 
 This repository contains test code for devicetree schema validation using the
 [json-schema](http://json-schema.org/documentation.html) vocabulary. Schema
 files are written in YAML (a superset of JSON), and operate on the YAML
 encoding of Devicetree data. Devicetree data must be transcoded from DTS to
-YAML before being used by this tool
+YAML before being used by this tool.
 
 ## Data Model
 
@@ -98,14 +98,11 @@ This tool takes user provided YAML Devicetree(s) and either a schema directory
 or pre-processed schema file and validates the YAML Devicetree against the schema.
 
 
-Please note: this is prototype code and is in no way officially supported or
-fit for use.
-
 ## Installing
 The project and its dependencies can be installed with pip directly from git:
 
 ```
-pip3 install git+https://github.com/robherring/yaml-bindings.git@master
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master
 ```
 
 All executables will be installed. Ensure ~/.local/bin is in the PATH.
@@ -114,8 +111,8 @@ All executables will be installed. Ensure ~/.local/bin is in the PATH.
 For development, clone the git repository manually and run pip on local tree::
 
 ```
-git clone https://github.com/robherring/yaml-bindings.git
-cd yaml-bindings
+git clone https://github.com/devicetree-org/dt-schema.git
+cd dt-schema
 pip3 install -e .
 ```
 
@@ -136,7 +133,7 @@ pip3 install rfc3987
 
 
 ### jsonschema
-This code depends on the current 'master' branch of the
+This code depends on at least version 3.0.0 of the
 [Python jsonschema](https://github.com/Julian/jsonschema/tree/master)
 library for Draft 6 support.
 
