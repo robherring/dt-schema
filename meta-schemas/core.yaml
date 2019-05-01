@@ -58,8 +58,10 @@ definitions:
             - default
             - dependencies
             - description
+            - else
             - enum
             - items
+            - if
             - minItems
             - minimum
             - maxItems
@@ -70,6 +72,7 @@ definitions:
             - patternProperties
             - properties
             - required
+            - then
             - type
             - typeSize
 

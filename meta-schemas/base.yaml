@@ -34,6 +34,9 @@ properties:
       propertyNames:
         enum:
           - $ref
+          - if
+          - then
+          - else
   oneOf: true
   definitions: true
   additionalProperties:
@@ -41,6 +44,9 @@ properties:
   dependencies: true
   patternProperties: true
   properties: true
+  if: true
+  then: true
+  else: true
 
   maintainers:
     type: array

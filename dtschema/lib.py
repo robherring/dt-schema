@@ -228,7 +228,7 @@ def fixup_schema(schema):
     if not isinstance(schema, dict):
         return
     for k,v in schema.items():
-        if not k in ['properties', 'patternProperties']:
+        if not k in ['properties', 'patternProperties', 'if', 'then', 'else']:
             continue
         walk_properties(v)
         for prop in v:
