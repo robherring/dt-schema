@@ -1,0 +1,72 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+# Copyright 2018 Arm Ltd.
+- model: [ "none" ]
+  compatible: [ "none" ]
+
+  "#address-cells": [[1]]
+  "#size-cells": [[1]]
+
+  bad-child-node-missing-req-prop:
+    compatible: [ "vendor,node-with-child-node" ]
+
+    child-node-fixed-name:
+      vendor,optional-property: [[1234]]
+
+  bad-child-node-property-value:
+    compatible: [ "vendor,node-with-child-node" ]
+
+    child-node-fixed-name:
+      vendor,required-property: [ "a string" ]
+
+  bad-parent-node-property:
+    compatible: [ "vendor,node-with-child-node" ]
+    foo: [[0, 1]]
+
+    child-node-fixed-name:
+      vendor,required-property: [[1234]]
+
+  bad-child-node-reg-size:
+    compatible: [ "vendor,node-with-child-node" ]
+
+    child-node-fixed-name:
+      vendor,required-property: [[1234]]
+
+    child-node@0:
+      compatible: [ "a-child-compatible" ]
+      reg: [[0], [1]]
+      vendor,a-child-property: [ !u32 [2]]
+
+  bad-child-node-u32-property:
+    compatible: [ "vendor,node-with-child-node" ]
+
+    child-node-fixed-name:
+      vendor,required-property: [[1234]]
+
+    child-node@0:
+      compatible: [ "a-child-compatible" ]
+      reg: [[0]]
+      vendor,a-child-property: [ !u32 [1]]
+
+  bad-child-node-u32-property2:
+    compatible: [ "vendor,node-with-child-node" ]
+
+    child-node-fixed-name:
+      vendor,required-property: [[1234]]
+
+    child-node@0:
+      compatible: [ "a-child-compatible" ]
+      reg: [[0]]
+      vendor,a-child-property2: [ !u32 [1]]
+
+  bad-child-node-string-property:
+    compatible: [ "vendor,node-with-child-node" ]
+
+    child-node-fixed-name:
+      vendor,required-property: [[1234]]
+
+    child-node@0:
+      compatible: [ "a-child-compatible" ]
+      reg: [[0]]
+      vendor,a-child-property: [ !u32 [2]]
+      vendor,a-child-string-property: [ "a-string", "bad-string" ]

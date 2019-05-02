@@ -103,21 +103,20 @@ class TestDTValidate(unittest.TestCase):
         for schema in self.schemas:
             schema["$select_validator"] = jsonschema.Draft6Validator(schema['select'])
 
-    def check_node(self, nodename, node):
+    def check_node(self, nodename, node, fail):
         if nodename == "/":
             return
 
         node['$nodename'] = [ nodename ]
         node_matched = True
-        if "bad" in nodename:
+        if fail:
             node_matched = False
             with self.assertRaises(jsonschema.ValidationError, msg=nodename):
                 for schema in self.schemas:
                     if schema['$select_validator'].is_valid(node):
                         node_matched = True
                         dtschema.DTValidator(schema).validate(node)
-
-        if "good" in nodename:
+        else:
             node_matched = False
             for schema in self.schemas:
                 if schema['$select_validator'].is_valid(node):
@@ -126,19 +125,22 @@ class TestDTValidate(unittest.TestCase):
 
         self.assertTrue(node_matched, msg=nodename)
 
-    def check_subtree(self, nodename, subtree):
-        self.check_node(nodename, subtree)
+    def check_subtree(self, nodename, subtree, fail):
+        self.check_node(nodename, subtree, fail)
         for name,value in subtree.items():
             if isinstance(value, dict):
-                self.check_subtree(name, value)
+                self.check_subtree(name, value, fail)
 
 
     def test_dt_validation(self):
         '''Test that all DT YAML files under ./test/ validate against the DT schema'''
         for filename in glob.iglob('test/*.yaml'):
             with self.subTest(schema=filename):
+                expect_fail = "-fail" in filename
                 testtree = dtschema.load(filename)[0]
-                self.check_subtree('/', testtree);
+                for name,value in testtree.items():
+                    if isinstance(value, dict):
+                        self.check_node(name, value, expect_fail)
 
 
 if __name__ == '__main__':

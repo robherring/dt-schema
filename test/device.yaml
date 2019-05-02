@@ -7,7 +7,7 @@
   "#address-cells": [[1]]
   "#size-cells": [[1]]
 
-  good-test1:
+  interrupt-controller@0:
     compatible: [ "vendor,soc4-ip", "vendor,soc1-ip" ]
     reg: [ [0x0, 0x4], [0x8, 0x4] ]
     reg-names: [ "coreAAA", "aux"]
@@ -30,117 +30,10 @@
     vendor,string-prop: [ foo ]
     vendor,string-list-prop: [ foobar, foobaz ]
 
-  good-test2:
+  interrupt-controller@10:
     compatible: [ "vendor,soc1-ip" ]
     interrupt-controller: true
+    reg: [ [0x10, 0x4], [0x8, 0x4] ]
     '#interrupt-cells': [[2]]
     interrupts: [ [10] ]
     interrupt-names: [ "tx irq" ]
-
-  bad-num-interrupts-test:
-    compatible: [ "vendor,soc1-ip" ]
-    interrupt-controller: true
-    '#interrupt-cells': [[2]]
-    interrupts: [ [10], [11], [12] ]
-
-  bad-interrupt-type-test:
-    compatible: [ "vendor,soc1-ip" ]
-    interrupt-controller: true
-    '#interrupt-cells': [[2]]
-    interrupts: [ "string" ]
-
-  bad-no-interrupt-cells-test:
-    compatible: [ "vendor,soc1-ip" ]
-    interrupt-controller: true
-    interrupts: [ [10] ]
-
-  bad-compatible-test:
-    compatible: [ "vendor,soc4-ip", "vendor,soc3-ip" ]
-    interrupt-controller: true
-    '#interrupt-cells': [[2]]
-    interrupts: [ [10] ]
-
-  bad-compatible-order-test:
-    compatible: [ "vendor,soc1-ip", "vendor,soc3-ip" ]
-    interrupt-controller: true
-    '#interrupt-cells': [[2]]
-    interrupts: [ [10] ]
-
-  bad-compatible-missing-test:
-    compatible: [ "vendor,soc3-ip" ]
-    interrupt-controller: true
-    '#interrupt-cells': [[2]]
-    interrupts: [ [10] ]
-
-  bad-compatible-value-test:
-    compatible: [ "vendor,undocumented-compatible string", "vendor,soc1-ip" ]
-    interrupt-controller: true
-    '#interrupt-cells': [[2]]
-    interrupts: [ [10] ]
-
-  bad-clock-freqency-test:
-    compatible: [ "vendor,soc1-ip" ]
-    interrupt-controller: true
-    '#interrupt-cells': [[2]]
-    interrupts: [ [10] ]
-    clock-frequency: [ [1] ]
-
-  bad-interrupt-names-test1:
-    compatible: [ "vendor,soc1-ip" ]
-    interrupt-controller: true
-    '#interrupt-cells': [[2]]
-    interrupt-names: [ "a irq" ]
-    interrupts: [ [10] ]
-
-  bad-interrupt-names-test2:
-    compatible: [ "vendor,soc1-ip" ]
-    interrupt-controller: true
-    '#interrupt-cells': [[2]]
-    interrupt-names: [ "tx irq", "rx irq", "bad irq" ]
-    interrupts: [ [10] ]
-
-  bad-vendor-bool-prop-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,bool-prop: [ "true" ]
-
-  bad-vendor-int-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,int-prop: [ [5] ]
-
-  bad-vendor-string-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,string-prop: [ "foobaz" ]
-
-  bad-vendor-string-list-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,string-list-prop: [ "foobar" ]
-
-  bad-vendor-int8-prop-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,int8-prop: [ !u16 [1] ]
-
-  bad-vendor-int8-array-prop-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,int8-array-prop: [ !u8 [1] ]
-
-  bad-vendor-int16-prop-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,int16-prop: [ [1] ]
-
-  bad-vendor-int16-array-prop-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,int16-array-prop: [ !u16 [1, 2, 3] ]
-
-  bad-vendor-int64-prop-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,int64-prop: [ !u64 [0x123] ]
-
-  bad-vendor-phandle-prop-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,phandle-prop: [[!phandle 1, 0], [1]]
-    vendor,phandle-array-prop: [[!phandle 1]]
-
-  bad-vendor-phandle-prop-tag-test:
-    compatible: [ "vendor,soc1-ip" ]
-    vendor,phandle-prop: [[1]]
-    vendor,phandle-array-prop: [[1], [2]]
