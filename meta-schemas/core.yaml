@@ -52,6 +52,7 @@ definitions:
             - additionalItems
             - additionalProperties
             - allOf
+            - anyOf
             - const
             - contains
             - default

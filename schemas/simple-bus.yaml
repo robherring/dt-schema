@@ -34,8 +34,17 @@ patternProperties:
           maxItems: 4
         minItems: 1
         maxItems: 1024
-    required:
-      - reg
+      ranges:
+        items:
+          minItems: 3
+          maxItems: 6
+        minItems: 0
+        maxItems: 1024
+    anyOf:
+      - required:
+          - reg
+      - required:
+          - ranges
 
 #additionalProperties: false
 
