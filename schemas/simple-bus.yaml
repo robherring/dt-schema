@@ -35,11 +35,13 @@ patternProperties:
         minItems: 1
         maxItems: 1024
       ranges:
-        items:
-          minItems: 3
-          maxItems: 6
-        minItems: 0
-        maxItems: 1024
+        oneOf:
+          - items:
+              minItems: 3
+              maxItems: 6
+            minItems: 0
+            maxItems: 1024
+          - $ref: "types.yaml#/definitions/flag"
     anyOf:
       - required:
           - reg
