@@ -44,6 +44,9 @@ patternProperties:
           - items:
               maximum: 8
 
+  ".*-names$":
+    $ref: "types.yaml#/definitions/string-array"
+
   # property and node namespace overlaps. Catch both here
   "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$":
     type: [object, array, boolean, 'null']
