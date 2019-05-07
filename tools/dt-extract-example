@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
+# Copyright 2019 Arm Ltd.
 
 import os
 import sys
@@ -8,16 +9,23 @@ import ruamel.yaml
 import argparse
 
 example_template = """
-/dts-v1/;
-/plugin/; // silence any missing phandle references
-/{{
-        interrupt-parent = <&foo>;
+    example-{example_num} {{
         #address-cells = <1>;
         #size-cells = <1>;
 
 {example}
 
-}};
+    }};
+"""
+
+example_header = """
+/dts-v1/;
+/plugin/; // silence any missing phandle references
+/{
+    interrupt-parent = <&foo>;
+    #address-cells = <1>;
+    #size-cells = <1>;
+
 """
 
 # Need pure until YAML 1.2 is supported
@@ -26,15 +34,17 @@ yaml = ruamel.yaml.YAML(typ='safe', pure=True)
 if __name__ == "__main__":
     ex = '// empty'
     ap = argparse.ArgumentParser()
-    ap.add_argument("-n", "--number", type=int, default=0,
-                    help="Example number to extract.")
     ap.add_argument("yamlfile", type=str,
                     help="Filename of YAML encoded schema input file")
     args = ap.parse_args()
 
     binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
 
-    if 'examples' in binding.keys() and args.number < len(binding['examples']):
-        ex = binding['examples'][args.number]
+    print(example_header)
 
-    print(example_template.format(example=ex))
+    if 'examples' in binding.keys():
+        for idx,ex in enumerate(binding['examples']):
+            ex = '        '.join(ex.splitlines(True))
+            print(example_template.format(example=ex,example_num=idx))
+
+    print("\n};")
