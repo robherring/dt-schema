@@ -29,6 +29,7 @@
     vendor,phandle-array-prop: [[!phandle 1], [!phandle 2]]
     vendor,string-prop: [ foo ]
     vendor,string-list-prop: [ foobar, foobaz ]
+    vendor,phandle-with-fixed-cells: [[!phandle 1, 2, 3]]
 
   interrupt-controller@10:
     compatible: [ "vendor,soc1-ip" ]

@@ -151,6 +151,16 @@ properties:
       - minItems: 2
     description: Vendor specific array of phandles property
 
+  vendor,phandle-with-fixed-cells:
+    allOf:
+      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
+      - items:
+          - items:
+            - description: the phandle to something
+            - description: the 1st cell data
+            - description: the 2nd cell data
+    description: Vendor specific array of phandles property
+
 
 required:
   - compatible
