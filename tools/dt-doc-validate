@@ -44,9 +44,13 @@ if __name__ == "__main__":
                     help="Filename of YAML encoded devicetree input file")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     ap.add_argument('-n', '--line-number', help="Print line and column numbers (slower)", action="store_true")
+    ap.add_argument('-u', '--url-path', help="Additional search path for references")
     args = ap.parse_args()
 
     line_number=args.line_number
+
+    if args.url_path:
+        dtschema.add_schema_path(args.url_path)
 
     if os.path.isdir(args.yamldt):
         for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):

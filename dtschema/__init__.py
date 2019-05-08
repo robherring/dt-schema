@@ -1,4 +1,5 @@
 from dtschema.lib import (
+    add_schema_path,
     load_schema,
     load,
     process_schemas,

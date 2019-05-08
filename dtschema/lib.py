@@ -75,9 +75,25 @@ def get_line_col(tree, path, obj=None):
         return obj.lc.key(path[-1])
     return -1, -1
 
+schema_user_paths = []
+
+def add_schema_path(path):
+    if os.path.isdir(path):
+        schema_user_paths.append(path)
+
 def load_schema(schema):
-    schema = os.path.join(schema_basedir, schema)
-    with open(schema, 'r', encoding='utf-8') as f:
+    for path in schema_user_paths:
+        if schema.startswith('schemas/'):
+            schema_file = schema.partition('/')[2]
+        else:
+            schema_file = schema
+        schema_file = os.path.join(path, schema_file)
+        if not os.path.isfile(schema_file):
+            continue
+        with open(schema_file, 'r', encoding='utf-8') as f:
+            return yaml.load(f.read())
+
+    with open(os.path.join(schema_basedir, schema), 'r', encoding='utf-8') as f:
         return yaml.load(f.read())
 
 def _value_is_type(subschema, key, type):

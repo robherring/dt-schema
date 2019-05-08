@@ -94,10 +94,14 @@ if __name__ == "__main__":
     ap.add_argument('-m', '--show-unmatched', help="Print out nodes which don't match any schema", action="store_true")
     ap.add_argument('-n', '--line-number', help="Print line and column numbers (slower)", action="store_true")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
+    ap.add_argument('-u', '--url-path', help="Additional search path for references")
     args = ap.parse_args()
 
     verbose = args.verbose
     show_unmatched = args.show_unmatched
+
+    if args.url_path:
+        dtschema.add_schema_path(args.url_path)
 
     if args.preparse:
         sg = schema_group(args.preparse)
