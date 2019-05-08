@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
-$id: "http://devicetree.org/schemas/gpio.yaml#"
+$id: "http://devicetree.org/schemas/gpio/gpio.yaml#"
 $schema: "http://devicetree.org/meta-schemas/base.yaml#"
 title: GPIO devicetree schema
 description: "Schema for GPIO devicetree bindings"
@@ -13,34 +13,34 @@ select: true
 properties:
   "#gpio-cells": true
   gpio-controller:
-    $ref: "types.yaml#/definitions/flag"
+    $ref: "/schemas/types.yaml#/definitions/flag"
   gpio-line-names:
     # Not using string-array here because names are not unique
     type: array
     items: { type: string }
     minItems: 1
   ngpios:
-    $ref: "types.yaml#/definitions/uint32"
+    $ref: "/schemas/types.yaml#/definitions/uint32"
   gpio-reserved-ranges:
     allOf:
-      - $ref: "types.yaml#/definitions/uint32-matrix"
+      - $ref: "/schemas/types.yaml#/definitions/uint32-matrix"
       - items:
           minItems: 2
           maxItems: 2
   gpio-ranges:
-    $ref: "types.yaml#/definitions/phandle-array"
+    $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
   gpio:
     # 'gpio' can appear as a property or node name
     oneOf:
       - type: object
-      - $ref: "types.yaml#/definitions/phandle-array"
+      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
 patternProperties:
   ".*-gpios?$":
-    $ref: "types.yaml#/definitions/phandle-array"
+    $ref: "/schemas/types.yaml#/definitions/phandle-array"
   "^gpios$":
-    $ref: "types.yaml#/definitions/phandle-array"
+    $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
 dependencies:
   gpio-controller: ['#gpio-cells']
