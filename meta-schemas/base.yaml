@@ -4,10 +4,10 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/base.yaml#"
-$schema: "http://json-schema.org/draft-06/schema#"
+$schema: "http://json-schema.org/draft-07/schema#"
 description: "Metaschema for devicetree binding documentation"
 
-allOf: [ { $ref: "http://json-schema.org/draft-06/schema#" } ]
+allOf: [ { $ref: "http://json-schema.org/draft-07/schema#" } ]
 
 properties:
   # listing all properties here to narrow the scope of what is allowed in
@@ -34,6 +34,9 @@ properties:
       propertyNames:
         enum:
           - $ref
+          - if
+          - then
+          - else
   oneOf: true
   definitions: true
   additionalProperties:
@@ -41,6 +44,9 @@ properties:
   dependencies: true
   patternProperties: true
   properties: true
+  if: true
+  then: true
+  else: true
 
   maintainers:
     type: array
@@ -50,7 +56,7 @@ properties:
 
   select:
     allOf:
-      - $ref: "http://json-schema.org/draft-06/schema#"
+      - $ref: "http://json-schema.org/draft-07/schema#"
       - oneOf:
           - type: object
             properties:

@@ -4,7 +4,7 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/core.yaml#"
-$schema: "http://json-schema.org/draft-06/schema#"
+$schema: "http://json-schema.org/draft-07/schema#"
 description: "Metaschema for devicetree binding documentation"
 
 allOf:
@@ -58,8 +58,10 @@ definitions:
             - default
             - dependencies
             - description
+            - else
             - enum
             - items
+            - if
             - minItems
             - minimum
             - maxItems
@@ -70,6 +72,7 @@ definitions:
             - patternProperties
             - properties
             - required
+            - then
             - type
             - typeSize
 

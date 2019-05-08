@@ -22,15 +22,15 @@ class TestDTMetaSchema(unittest.TestCase):
         self.bad_schema = dtschema.load(os.path.join(basedir, 'schemas/bad-example.yaml'))
 
     def test_metaschema_valid(self):
-        '''The DTValidator metaschema must be a valid Draft6 schema'''
-        jsonschema.Draft6Validator.check_schema(dtschema.DTValidator.META_SCHEMA)
+        '''The DTValidator metaschema must be a valid Draft7 schema'''
+        jsonschema.Draft7Validator.check_schema(dtschema.DTValidator.META_SCHEMA)
 
     def test_all_metaschema_valid(self):
-        '''The metaschema must all be a valid Draft6 schema'''
+        '''The metaschema must all be a valid Draft7 schema'''
         for filename in glob.iglob('meta-schemas/**/*.yaml', recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
-                jsonschema.Draft6Validator.check_schema(schema)
+                jsonschema.Draft7Validator.check_schema(schema)
 
     def test_required_properties(self):
         dtschema.DTValidator.check_schema(self.schema)
@@ -83,15 +83,15 @@ class TestDTSchema(unittest.TestCase):
                 self.assertEqual(ids.count(schema['$id']), 0)
                 ids.append(schema['$id'])
 
-    def test_binding_schemas_valid_draft6(self):
-        '''Test that all schema files under ./schemas/ validate against the Draft6 metaschema
+    def test_binding_schemas_valid_draft7(self):
+        '''Test that all schema files under ./schemas/ validate against the Draft7 metaschema
         The DT Metaschema is supposed to force all schemas to be valid against
-        Draft6. This test makes absolutely sure that they are.
+        Draft7. This test makes absolutely sure that they are.
         '''
         for filename in glob.iglob('schemas/**/*.yaml', recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
-                jsonschema.Draft6Validator.check_schema(schema)
+                jsonschema.Draft7Validator.check_schema(schema)
 
 
 class TestDTValidate(unittest.TestCase):
@@ -101,7 +101,7 @@ class TestDTValidate(unittest.TestCase):
         self.schemas = dtschema.process_schemas([ os.path.join(os.path.abspath(basedir), "schemas/")])
 
         for schema in self.schemas:
-            schema["$select_validator"] = jsonschema.Draft6Validator(schema['select'])
+            schema["$select_validator"] = jsonschema.Draft7Validator(schema['select'])
 
     def check_node(self, nodename, node, fail):
         if nodename == "/":
