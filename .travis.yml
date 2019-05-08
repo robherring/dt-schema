@@ -5,5 +5,5 @@ python:
   - 3.6
 
 script:
-  - pip install . --process-dependency-links
+  - pip install .
   - test/test-dt-validate.py
