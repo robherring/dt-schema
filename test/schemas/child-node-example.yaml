@@ -24,6 +24,7 @@ properties:
       - description: aux regs
 
   child-node-fixed-name:
+    type: object
     properties:
       vendor,required-property:
         $ref: "/schemas/types.yaml#/definitions/uint32"
@@ -36,6 +37,7 @@ properties:
 
 patternProperties:
   '^child-node@.*$':
+    type: object
     description:
       This is a child node.
     properties:
