@@ -16,7 +16,7 @@ properties:
   # Also, being explicit about what properties are allowed helps to catch
   # misspelled or unsupported tests.
   $id:
-    pattern: 'http://devicetree.org/(test/)?schemas/.*\.yaml#'
+    pattern: 'http://devicetree.org/schemas/.*\.yaml#'
   $schema:
     enum:
       - "http://devicetree.org/meta-schemas/core.yaml#"
