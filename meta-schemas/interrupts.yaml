@@ -18,11 +18,12 @@ properties:
   interrupt-map-mask:
     $ref: "cell.yaml#array"
   interrupt-controller:
-    $ref: "boolean.yaml"
+    oneOf:
+      - $ref: "boolean.yaml"
+      - type: object
   interrupt-parent: false # interrupt-parent is implicit
 
 dependencies:
-  interrupt-controller: ['#interrupt-cells']
   interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
   '#interrupt-cells':
     oneOf:
