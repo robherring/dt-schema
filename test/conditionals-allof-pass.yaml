@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2019 Maxime Ripard
+- model: [ "none" ]
+  compatible: [ "none" ]
+
+  "#address-cells": [[1]]
+  "#size-cells": [[1]]
+
+  test-controller:
+    compatible: [ "vendor,conditionals-allof-test-controller" ]
+
+    vendor,property: [ "test1234" ]
+
+  second-test-controller:
+    compatible: [ "vendor,second-conditionals-allof-test-controller" ]
+
+    vendor,property: [ "test5678" ]
+    vendor,other-property: true
