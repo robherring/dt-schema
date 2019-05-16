@@ -246,36 +246,25 @@ def fixup_schema(schema):
         return
 
     for k,v in schema.items():
-        if not k in ['properties', 'patternProperties',
-                     'if', 'then', 'else',
-                     'allOf']:
+        # If, then and else contain subschemas that we'll want to
+        # fixup as well. Let's recurse into those subschemas.
+        if k in ['if', 'then', 'else']:
+            fixup_schema(v)
+
+        # allOf can contain a list of if, then and else statements,
+        # that in turn will contain subschemas that we'll want to
+        # fixup. Let's recurse into each of those subschemas.
+        if k in ['allOf']:
+            for subschema in v:
+                fixup_schema(subschema)
+
+        if not k in ['properties', 'patternProperties']:
             continue
 
-        # allOf will have a list of subschemas if we're using the
-        # conditionals that we need to fixup as well as the main
-        # schema.
-        subschemas = list()
-        if k == "allOf":
-            for subschema in v:
-                # If we don't have an if statement, we don't have a
-                # conditional, therefore we don't need to fixup the
-                # subschemas that might be there.
-                if "if" not in subschema:
-                    continue
-
-                subschemas.append(subschema)
-        else:
-            subschemas.append(v)
-
-        for subschema in subschemas:
-            walk_properties(subschema)
-
-            if not isinstance(subschema, dict):
-                continue
-
-            for prop in subschema.keys():
-                # Recurse to check for {properties,patternProperties} in each prop
-                fixup_schema(subschema[prop])
+        walk_properties(v)
+        for prop in v:
+            # Recurse to check for {properties,patternProperties} in each prop
+            fixup_schema(v[prop])
 
 def item_generator(json_input, lookup_key):
     if isinstance(json_input, dict):

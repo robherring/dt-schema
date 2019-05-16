@@ -1,0 +1,45 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2019 Maxime Ripard
+%YAML 1.2
+---
+$id: "http://devicetree.org/schemas/conditionals-allof-example.yaml#"
+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+
+title: Test for multiple conditionals statements
+
+maintainers:
+  - Maxime Ripard <maxime.ripard@bootlin.com>
+
+properties:
+  compatible:
+    enum:
+      - vendor,conditionals-allof-test-controller
+      - vendor,second-conditionals-allof-test-controller
+
+allOf:
+  - if:
+      properties:
+        compatible:
+          const: vendor,conditionals-allof-test-controller
+
+    then:
+      properties:
+        vendor,property:
+          const: test1234
+
+    else:
+      properties:
+        vendor,property:
+          const: test5678
+
+  - if:
+      properties:
+        compatible:
+          const: vendor,second-conditionals-allof-test-controller
+
+    then:
+      properties:
+        vendor,other-property: true
+
+      required:
+        - vendor,other-property
