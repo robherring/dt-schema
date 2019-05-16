@@ -227,9 +227,23 @@ def walk_properties(props):
 def fixup_schema(schema):
     if not isinstance(schema, dict):
         return
+
     for k,v in schema.items():
-        if not k in ['properties', 'patternProperties', 'if', 'then', 'else']:
+        # If, then and else contain subschemas that we'll want to
+        # fixup as well. Let's recurse into those subschemas.
+        if k in ['if', 'then', 'else']:
+            fixup_schema(v)
+
+        # allOf can contain a list of if, then and else statements,
+        # that in turn will contain subschemas that we'll want to
+        # fixup. Let's recurse into each of those subschemas.
+        if k in ['allOf']:
+            for subschema in v:
+                fixup_schema(subschema)
+
+        if not k in ['properties', 'patternProperties']:
             continue
+
         walk_properties(v)
         for prop in v:
             # Recurse to check for {properties,patternProperties} in each prop
