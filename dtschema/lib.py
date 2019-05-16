@@ -82,6 +82,7 @@ def add_schema_path(path):
         schema_user_paths.append(path)
 
 def load_schema(schema):
+    yaml.allow_duplicate_keys = False
     for path in schema_user_paths:
         if schema.startswith('schemas/'):
             schema_file = schema.partition('/')[2]
@@ -497,11 +498,13 @@ def process_schemas(schema_paths, core_schema=True):
 
     return schemas
 
-def load(filename, line_number=False):
+def load(filename, line_number=False, duplicate_keys=True):
     with open(filename, 'r', encoding='utf-8') as f:
         if line_number:
+            rtyaml.allow_duplicate_keys = duplicate_keys
             return rtyaml.load(f.read())
         else:
+            yaml.allow_duplicate_keys = duplicate_keys
             return yaml.load(f.read())
 
 schema_cache = []

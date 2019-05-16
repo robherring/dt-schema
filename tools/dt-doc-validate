@@ -22,7 +22,7 @@ line_number = False
 def check_doc(filename):
     ret = 0
     try:
-        testtree = dtschema.load(filename, line_number=line_number)
+        testtree = dtschema.load(filename, line_number=line_number, duplicate_keys=False)
     except (ruamel.yaml.scanner.ScannerError, ruamel.yaml.parser.ParserError) as exc:
         print(filename + ": ", exc)
         return 1
