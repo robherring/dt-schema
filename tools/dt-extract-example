@@ -22,6 +22,8 @@ example_header = """
 /dts-v1/;
 /plugin/; // silence any missing phandle references
 /{
+    compatible = "foo";
+    model = "foo";
     interrupt-parent = <&foo>;
     #address-cells = <1>;
     #size-cells = <1>;
