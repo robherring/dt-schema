@@ -18,6 +18,10 @@ import pkgutil
 schema_base_url = "http://devicetree.org/"
 schema_basedir = os.path.dirname(os.path.abspath(__file__))
 
+# We use a lot of regex's in schema and exceeding the cache size has noticeable
+# peformance impact.
+re._MAXCACHE = 2048
+
 class tagged_list(list):
 
     tags = {u'!u8': 8, u'!u16': 16, u'!u32': 32, u'!u64': 64}
