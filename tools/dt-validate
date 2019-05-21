@@ -35,6 +35,9 @@ class schema_group():
             exit(-1)
 
     def check_node(self, tree, node, nodename, fullname, filename):
+        # Skip any generated nodes
+        if nodename.startswith('__'):
+            return
         node['$nodename'] = [ nodename ]
         node_matched = False
         for schema in self.schemas:
