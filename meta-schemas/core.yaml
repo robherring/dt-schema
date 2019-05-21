@@ -85,6 +85,9 @@ definitions:
             - type
             - typeSize
 
+    dependencies:
+      "#size-cells": [ "#address-cells" ]
+
 properties:
   patternProperties:
     $ref: "#definitions/all-properties"
