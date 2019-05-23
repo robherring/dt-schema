@@ -79,6 +79,10 @@ properties:
   some-gpios:
     maxItems: 2
 
+  a-single-gpios:
+    description: A GPIO that does something
+    maxItems: 1
+
   vendor,bool-prop:
     $ref: "/schemas/types.yaml#/definitions/flag"
     description: A vendor specific boolean property
