@@ -66,7 +66,7 @@ properties:
     description:
       This property (currently used only on arm64) holds the memory range,
       the address and the size, of the elf core header which mainly describes
-      the panicked kernel's memory layout as PT_LOAD segments of elf format.
+      the panicked kernel\'s memory layout as PT_LOAD segments of elf format.
 
   linux,usable-memory-range:
     allOf:
@@ -90,7 +90,7 @@ properties:
 
       The main usage is for crash dump kernel to identify its own usable
       memory and exclude, at its boot time, any other memory areas that are
-      part of the panicked kernel's memory.
+      part of the panicked kernel\'s memory.
 
       While this property does not represent a real hardware, the address
       and the size are expressed in #address-cells and #size-cells,
@@ -99,14 +99,14 @@ properties:
   linux,initrd-start:
     $ref: types.yaml#definitions/uint32
     description:
-      These properties hold the physical start and end address of an initrd that's
+      These properties hold the physical start and end address of an initrd that\'s
       loaded by the bootloader. Note that linux,initrd-start is inclusive, but
       linux,initrd-end is exclusive.
 
   linux,initrd-end:
     $ref: types.yaml#definitions/uint32
     description:
-      These properties hold the physical start and end address of an initrd that's
+      These properties hold the physical start and end address of an initrd that\'s
       loaded by the bootloader. Note that linux,initrd-start is inclusive, but
       linux,initrd-end is exclusive.
 
