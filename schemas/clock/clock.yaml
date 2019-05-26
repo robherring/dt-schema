@@ -52,7 +52,7 @@ properties:
       specific names property.
 
       Clock consumer nodes must never directly reference
-      the provider's clock-output-names property.
+      the provider\'s clock-output-names property.
 
   clock-indices:
     $ref: "/schemas/types.yaml#/definitions/uint32-array"
