@@ -597,12 +597,17 @@ class DTValidator(DTVal):
             print(err_msg, exc, file=sys.stderr)
 
 
-def format_error(filename, error, verbose=False):
+def format_error(filename, error, nodename=None, verbose=False):
     src = os.path.abspath(filename) + ':'
-    if error.linecol[0] >= 0 :
-        src = src + '%i:%i:'%(error.linecol[0]+1, error.linecol[1]+1)
 
-    src += ' '
+    if error.linecol[0] >= 0 :
+        src = src + '%i:%i: '%(error.linecol[0]+1, error.linecol[1]+1)
+    else:
+        src += ' '
+
+    if nodename is not None:
+        src += nodename + ': '
+
     if error.path:
         for path in error.path:
             src += str(path) + ":"
