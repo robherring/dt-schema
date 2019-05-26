@@ -22,6 +22,7 @@ properties:
         - properties:
             enum: {}
             const: {}
+            pattern: {}
           additionalProperties: false
   enum:
     type: array
