@@ -258,7 +258,7 @@ def fixup_schema(schema):
         # allOf can contain a list of if, then and else statements,
         # that in turn will contain subschemas that we'll want to
         # fixup. Let's recurse into each of those subschemas.
-        if k in ['allOf']:
+        if k in ['allOf', 'anyOf', 'oneOf']:
             for subschema in v:
                 fixup_schema(subschema)
 
