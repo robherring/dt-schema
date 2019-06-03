@@ -18,7 +18,8 @@ properties:
   pwms:
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
-  pwm-names: true
+  pwm-names:
+    $ref: "/schemas/types.yaml#/definitions/string-array"
 
 dependencies:
   pwm-names: [ pwms ]

@@ -72,6 +72,7 @@ properties:
       only the phandle portion of the pair will appear.
 
   clock-names:
+    $ref: "/schemas/types.yaml#/definitions/string-array"
     description: List of clock input name strings sorted in the same order
       as the clocks property.  Consumers drivers will use clock-names
       to match clock input names with clocks specifiers.

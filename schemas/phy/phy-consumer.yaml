@@ -18,7 +18,8 @@ properties:
   phys:
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
-  phy-names: true
+  phy-names:
+    $ref: "/schemas/types.yaml#/definitions/string-array"
 
 dependencies:
   phy-names: [ phys ]
