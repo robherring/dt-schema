@@ -27,6 +27,7 @@ properties:
 
   "#address-cells": true
   "#size-cells": true
+  ranges: true
 
   bootargs:
     $ref: types.yaml#definitions/string
