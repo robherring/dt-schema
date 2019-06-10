@@ -17,7 +17,8 @@ properties:
   resets:
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
-  reset-names: true
+  reset-names:
+    $ref: "/schemas/types.yaml#/definitions/string-array"
 
 dependencies:
   reset-names: [ resets ]

@@ -19,11 +19,14 @@ definitions:
       - type: boolean
         const: true
       - type: 'null'
-  string-array:
+  non-unique-string-array:
     type: array
     items: { type: string }
     minItems: 1
-    uniqueItems: true
+  string-array:
+    allOf:
+      - $ref: "#/definitions/non-unique-string-array"
+      - uniqueItems: true
   string:
     allOf:
       - $ref: "#/definitions/string-array"

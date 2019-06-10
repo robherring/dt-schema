@@ -15,10 +15,7 @@ properties:
   gpio-controller:
     $ref: "/schemas/types.yaml#/definitions/flag"
   gpio-line-names:
-    # Not using string-array here because names are not unique
-    type: array
-    items: { type: string }
-    minItems: 1
+    $ref: "/schemas/types.yaml#/definitions/non-unique-string-array"
   ngpios:
     $ref: "/schemas/types.yaml#/definitions/uint32"
   gpio-reserved-ranges:

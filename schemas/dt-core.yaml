@@ -45,7 +45,7 @@ patternProperties:
               maximum: 8
 
   ".*-names$":
-    $ref: "types.yaml#/definitions/string-array"
+    $ref: "types.yaml#/definitions/non-unique-string-array"
 
   ".*-supply$":
     if:

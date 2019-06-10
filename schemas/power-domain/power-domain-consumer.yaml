@@ -18,7 +18,8 @@ properties:
   power-domains:
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
-  power-domain-names: true
+  power-domain-names:
+    $ref: "/schemas/types.yaml#/definitions/string-array"
 
 dependencies:
   power-domain-names: [ power-domains ]

@@ -18,7 +18,8 @@ properties:
   mboxes:
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
-  mbox-names: true
+  mbox-names:
+    $ref: "/schemas/types.yaml#/definitions/string-array"
 
 dependencies:
   mbox-names: [ mboxes ]
