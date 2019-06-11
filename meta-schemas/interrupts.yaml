@@ -20,7 +20,7 @@ properties:
   interrupt-controller:
     oneOf:
       - $ref: "boolean.yaml"
-      - type: object
+      - $ref: "nodes.yaml"
   interrupt-parent: false # interrupt-parent is implicit
 
 dependencies:
