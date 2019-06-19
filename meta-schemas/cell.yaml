@@ -55,7 +55,7 @@ single-array:
     maximum: [minimum]
 
 single-array-names:
-  enum: [ description, const, enum, minimum, maximum, default, $ref ]
+  enum: [ description, deprecated, const, enum, minimum, maximum, default, $ref ]
 
 
 single:

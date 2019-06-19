@@ -59,6 +59,7 @@ definitions:
             - contains
             - default
             - dependencies
+            - deprecated
             - description
             - else
             - enum
