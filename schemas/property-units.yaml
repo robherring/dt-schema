@@ -42,6 +42,9 @@ patternProperties:
   "^.*-ns$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: nanoseconds
+  "^.*-ps$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: picoseconds
 
   # Distance
   "^.*-mm$":
