@@ -12,6 +12,9 @@ properties:
     const: object
   description: {}
   properties: {}
+  patternProperties: {}
+  additionalProperties: {}
+  required: {}
 
 required:
   - type
