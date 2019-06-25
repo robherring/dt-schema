@@ -12,7 +12,7 @@ maintainers:
 
 properties:
   $nodename:
-    pattern: "^cache-controller(@[0-9a-f,]+)*$"
+    pattern: "^(cache-controller|cpu)(@[0-9a-f,]+)*$"
 
   cache-level:
     allOf:
@@ -38,5 +38,10 @@ patternProperties:
   "^(i-|d-|)cache-line-size$":
     $ref: "/schemas/types.yaml#/definitions/uint32"
 
-required:
-  - cache-level
+if:
+  properties:
+    $nodename:
+      pattern: "^cache-controller.*"
+then:
+  required:
+    - cache-level
