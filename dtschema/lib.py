@@ -266,6 +266,11 @@ def fixup_schema(schema):
             for subschema in v:
                 fixup_schema(subschema)
 
+        # properties within dependencies can be a schema
+        if k in ['dependencies']:
+            for prop in v:
+                fixup_schema(v[prop])
+
         if not k in ['properties', 'patternProperties']:
             continue
 
