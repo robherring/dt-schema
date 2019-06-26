@@ -30,13 +30,19 @@ definitions:
       memory-region:
         $ref: "cell.yaml#array"
     patternProperties:
-      '^[a-zA-Z0-9].*,.*$':
+      '^[a-zA-Z0-9].*,.*(?<!(-gpio|gpios))$':
         type: object
         properties:
           description:
             type: string
         required:
           - description
+        anyOf:
+          - required: [ $ref ]
+          - required: [ type ]
+          - required: [ allOf ]
+          - required: [ not ]
+          - required: [ enum ]
 
       '.*-names$':
         $ref: "string-array.yaml"
