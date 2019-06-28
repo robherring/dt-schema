@@ -36,8 +36,6 @@ class schema_group():
 
     def check_node(self, tree, node, nodename, fullname, filename):
         # Skip any generated nodes
-        if nodename.startswith('__'):
-            return
         node['$nodename'] = [ nodename ]
         node_matched = False
         for schema in self.schemas:
@@ -74,6 +72,8 @@ class schema_group():
                 print("%s: node \"%s\" failed to match any schema" % (filename, fullname))
 
     def check_subtree(self, tree, subtree, nodename, fullname, filename):
+        if nodename.startswith('__'):
+            return
         self.check_node(tree, subtree, nodename, fullname, filename)
         for name,value in subtree.items():
             if isinstance(value, dict):
