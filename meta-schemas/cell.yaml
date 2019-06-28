@@ -7,7 +7,7 @@ $id: "http://devicetree.org/meta-schemas/cell.yaml#"
 $schema: "http://json-schema.org/draft-07/schema#"
 
 array:
-  oneOf:
+  anyOf:
     - allOf:
         - properties:
             maxItems:
@@ -36,6 +36,7 @@ array:
 
       additionalProperties: false
 
+    - $ref: '#single'
 
 single-array:
   properties:
