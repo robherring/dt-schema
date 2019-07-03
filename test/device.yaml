@@ -19,6 +19,8 @@
     clock-names: [ "clk1" , "clk2"]
     vendor,bool-prop:
     vendor,int-prop: [[3]]
+    vendor,int-array-prop: [[ 5, 6, 7, 8 ]]
+    vendor,int-array-prop-2: [[ 5, 10 ]]
     vendor,string-prop: [ "foo" ]
     vendor,int8-prop: [ !u8 [1] ]
     vendor,int8-array-prop: [ !u8 [1, 2] ]
@@ -38,3 +40,4 @@
     '#interrupt-cells': [[2]]
     interrupts: [ [10] ]
     interrupt-names: [ "tx irq" ]
+    vendor,int-array-prop: [ [5], [6], [7], [8] ]

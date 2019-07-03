@@ -199,16 +199,13 @@ def _fixup_items_size(schema):
 
             if isinstance(schema['items'], list):
                 c = len(schema['items'])
-            else:
-                c = 1
+                if not 'minItems' in schema.keys():
+                    schema['minItems'] = c
+                if not 'maxItems' in schema.keys():
+                    schema['maxItems'] = c
 
-            if not 'minItems' in schema.keys():
-                schema['minItems'] = c
-            if not 'maxItems' in schema.keys():
-                schema['maxItems'] = c
-
-            if not 'additionalItems' in schema.keys():
-                schema['additionalItems'] = False
+                if not 'additionalItems' in schema.keys():
+                    schema['additionalItems'] = False
         elif 'maxItems' in schema.keys() and not 'minItems' in schema.keys():
             schema['minItems'] = schema['maxItems']
         elif 'minItems' in schema.keys() and not 'maxItems' in schema.keys():

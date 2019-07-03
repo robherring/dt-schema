@@ -93,6 +93,22 @@ properties:
       - enum: [ 1, 2, 3 ]
     description: Vendor specific single cell integer property
 
+  vendor,int-array-prop:
+    allOf:
+      - $ref: "/schemas/types.yaml#/definitions/uint32-array"
+      - items:
+          minimum: 5
+          maximum: 10
+    description: Vendor specific integer array property
+
+  vendor,int-array-prop-2:
+    allOf:
+      - $ref: "/schemas/types.yaml#/definitions/uint32-array"
+      - items:
+          - const: 5
+          - const: 10
+    description: Vendor specific integer array property
+
   vendor,string-prop:
     allOf:
       - $ref: "/schemas/types.yaml#/definitions/string"
