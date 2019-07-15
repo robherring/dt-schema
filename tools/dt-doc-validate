@@ -47,6 +47,7 @@ def check_doc(filename):
     if ret == 0:
         ret = check_id_path(filename, testtree['$id'])
     dtschema.DTValidator.check_schema_refs(filename + ":", testtree)
+    dtschema.DTValidator.check_quotes(filename + ":", testtree)
 
     return ret
 
