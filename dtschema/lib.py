@@ -343,7 +343,7 @@ def add_select_schema(schema):
 
             return
 
-    if '$nodename' in schema['properties'].keys():
+    if schema['properties']['$nodename'] != True:
         schema['select'] = {
             'required': ['$nodename'],
             'properties': {'$nodename': convert_to_dict(schema['properties']['$nodename']) }}
