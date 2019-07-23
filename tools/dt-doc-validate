@@ -19,6 +19,16 @@ import glob
 
 line_number = False
 
+def check_id_path(filename, id):
+    id = id.replace('http://devicetree.org/schemas/', '')
+    id = id.replace('#', '')
+
+    if not filename.endswith(id):
+        print(filename + ": $id: path/filename '" + id + "' doesn't match actual filename", file=sys.stderr)
+        return 1
+
+    return 0
+
 def check_doc(filename):
     ret = 0
     try:
@@ -34,6 +44,8 @@ def check_doc(filename):
         print(dtschema.format_error(filename, error, verbose=args.verbose))
         ret = 1
 
+    if ret == 0:
+        ret = check_id_path(filename, testtree['$id'])
     dtschema.DTValidator.check_schema_refs(filename + ":", testtree)
 
     return ret
