@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
-# Copyright 2018 Arm Ltd.
+# Copyright 2018-2019 Arm Ltd.
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/core.yaml#"
@@ -19,6 +19,7 @@ definitions:
       - $ref: "interrupts.yaml#"
       - $ref: "reset.yaml#"
       - $ref: "mailbox.yaml#"
+      - $ref: "vendor-props.yaml#"
   core-properties:
     properties:
       reg:
@@ -30,20 +31,6 @@ definitions:
       memory-region:
         $ref: "cell.yaml#array"
     patternProperties:
-      '^[a-zA-Z0-9].*,.*(?<!(-gpio|gpios))$':
-        type: object
-        properties:
-          description:
-            type: string
-        required:
-          - description
-        anyOf:
-          - required: [ $ref ]
-          - required: [ type ]
-          - required: [ allOf ]
-          - required: [ not ]
-          - required: [ enum ]
-
       '.*-names$':
         $ref: "string-array.yaml"
 

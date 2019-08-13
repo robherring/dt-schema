@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2018 Linaro Ltd.
+# Copyright 2018-2019 Arm Ltd.
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/vendor-props.yaml#"
+$schema: "http://json-schema.org/draft-07/schema#"
+
+description: Metaschema for vendor specific properties
+
+patternProperties:
+  '^[a-zA-Z0-9].*,.*(?<!(-gpio|gpios))$':
+    type: object
+    oneOf:
+      - properties:   # A deprecated property using 'not'
+          description:
+            type: string
+          not: true
+        required:
+          - description
+          - not
+        additionalProperties: false
+
+      - properties:   # A boolean property
+          description:
+            type: string
+          type:
+            const: boolean
+          deprecated: true
+        required:
+          - description
+          - type
+        additionalProperties: false
+
+      - properties:   # A string property with exact values
+          description:
+            type: string
+          enum:
+            items:
+              type: string
+          const:
+              type: string
+          deprecated: true
+        required:
+          - description
+        oneOf:
+          - required: [ enum ]
+          - required: [ const ]
+        additionalProperties: false
+
+      - properties:   # A property with a type and no additional constraints
+          description:
+            type: string
+          $ref:
+            pattern: "types.yaml#[\/]{0,1}definitions\/.*"
+          deprecated: true
+        required:
+          - description
+          - $ref
+        additionalProperties: false
+
+      - properties:   # A property with a type and additional constraints
+          description:
+            type: string
+          allOf:
+            items:
+              - properties:
+                  $ref:
+                    pattern: "types.yaml#[\/]{0,1}definitions\/.*"
+        required:
+          - description
+          - allOf
+
+...
