@@ -27,6 +27,10 @@ array:
           type: array
           items:
             $ref: '#array'
+        anyOf:
+          type: array
+          items:
+            $ref: '#array'
         items:
           items:
             allOf:

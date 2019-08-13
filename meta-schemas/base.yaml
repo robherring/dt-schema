@@ -48,6 +48,9 @@ properties:
   then: true
   else: true
 
+  unevaluatedProperties:
+    type: boolean
+
   maintainers:
     type: array
     items:
