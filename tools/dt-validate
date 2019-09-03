@@ -38,11 +38,14 @@ class schema_group():
         # Skip any generated nodes
         node['$nodename'] = [ nodename ]
         node_matched = False
+        node_compatible_matched = False
         for schema in self.schemas:
             if schema['$select_validator'].is_valid(node):
                 # We have a match if a conditional schema is selected
                 if schema['select'] != True:
                     node_matched = True
+                    if 'compatible' in schema['select']['properties'].keys():
+                        node_compatible_matched = True
                 errors = sorted(dtschema.DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
                 for error in errors:
 
@@ -60,26 +63,30 @@ class schema_group():
                     print(dtschema.format_error(filename, error,
                                                 nodename=nodename,
                                                 verbose=verbose))
-        if show_unmatched and not node_matched:
-            if 'compatible' in node:
-                if isinstance(node, ruamel.yaml.comments.CommentedBase):
-                    line = node.lc.line
-                    col = node.lc.col
-                else:
-                    line = 0
-                    col = 0
-                print("%s:%i:%i: %s failed to match any schema with compatible(s) %s" %
-                    (filename, line, col, fullname, node["compatible"]))
+
+        if show_unmatched >= 1 and 'compatible' in node.keys() and \
+           not node_compatible_matched:
+            if isinstance(node, ruamel.yaml.comments.CommentedBase):
+                line = node.lc.line
+                col = node.lc.col
             else:
-                print("%s: node \"%s\" failed to match any schema" % (filename, fullname))
+                line = 0
+                col = 0
+            print("%s:%i:%i: %s: failed to match any schema with compatible(s): %s" %
+                (filename, line, col, fullname, ', '.join(node["compatible"])))
+
+        if show_unmatched >= 2 and not node_matched:
+            print("%s: %s: failed to match any schema" % (filename, fullname))
 
     def check_subtree(self, tree, subtree, nodename, fullname, filename):
         if nodename.startswith('__'):
             return
         self.check_node(tree, subtree, nodename, fullname, filename)
+        if fullname != "/":
+            fullname += "/"
         for name,value in subtree.items():
             if isinstance(value, dict):
-                self.check_subtree(tree, value, name, fullname + "/" + name, filename)
+                self.check_subtree(tree, value, name, fullname + name, filename)
 
     def check_trees(self, filename, dt):
         """Check the given DT against all schemas"""
@@ -88,7 +95,7 @@ class schema_group():
             schema["$select_validator"] = jsonschema.Draft7Validator(schema['select'])
 
         for subtree in dt:
-            self.check_subtree(dt, subtree, "/", "", filename)
+            self.check_subtree(dt, subtree, "/", "/", filename)
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
@@ -96,7 +103,10 @@ if __name__ == "__main__":
                     help="Filename or directory of YAML encoded devicetree input file(s)")
     ap.add_argument('-s', '--schema', help="path to additional additional schema files")
     ap.add_argument('-p', '--preparse', help="preparsed schema file")
-    ap.add_argument('-m', '--show-unmatched', help="Print out nodes which don't match any schema", action="store_true")
+    ap.add_argument('-m', '--show-unmatched', default=0,
+        help="Print out nodes which don't match any schema.\n" \
+             "Once for only nodes with 'compatible'\n" \
+             "Twice for all nodes", action="count")
     ap.add_argument('-n', '--line-number', help="Print line and column numbers (slower)", action="store_true")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     ap.add_argument('-u', '--url-path', help="Additional search path for references")
