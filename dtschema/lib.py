@@ -129,7 +129,7 @@ def _fixup_string_to_array(subschema):
         subschema.pop(match, None)
 
     if tmpsch != {}:
-        subschema['items'] = tmpsch
+        subschema['items'] = [ tmpsch ]
 
 def _fixup_int_array_to_matrix(subschema):
     is_int = False
