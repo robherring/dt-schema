@@ -37,6 +37,7 @@ properties:
           - if
           - then
           - else
+  anyOf: true
   oneOf: true
   definitions: true
   additionalProperties:
