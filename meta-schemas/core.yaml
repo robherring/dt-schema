@@ -44,6 +44,26 @@ definitions:
             $ref: "#/definitions/all-properties"
         dependencies:
           properties: [ type ]
+          contains:
+            properties:
+              enum: false
+              const: false
+              pattern: false
+          items:
+            properties:
+              enum: false
+              const: false
+              pattern: false
+          maxItems:
+            properties:
+              enum: false
+              const: false
+              pattern: false
+          minItems:
+            properties:
+              enum: false
+              const: false
+              pattern: false
         propertyNames:
           enum:
             - $ref
