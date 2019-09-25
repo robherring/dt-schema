@@ -39,7 +39,9 @@ definitions:
 
       '^.*$':
         properties:
-          type: true
+          # 'boolean' and 'object' are the only native types allowed
+          type:
+            enum: [ boolean, object ]
           properties:
             $ref: "#/definitions/all-properties"
         dependencies:
