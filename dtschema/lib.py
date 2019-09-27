@@ -336,6 +336,11 @@ def add_select_schema(schema):
                 compatible_list.extend(l)
 
         compatible_list = list(set(compatible_list))
+        try:
+            compatible_list.remove('syscon')
+            compatible_list.remove('simple-mfd')
+        except:
+            pass
 
         if len(compatible_list) != 0:
             schema['select'] = {
