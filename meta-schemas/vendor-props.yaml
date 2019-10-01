@@ -9,7 +9,16 @@ $schema: "http://json-schema.org/draft-07/schema#"
 description: Metaschema for vendor specific properties
 
 patternProperties:
-  '^[a-zA-Z0-9].*,.*(?<!(-gpio|gpios))$':
+  '^\^': true
+  '^[^,]*$': true
+  '^linux,.*$': true
+  '-(gpio|gpios)$': true
+  '-supply$': true
+  '-(bits|mhz|hz|sec|ms|us|ns|ps|mm)$': true
+  '-(microamp|microamp-hours|ohms|micro-ohms|microwatt-hours)$': true
+  '-(microvolts|picofarads|celsius|millicelsius|kpascal)$': true
+
+additionalProperties:
     type: object
     oneOf:
       - properties:   # A deprecated property using 'not'
