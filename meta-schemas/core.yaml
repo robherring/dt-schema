@@ -94,6 +94,7 @@ definitions:
             - then
             - type
             - typeSize
+            - unevaluatedProperties
 
     dependencies:
       "#size-cells": [ "#address-cells" ]
