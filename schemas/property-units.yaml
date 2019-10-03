@@ -23,6 +23,9 @@ description:
 select: true
 
 patternProperties:
+  "^.*-bits$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: Number of bits
   # Time/Frequency
   "^.*-mhz$":
     $ref: "types.yaml#/definitions/uint32-array"
