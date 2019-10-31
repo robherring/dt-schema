@@ -107,5 +107,8 @@ properties:
   properties:
     $ref: "#definitions/all-properties"
 
-required:
-  - properties
+anyOf:
+  - required:
+      - properties
+  - required:
+      - patternProperties
