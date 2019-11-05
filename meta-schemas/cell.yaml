@@ -36,6 +36,9 @@ array:
             allOf:
               - required: [description]
               - $ref: '#single'
+        additionalItems:
+          type: boolean
+          const: true
         description: true
 
       additionalProperties: false
