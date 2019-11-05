@@ -23,69 +23,69 @@ description:
 select: true
 
 patternProperties:
-  "^.*-bits$":
+  "-bits$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: Number of bits
   # Time/Frequency
-  "^.*-mhz$":
+  "-mhz$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: megahertz
-  "^.*-hz$":
+  "-hz$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: Hertz (preferred)
-  "^.*-sec$":
+  "-sec$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: seconds
-  "^.*-ms$":
+  "-ms$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: milliseconds
-  "^.*-us$":
+  "-us$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: microseconds
-  "^.*-ns$":
+  "-ns$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: nanoseconds
-  "^.*-ps$":
+  "-ps$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: picoseconds
 
   # Distance
-  "^.*-mm$":
+  "-mm$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: millimeters
 
   # Electricity
-  "^.*-microamp$":
+  "-microamp$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: micro amps
-  "^.*-microamp-hours$":
+  "-microamp-hours$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: micro amp-hours
-  "^.*-ohms$":
+  "-ohms$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: Ohms
-  "^.*-micro-ohms$":
+  "-micro-ohms$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: micro Ohms
-  "^.*-microwatt-hours$":
+  "-microwatt-hours$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: micro Watt-hours
-  "^.*-microvolt$":
+  "-microvolt$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: micro volts
-  "^.*-picofarads$":
+  "-picofarads$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: picofarads
 
   # Temperature
-  "^.*-celsius$":
+  "-celsius$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: Degrees Celsius
-  "^.*-millicelsius$":
+  "-millicelsius$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: Degreee milli-Celsius
 
   # Pressure
-  "^.*-kpascal$":
+  "-kpascal$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: kiloPascal
