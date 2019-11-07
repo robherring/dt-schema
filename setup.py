@@ -19,7 +19,8 @@ os.chdir('..')
 
 setuptools.setup(
     name="dtschema",
-    version="0.0.1",
+    use_scm_version=True,
+    setup_requires = ['setuptools_scm'],
     author="Rob Herring",
     author_email="robh@kernel.org",
     description="DeviceTree validation schema and tools",
