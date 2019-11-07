@@ -15,7 +15,6 @@ for filename in glob.iglob("schemas/**/*.yaml", recursive=True):
     data_files.append(filename)
 for filename in glob.iglob("meta-schemas/**/*.yaml", recursive=True):
     data_files.append(filename)
-print(data_files)
 os.chdir('..')
 
 setuptools.setup(
