@@ -24,7 +24,7 @@ setuptools.setup(
     author_email="robh@kernel.org",
     description="DeviceTree validation schema and tools",
     long_description=long_description,
-    url="https://github.com/robherring/yaml-bindings",
+    url="https://github.com/devicetree-org/dt-schema",
 
     packages=['dtschema'],
     package_data={'dtschema': data_files},
