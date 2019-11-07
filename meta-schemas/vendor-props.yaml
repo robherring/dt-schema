@@ -16,7 +16,7 @@ patternProperties:
   '-supply$': true
   '-(bits|mhz|hz|sec|ms|us|ns|ps|mm)$': true
   '-(microamp|microamp-hours|ohms|micro-ohms|microwatt-hours)$': true
-  '-(microvolts|picofarads|celsius|millicelsius|kpascal)$': true
+  '-(microvolt|picofarads|celsius|millicelsius|kpascal)$': true
 
 additionalProperties:
     type: object
