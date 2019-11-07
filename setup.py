@@ -45,9 +45,9 @@ setuptools.setup(
         'rfc3987',
     ],
 
-    classifiers=(
+    classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
-    ),
+    ],
 )
