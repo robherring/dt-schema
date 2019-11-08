@@ -125,6 +125,15 @@ properties:
       loaded by the bootloader. Note that linux,initrd-start is inclusive, but
       linux,initrd-end is exclusive.
 
+  linux,pci-probe-only:
+    allOf:
+      - $ref: types.yaml#definitions/uint32
+    enum: [ 0, 1 ]
+    description:
+      Optional property which takes a single-cell argument. If '0', then Linux
+      will assign devices in its usual manner, otherwise it will not try to
+      assign devices and instead use them as they are configured already.
+
   stdout-path:
     allOf:
       - $ref: types.yaml#definitions/string
