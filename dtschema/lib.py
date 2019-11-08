@@ -113,23 +113,37 @@ def _value_is_type(subschema, key, type):
 
     return isinstance(val, type)
 
+def _is_int_schema(subschema):
+    for match in ['const', 'enum', 'minimum', 'maximum']:
+        if _value_is_type(subschema, match, int):
+            return True
 
-def _fixup_string_to_array(subschema):
+    return False
+
+def _is_string_schema(subschema):
+    for match in ['const', 'enum', 'pattern']:
+        if _value_is_type(subschema, match, str):
+            return True
+
+    return False
+
+def _extract_single_schemas(subschema):
     tmpsch = {}
 
-    # nothing to do if we already have an array
-    if 'items' in subschema.keys():
+    for match in ['const', 'enum', 'pattern', 'minimum', 'maximum']:
+        if not match in subschema.keys():
+            continue
+        tmpsch[match] = subschema[match]
+        del subschema[match]
+
+    return tmpsch
+
+def _fixup_string_to_array(subschema):
+    # nothing to do if we don't have a set of string schema
+    if not _is_string_schema(subschema):
         return
 
-    for match in ['const', 'enum', 'pattern']:
-        if not _value_is_type(subschema, match, str):
-            continue
-
-        tmpsch[match] = subschema[match]
-        subschema.pop(match, None)
-
-    if tmpsch != {}:
-        subschema['items'] = [ tmpsch ]
+    subschema['items'] = [ _extract_single_schemas(subschema) ]
 
 def _fixup_int_array_to_matrix(subschema):
     is_int = False
@@ -140,13 +154,7 @@ def _fixup_int_array_to_matrix(subschema):
     if (not isinstance(subschema['items'],dict)) or 'items' in subschema['items'].keys():
         return
 
-    for match in ['const', 'enum', 'minimum', 'maximum']:
-        if not _value_is_type(subschema['items'], match, int):
-            continue
-
-        is_int = True
-
-    if not is_int:
+    if not _is_int_schema(subschema['items']):
         return
 
     subschema['items'] = copy.deepcopy(subschema)
@@ -159,20 +167,10 @@ def _fixup_int_array_to_matrix(subschema):
 
 
 def _fixup_scalar_to_array(subschema):
-    tmpsch = {}
-
-    if 'items' in subschema.keys():
+    if not _is_int_schema(subschema):
         return
 
-    for match in ['const', 'enum', 'minimum', 'maximum']:
-        if not _value_is_type(subschema, match, int):
-            continue
-
-        tmpsch[match] = subschema[match]
-        subschema.pop(match, None)
-
-    if tmpsch != {}:
-        subschema['items'] = { 'items': tmpsch }
+    subschema['items'] = { 'items': _extract_single_schemas(subschema) }
 
 def _fixup_int_array(subschema):
 
@@ -183,11 +181,10 @@ def _fixup_int_array(subschema):
     for l in subschema['items']:
         if isinstance(l, dict) and 'items' in l.keys():
             return
-        for match in ['const', 'enum', 'minimum', 'maximum']:
-            if _value_is_type(l, match, int):
-                break
-        else:
-            return
+        if _is_int_schema(l):
+            break
+    else:
+        return
 
     subschema['items'] = [ {'items': subschema['items']} ]
 
