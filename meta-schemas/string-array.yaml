@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
-# Copyright 2018 Arm Ltd.
+# Copyright 2018-2019 Arm Ltd.
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/string-array.yaml#"
@@ -17,40 +17,51 @@ then:
     items:
       type: array
 
-properties:
-  description: {}
-  minItems:
-    minimum: 1
-  maxItems:
-    minimum: 1
-  items:
-    minItems: 1
+allOf:
+  - $ref: '#/all-properties'
+
+all-properties:
+  properties:
+    description: {}
+    minItems:
+      minimum: 1
+    maxItems:
+      minimum: 1
     items:
-      allOf:
-        - $ref: '#'
-        - properties:
-            enum: {}
-            const: {}
-            pattern: {}
-          additionalProperties: false
-  enum:
-    type: array
-    items:
+      minItems: 1
+      items:
+        allOf:
+          - $ref: '#/all-properties'
+          - properties:
+              enum: {}
+              const: {}
+              pattern: {}
+            additionalProperties: false
+    enum:
+      type: array
+      items:
+        type: string
+        pattern: '^[a-zA-Z0-9,.\-_ #+/]+$'
+    const:
       type: string
       pattern: '^[a-zA-Z0-9,.\-_ #+/]+$'
-  const:
-    type: string
-    pattern: '^[a-zA-Z0-9,.\-_ #+/]+$'
-  pattern:
-    type: string
+    contains:
+      $ref: '#/all-properties'
+    deprecated: {}
+    pattern:
+      type: string
 
-  oneOf:
-    type: array
-    items:
-      $ref: '#'
+    oneOf:
+      type: array
+      items:
+        $ref: '#/all-properties'
+    allOf:
+      type: array
+      items:
+        $ref: '#/all-properties'
+    $ref: {}
 
-  additionalItems:
-    type: boolean
+    additionalItems:
+      type: boolean
 
-additionalProperties:
-  $ref: '#'
+  additionalProperties: false
