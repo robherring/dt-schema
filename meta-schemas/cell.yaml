@@ -33,9 +33,7 @@ array:
             $ref: '#array'
         items:
           items:
-            allOf:
-              - required: [description]
-              - $ref: '#single'
+            $ref: '#single'
         additionalItems:
           type: boolean
           const: true
