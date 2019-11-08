@@ -150,8 +150,10 @@ def _fixup_int_array_to_matrix(subschema):
         return
 
     subschema['items'] = copy.deepcopy(subschema)
+    # Don't copy 'allOf'
+    subschema['items'].pop('allOf', None)
     for k in list(subschema.keys()):
-        if k == 'items':
+        if k == 'items' or k == 'allOf':
             continue
         subschema.pop(k)
 
