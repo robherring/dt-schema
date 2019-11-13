@@ -432,7 +432,7 @@ def process_schema(filename):
     try:
         DTValidator.check_schema(schema)
     except jsonschema.SchemaError as exc:
-        print(filename + ": ignoring, error in schema '%s'" % exc.path[-1])
+        print(filename + ": ignoring, error in schema: " + ': '.join(str(x) for x in exc.path))
         #print(exc.message)
         return
 
@@ -641,8 +641,9 @@ class DTValidator(DTVal):
                 self._check_str(err_msg, schema, None, s)
                 self.check_quotes(err_msg, s)
 
-def format_error(filename, error, nodename=None, verbose=False):
-    src = os.path.abspath(filename) + ':'
+def format_error(filename, error, prefix="", nodename=None, verbose=False):
+    submsg = ""
+    src = prefix + os.path.abspath(filename) + ':'
 
     if error.linecol[0] >= 0 :
         src = src + '%i:%i: '%(error.linecol[0]+1, error.linecol[1]+1)
@@ -652,10 +653,20 @@ def format_error(filename, error, nodename=None, verbose=False):
     if nodename is not None:
         src += nodename + ': '
 
-    if error.path:
-        for path in error.path:
+    if error.absolute_path:
+        for path in error.absolute_path:
             src += str(path) + ":"
         src += ' '
+
+    # An error on a conditional will have context with sub-errors
+    if error.context:
+        submsg = " (Possible causes of the failure):\n"
+        best = jsonschema.exceptions.best_match(error.context)
+        submsg += format_error(filename, best, prefix=prefix+"\t", nodename=nodename, verbose=verbose) + "\n"
+
+        for suberror in sorted(error.context, key=lambda e: e.path):
+            if suberror != best and len(suberror.path) > 0:
+                submsg += format_error(filename, suberror, prefix=prefix+"\t", nodename=nodename, verbose=verbose) + "\n"
 
     if verbose:
         msg = str(error)
@@ -666,4 +677,4 @@ def format_error(filename, error, nodename=None, verbose=False):
         if not error.path and error.validator in ['oneOf', 'allOf', 'anyOf']:
             msg += '\n' + pprint.pformat(error.schema, width=72)
 
-    return src + msg
+    return src + msg + submsg
