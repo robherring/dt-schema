@@ -39,10 +39,12 @@ class schema_group():
         node['$nodename'] = [ nodename ]
         node_matched = False
         node_compatible_matched = False
+        matched_schemas = []
         for schema in self.schemas:
             if schema['$select_validator'].is_valid(node):
                 # We have a match if a conditional schema is selected
                 if schema['select'] != True:
+                    matched_schemas.append(schema['$id'])
                     node_matched = True
                     if 'compatible' in schema['select']['properties'].keys():
                         node_compatible_matched = True
@@ -63,6 +65,10 @@ class schema_group():
                     print(dtschema.format_error(filename, error,
                                                 nodename=nodename,
                                                 verbose=verbose))
+
+        if show_matched and matched_schemas:
+            print("%s: %s: matched on schema(s)\n\t" % (filename, fullname) +
+                '\n\t'.join(matched_schemas))
 
         if show_unmatched >= 1 and 'compatible' in node.keys() and \
            not node_compatible_matched:
@@ -107,6 +113,8 @@ if __name__ == "__main__":
         help="Print out nodes which don't match any schema.\n" \
              "Once for only nodes with 'compatible'\n" \
              "Twice for all nodes", action="count")
+    ap.add_argument('-M', '--show-matched',
+        help="Print out matching schema for each node", action="store_true")
     ap.add_argument('-n', '--line-number', help="Print line and column numbers (slower)", action="store_true")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     ap.add_argument('-u', '--url-path', help="Additional search path for references")
@@ -114,6 +122,7 @@ if __name__ == "__main__":
 
     verbose = args.verbose
     show_unmatched = args.show_unmatched
+    show_matched = args.show_matched
 
     if args.url_path:
         dtschema.add_schema_path(args.url_path)
