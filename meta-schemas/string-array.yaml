@@ -59,6 +59,10 @@ all-properties:
       type: array
       items:
         $ref: '#/all-properties'
+    anyOf:
+      type: array
+      items:
+        $ref: '#/all-properties'
     $ref: {}
 
     additionalItems:
