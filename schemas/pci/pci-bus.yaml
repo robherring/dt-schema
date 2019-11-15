@@ -1,0 +1,148 @@
+# SPDX-License-Identifier: (GPL2.0-only OR BSD-2-Clause)
+# Copyright 2018 Linaro Ltd.
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/pci-bus.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: PCI bus schema
+
+description: |
+  Common properties for PCI host bridge nodes and PCI bus structure.
+
+  PCI bus bridges have standardized Device Tree bindings:
+
+  PCI Bus Binding to: IEEE Std 1275-1994
+  http://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
+
+  And for the interrupt mapping part:
+
+  Open Firmware Recommended Practice: Interrupt Mapping
+  http://www.devicetree.org/open-firmware/practice/imap/imap0_9d.pdf
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+properties:
+  $nodename:
+    pattern: "^pcie?@"
+
+  ranges:
+    minItems: 1
+    maxItems: 32    # Should be enough
+    items:
+      minItems: 5
+      maxItems: 7
+      additionalItems: true
+      items:
+        - enum:
+            - 0x01000000
+            - 0x02000000
+            - 0x03000000
+            - 0x42000000
+            - 0x43000000
+
+  dma-ranges:
+    oneOf:
+      - type: boolean
+      - minItems: 1
+        maxItems: 32    # Should be enough
+        items:
+          minItems: 5
+          maxItems: 7
+          additionalItems: true
+          items:
+            - enum:
+                - 0x02000000
+                - 0x03000000
+                - 0x42000000
+                - 0x43000000
+
+  "#address-cells":
+    const: 3
+
+  "#size-cells":
+    const: 2
+
+  device_type:
+    const: pci
+
+  bus-range:
+    allOf:
+      - $ref: /schemas/types.yaml#/definitions/uint32-array
+    minItems: 2
+    maxItems: 2
+    items:
+      maximum: 255
+
+  "#interrupt-cells":
+    const: 1
+
+  interrupt-map:
+    minItems: 1
+    maxItems: 88    # 22 IDSEL x 4 IRQs
+    items:
+      minItems: 6   # 3 addr cells, 1 PCI IRQ cell, 1 phandle, 1+ parent addr and IRQ cells
+      maxItems: 16
+
+  interrupt-map-mask:
+    items:
+      - description: PCI high address cell
+        minimum: 0
+        maximum: 0xf800
+      - description: PCI mid address cell
+        const: 0
+      - description: PCI low address cell
+        const: 0
+      - description: PCI IRQ cell
+        minimum: 1
+        maximum: 7
+
+  linux,pci-domain:
+    allOf:
+      - $ref: /schemas/types.yaml#/definitions/uint32
+
+  max-link-speed:
+    allOf:
+      - $ref: /schemas/types.yaml#/definitions/uint32
+    enum: [ 1, 2, 3, 4 ]
+
+  reset-gpios:
+    description: GPIO controlled connection to PERST# signal
+    maxItems: 1
+
+  supports-clkreq:
+    type: boolean
+
+  vendor-id:
+    description: The PCI vendor ID
+    allOf:
+      - $ref: /schemas/types.yaml#/definitions/uint32
+
+  device-id:
+    description: The PCI device ID
+    allOf:
+      - $ref: /schemas/types.yaml#/definitions/uint32
+
+patternProperties:
+  "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@1?[0-9a-f](,[0-7])?$":
+    type: object
+    properties:
+      compatible:
+        contains:
+          pattern: "^(pci[0-9a-f]{3,4},[0-9a-f]{1,4}|pciclass[0-9a-f]{4,6})$"
+      reg:
+        items:
+          minItems: 5
+          maxItems: 5
+        minItems: 1
+        maxItems: 6   # Up to 6 BARs
+    required:
+      - reg
+
+required:
+  - compatible
+  - device_type
+  - ranges
+  - "#address-cells"
+  - "#size-cells"
