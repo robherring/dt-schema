@@ -76,6 +76,8 @@ additionalProperties:
               - properties:
                   $ref:
                     pattern: "types.yaml#[\/]{0,1}definitions\/.*"
+                required:
+                  - $ref
         required:
           - description
           - allOf
