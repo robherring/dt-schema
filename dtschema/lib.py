@@ -246,6 +246,8 @@ def fixup_schema(schema):
     if not isinstance(schema, dict):
         return
 
+    fixup_interrupts(schema)
+
     for k,v in schema.items():
         # select is a subschema that we want to fixup
         if k in ['select']:
@@ -368,13 +370,13 @@ def remove_description(schema):
 
 def fixup_interrupts(schema):
     # Supporting 'interrupts' implies 'interrupts-extended' is also supported.
-    if not 'interrupts' in schema['properties'].keys():
+    if not ('properties' in schema.keys() and 'interrupts' in schema['properties'].keys()):
         return
 
     # Any node with 'interrupts' can have 'interrupt-parent'
     schema['properties']['interrupt-parent'] = True
 
-    schema['properties']['interrupts-extended'] = { "$ref": "#/properties/interrupts" };
+    schema['properties']['interrupts-extended'] = copy.deepcopy(schema['properties']['interrupts']);
 
     if not ('required' in schema.keys() and 'interrupts' in schema['required']):
         return
@@ -454,8 +456,6 @@ def process_schema(filename):
 
     # Add any implicit properties
     fixup_node_props(schema)
-
-    fixup_interrupts(schema)
 
     add_select_schema(schema)
     if not 'select' in schema.keys():
