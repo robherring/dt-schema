@@ -28,15 +28,20 @@ all-properties:
     maxItems:
       minimum: 1
     items:
-      minItems: 1
-      items:
-        allOf:
-          - $ref: '#/all-properties'
-          - properties:
-              enum: {}
-              const: {}
-              pattern: {}
-            additionalProperties: false
+      oneOf:
+        - type: object
+          allOf:
+            - $ref: '#/all-properties'
+        - type: array
+          minItems: 1
+          items:
+            allOf:
+              - $ref: '#/all-properties'
+              - properties:
+                  enum: {}
+                  const: {}
+                  pattern: {}
+                additionalProperties: false
     enum:
       type: array
       items:

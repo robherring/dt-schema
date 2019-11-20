@@ -32,8 +32,13 @@ array:
           items:
             $ref: '#array'
         items:
-          items:
-            $ref: '#single'
+          oneOf:
+            - type: object
+              allOf:
+                - $ref: '#array'
+            - type: array
+              items:
+                $ref: '#single'
         additionalItems:
           type: boolean
           const: true
