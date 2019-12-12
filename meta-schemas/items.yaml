@@ -1,0 +1,155 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2019 Arm Ltd.
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/items.yaml#"
+$schema: "http://json-schema.org/draft-07/schema#"
+
+description:
+  Meta-schema for 'items' schema. This meta-schema checks that an 'items' list
+  doesn't have 'minItems' and 'maxItems' with the same value as the length of
+  the list.
+
+properties:
+  allOf:
+    items:
+      $ref: '#'
+  anyOf:
+    items:
+      $ref: '#'
+  oneOf:
+    items:
+      $ref: '#'
+  then:
+    $ref: '#'
+
+allOf:
+  - if:
+      required:
+        - items
+        - minItems
+        - maxItems
+      oneOf:
+        - properties:
+            items:
+              type: array
+              minItems: 2
+              maxItems: 2
+            minItems:
+              const: 2
+            maxItems:
+              const: 2
+        - properties:
+            items:
+              type: array
+              minItems: 3
+              maxItems: 3
+            minItems:
+              const: 3
+            maxItems:
+              const: 3
+        - properties:
+            items:
+              type: array
+              minItems: 4
+              maxItems: 4
+            minItems:
+              const: 4
+            maxItems:
+              const: 4
+        - properties:
+            items:
+              type: array
+              minItems: 5
+              maxItems: 5
+            minItems:
+              const: 5
+            maxItems:
+              const: 5
+        - properties:
+            items:
+              type: array
+              minItems: 6
+              maxItems: 6
+            minItems:
+              const: 6
+            maxItems:
+              const: 6
+        - properties:
+            items:
+              type: array
+              minItems: 7
+              maxItems: 7
+            minItems:
+              const: 7
+            maxItems:
+              const: 7
+        - properties:
+            items:
+              type: array
+              minItems: 8
+              maxItems: 8
+            minItems:
+              const: 8
+            maxItems:
+              const: 8
+        - properties:
+            items:
+              type: array
+              minItems: 9
+              maxItems: 9
+            minItems:
+              const: 9
+            maxItems:
+              const: 9
+        - properties:
+            items:
+              type: array
+              minItems: 10
+              maxItems: 10
+            minItems:
+              const: 10
+            maxItems:
+              const: 10
+        - properties:
+            items:
+              type: array
+              minItems: 11
+              maxItems: 11
+            minItems:
+              const: 11
+            maxItems:
+              const: 11
+        - properties:
+            items:
+              type: array
+              minItems: 12
+              maxItems: 12
+            minItems:
+              const: 12
+            maxItems:
+              const: 12
+        - properties:
+            items:
+              type: array
+              minItems: 16
+              maxItems: 16
+            minItems:
+              const: 16
+            maxItems:
+              const: 16
+        - properties:
+            items:
+              type: array
+              minItems: 32
+              maxItems: 32
+            minItems:
+              const: 32
+            maxItems:
+              const: 32
+    then:
+      properties:
+        minItems: false
+        maxItems: false
+
+...
