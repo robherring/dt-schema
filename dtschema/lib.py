@@ -146,47 +146,44 @@ def _fixup_string_to_array(subschema):
     subschema['items'] = [ _extract_single_schemas(subschema) ]
 
 def _fixup_int_array_to_matrix(subschema):
-    is_int = False
+    if 'allOf' in subschema.keys() and '$ref' in subschema['allOf'][0].keys():
+        if not re.match('.*uint(8|16|32)-array', subschema['allOf'][0]['$ref']):
+            return
 
-    if not 'items' in subschema.keys():
+        # Find 'items'. It may be under the 'allOf' or at the same level
+        for item in subschema['allOf']:
+            if isinstance(item, dict) and 'items' in item.keys():
+                subschema = item
+                break
+
+        if not 'items' in subschema.keys():
+            return
+
+    elif not 'items' in subschema.keys() or \
+        (isinstance(subschema['items'],list) and not _is_int_schema(subschema['items'][0])) or \
+        (isinstance(subschema['items'],dict) and not _is_int_schema(subschema['items'])):
         return
 
-    if (not isinstance(subschema['items'],dict)) or 'items' in subschema['items'].keys():
-        return
+    if isinstance(subschema['items'],dict) and not 'items' in subschema['items'].keys():
+        subschema['items'] = copy.deepcopy(subschema)
+        # Don't copy 'allOf'
+        subschema['items'].pop('allOf', None)
+        for k in list(subschema.keys()):
+            if k == 'items' or k == 'allOf':
+                continue
+            subschema.pop(k)
 
-    if not _is_int_schema(subschema['items']):
-        return
-
-    subschema['items'] = copy.deepcopy(subschema)
-    # Don't copy 'allOf'
-    subschema['items'].pop('allOf', None)
-    for k in list(subschema.keys()):
-        if k == 'items' or k == 'allOf':
-            continue
-        subschema.pop(k)
-
+    if isinstance(subschema['items'],list) and not \
+        ('items' in subschema['items'][0].keys() or \
+         'minItems' in subschema['items'][0].keys() or \
+         'maxitems' in subschema['items'][0].keys()):
+        subschema['items'] = [ {'items': subschema['items']} ]
 
 def _fixup_scalar_to_array(subschema):
     if not _is_int_schema(subschema):
         return
 
     subschema['items'] = { 'items': _extract_single_schemas(subschema) }
-
-def _fixup_int_array(subschema):
-
-    if not 'items' in subschema.keys():
-        return
-
-    # A string list or already a matrix?
-    for l in subschema['items']:
-        if isinstance(l, dict) and 'items' in l.keys():
-            return
-        if _is_int_schema(l):
-            break
-    else:
-        return
-
-    subschema['items'] = [ {'items': subschema['items']} ]
 
 def _fixup_items_size(schema):
     # Make items list fixed size-spec
@@ -218,10 +215,8 @@ def fixup_vals(schema):
     # Now we should be a the schema level to do actual fixups
 #    print(schema)
     _fixup_int_array_to_matrix(schema)
-    _fixup_int_array(schema)
     _fixup_string_to_array(schema)
     _fixup_scalar_to_array(schema)
-    _fixup_items_size(schema)
 #    print(schema)
 
 def walk_conditionals(schema):
@@ -456,6 +451,7 @@ def process_schema(filename):
 
     # Add any implicit properties
     fixup_node_props(schema)
+    _fixup_items_size(schema)
 
     add_select_schema(schema)
     if not 'select' in schema.keys():
