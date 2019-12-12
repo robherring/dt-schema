@@ -44,6 +44,20 @@ definitions:
             enum: [ boolean, object ]
           properties:
             $ref: "#/definitions/all-properties"
+          patternProperties:
+            $ref: "#/definitions/all-properties"
+
+        allOf:
+          - if:
+              type: object
+              properties:
+                type:
+                  const: object
+              required:
+                - type
+            then:
+              $ref: "nodes.yaml#"
+
         dependencies:
           properties: [ type ]
           contains:

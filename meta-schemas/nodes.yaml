@@ -10,14 +10,20 @@ type: object
 properties:
   type:
     const: object
-  description: {}
-  properties: {}
-  patternProperties: {}
-  additionalProperties: {}
-  required: {}
+
+propertyNames:
+  enum:
+    - type
+    - description
+    - dependencies
+    - properties
+    - patternProperties
+    - additionalProperties
+    - required
+    - allOf
+    - anyOf
+    - oneOf
+    - $ref
 
 required:
   - type
-  - properties
-
-additionalProperties: false
