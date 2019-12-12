@@ -56,16 +56,22 @@ definitions:
               enum: false
               const: false
               pattern: false
+              minimum: false
+              maximum: false
           maxItems:
             properties:
               enum: false
               const: false
               pattern: false
+              minimum: false
+              maximum: false
           minItems:
             properties:
               enum: false
               const: false
               pattern: false
+              minimum: false
+              maximum: false
         propertyNames:
           enum:
             - $ref
