@@ -7,7 +7,9 @@ $id: "http://devicetree.org/meta-schemas/base.yaml#"
 $schema: "http://json-schema.org/draft-07/schema#"
 description: "Metaschema for devicetree binding documentation"
 
-allOf: [ { $ref: "http://json-schema.org/draft-07/schema#" } ]
+allOf:
+  - $ref: "http://json-schema.org/draft-07/schema#"
+  - $ref: "http://devicetree.org/meta-schemas/keywords.yaml#"
 
 properties:
   # listing all properties here to narrow the scope of what is allowed in
@@ -28,10 +30,7 @@ properties:
     type: array
     items:
       type: string
-  required:
-    type: array
-    items:
-      pattern: "^[a-zA-Z#][a-zA-Z0-9,+\\-._@]{0,63}$"
+  required: true
   allOf:
     items:
       propertyNames:
@@ -43,17 +42,14 @@ properties:
   anyOf: true
   oneOf: true
   definitions: true
-  additionalProperties:
-    type: boolean
+  additionalProperties: true
   dependencies: true
   patternProperties: true
   properties: true
   if: true
   then: true
   else: true
-
-  unevaluatedProperties:
-    type: boolean
+  unevaluatedProperties: true
 
   maintainers:
     type: array

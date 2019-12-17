@@ -61,63 +61,6 @@ definitions:
 
         dependencies:
           properties: [ type ]
-          contains:
-            properties:
-              enum: false
-              const: false
-              pattern: false
-          items:
-            properties:
-              enum: false
-              const: false
-              pattern: false
-              minimum: false
-              maximum: false
-          maxItems:
-            properties:
-              enum: false
-              const: false
-              pattern: false
-              minimum: false
-              maximum: false
-          minItems:
-            properties:
-              enum: false
-              const: false
-              pattern: false
-              minimum: false
-              maximum: false
-        propertyNames:
-          enum:
-            - $ref
-            - additionalItems
-            - additionalProperties
-            - allOf
-            - anyOf
-            - const
-            - contains
-            - default
-            - dependencies
-            - deprecated
-            - description
-            - else
-            - enum
-            - items
-            - if
-            - minItems
-            - minimum
-            - maxItems
-            - maximum
-            - not
-            - oneOf
-            - pattern
-            - patternProperties
-            - properties
-            - required
-            - then
-            - type
-            - typeSize
-            - unevaluatedProperties
 
     dependencies:
       "#size-cells": [ "#address-cells" ]

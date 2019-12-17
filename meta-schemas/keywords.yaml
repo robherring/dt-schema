@@ -1,0 +1,147 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2019 Arm Ltd.
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/keywords.yaml#"
+$schema: "http://json-schema.org/draft-07/schema#"
+
+description:
+  Metaschema to only allow for known json-schema vocabulary keywords. This is a
+  subset of json-schema vocabulary plus our additional keywords.
+
+definitions:
+  sub-schemas:
+    allOf:
+      - $ref: "#"
+    propertyNames:
+      # The subset of keywords allowed for sub-schema
+      enum:
+        - $ref
+        - additionalItems
+        - additionalProperties
+        - allOf
+        - anyOf
+        - const
+        - contains
+        - default
+        - dependencies
+        - deprecated
+        - description
+        - else
+        - enum
+        - exclusiveMaximum
+        - exclusiveMinimum
+        - items
+        - if
+        - minItems
+        - minimum
+        - maxItems
+        - maximum
+        - multipleOf
+        - not
+        - oneOf
+        - pattern
+        - patternProperties
+        - properties
+        - required
+        - then
+        - type
+        - typeSize
+        - unevaluatedProperties
+        - uniqueItems
+
+  scalar-prop-list:
+    properties:
+      enum: false
+      exclusiveMaximum: false
+      exclusiveMinimum: false
+      const: false
+      maximum: false
+      minimum: false
+      multipleOf: false
+      pattern: false
+
+# Array keywords should not be mixed with scalar keywords
+dependencies:
+  contains:
+    $ref: "#/definitions/scalar-prop-list"
+  items:
+    $ref: "#/definitions/scalar-prop-list"
+  maxItems:
+    $ref: "#/definitions/scalar-prop-list"
+  minItems:
+    $ref: "#/definitions/scalar-prop-list"
+
+properties:
+  $id: true
+  $schema: true
+  $ref: true
+  additionalItems:
+    type: boolean
+  additionalProperties:
+    type: boolean
+  allOf:
+    items:
+      $ref: "#/definitions/sub-schemas"
+  anyOf:
+    items:
+      $ref: "#/definitions/sub-schemas"
+  contains:
+    $ref: "#/definitions/sub-schemas"
+  const: true
+  default: true
+  definitions: true
+  dependencies: true
+  deprecated: true
+  description: true
+  else:
+    $ref: "#/definitions/sub-schemas"
+  enum: true
+  examples: true
+  exclusiveMaximum: true
+  exclusiveMinimum: true
+  if:
+    $ref: "#/definitions/sub-schemas"
+  items:
+    oneOf:
+      - type: object
+        allOf:
+          - $ref: "#/definitions/sub-schemas"
+      - type: array
+        items:
+          $ref: "#/definitions/sub-schemas"
+  minItems: true
+  minimum: true
+  maintainers: true
+  maxItems: true
+  maximum: true
+  multipleOf: true
+  not:
+    $ref: "#/definitions/sub-schemas"
+  oneOf:
+    items:
+      $ref: "#/definitions/sub-schemas"
+  pattern: true
+  patternProperties:
+    additionalProperties:
+      $ref: "#/definitions/sub-schemas"
+  properties:
+    additionalProperties:
+      $ref: "#/definitions/sub-schemas"
+  required:
+    type: array
+    items:
+      pattern: '^([a-zA-Z#][a-zA-Z0-9,+\-._@]{0,63}|\$nodename)$'
+  select:
+    $ref: "#/definitions/sub-schemas"
+  then:
+    $ref: "#/definitions/sub-schemas"
+  title: true
+  type: true
+  typeSize: true
+  unevaluatedProperties:
+    type: boolean
+  uniqueItems:
+    type: boolean
+
+additionalProperties: false
