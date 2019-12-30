@@ -95,7 +95,7 @@ properties:
       - description: PCI low address cell
         const: 0
       - description: PCI IRQ cell
-        minimum: 1
+        minimum: 0
         maximum: 7
 
   linux,pci-domain:
