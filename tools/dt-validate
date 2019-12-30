@@ -48,23 +48,26 @@ class schema_group():
                     node_matched = True
                     if 'compatible' in schema['select']['properties'].keys():
                         node_compatible_matched = True
-                errors = sorted(dtschema.DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
-                for error in errors:
+                try:
+                    errors = sorted(dtschema.DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
+                    for error in errors:
 
-                    # Disabled nodes might not have all the required
-                    # properties filled in, such as a regulator or a
-                    # GPIO meant to be filled at the DTS level on
-                    # boards using that particular node. Thus, if the
-                    # node is marked as disabled, let's just ignore
-                    # any error message reporting a missing property.
-                    if 'status' in node and \
-                       'disabled' in node['status'] and \
-                       'required property' in error.message:
-                        continue
+                        # Disabled nodes might not have all the required
+                        # properties filled in, such as a regulator or a
+                        # GPIO meant to be filled at the DTS level on
+                        # boards using that particular node. Thus, if the
+                        # node is marked as disabled, let's just ignore
+                        # any error message reporting a missing property.
+                        if 'status' in node and \
+                           'disabled' in node['status'] and \
+                           'required property' in error.message:
+                            continue
 
-                    print(dtschema.format_error(filename, error,
-                                                nodename=nodename,
-                                                verbose=verbose))
+                        print(dtschema.format_error(filename, error,
+                                                    nodename=nodename,
+                                                    verbose=verbose))
+                except RecursionError as e:
+                    print(ap.prog + ": recursion error: Check for prior errors in a referenced schema")
 
         if show_matched and matched_schemas:
             print("%s: %s: matched on schema(s)\n\t" % (filename, fullname) +
