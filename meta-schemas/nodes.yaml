@@ -19,6 +19,7 @@ propertyNames:
     - properties
     - patternProperties
     - additionalProperties
+    - unevaluatedProperties
     - required
     - allOf
     - anyOf
