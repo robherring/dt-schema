@@ -20,6 +20,7 @@ propertyNames:
     - patternProperties
     - additionalProperties
     - unevaluatedProperties
+    - deprecated
     - required
     - allOf
     - anyOf
