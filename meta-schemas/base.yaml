@@ -50,6 +50,7 @@ properties:
   then: true
   else: true
   unevaluatedProperties: true
+  deprecated: true
 
   maintainers:
     type: array
