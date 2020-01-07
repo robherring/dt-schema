@@ -516,15 +516,19 @@ def set_schema(schemas):
 def http_handler(uri):
     global schema_cache
     '''Custom handler for http://devicetre.org YAML references'''
-    if schema_base_url in uri:
-        for sch in schema_cache:
-            if uri in sch['$id']:
-                return sch
-        if 'meta-schemas' in uri:
-            return load_schema(uri.replace(schema_base_url, ''))
-        return process_schema(uri.replace(schema_base_url, ''))
+    try:
+        if schema_base_url in uri:
+            for sch in schema_cache:
+                if uri in sch['$id']:
+                    return sch
+            if 'meta-schemas' in uri:
+                return load_schema(uri.replace(schema_base_url, ''))
+            return process_schema(uri.replace(schema_base_url, ''))
 
-    return yaml.load(jsonschema.compat.urlopen(uri).read().decode('utf-8'))
+        return yaml.load(jsonschema.compat.urlopen(uri).read().decode('utf-8'))
+    except FileNotFoundError as e:
+        print('Unknown file referenced:', e, file=sys.stderr)
+        exit(-1)
 
 handlers = {"http": http_handler}
 
