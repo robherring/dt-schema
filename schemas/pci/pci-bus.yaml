@@ -78,12 +78,12 @@ properties:
   "#interrupt-cells":
     const: 1
 
-  interrupt-map:
-    minItems: 1
-    maxItems: 88    # 22 IDSEL x 4 IRQs
-    items:
-      minItems: 6   # 3 addr cells, 1 PCI IRQ cell, 1 phandle, 1+ parent addr and IRQ cells
-      maxItems: 16
+#  interrupt-map:
+#    minItems: 1
+#    maxItems: 88    # 22 IDSEL x 4 IRQs
+#    items:
+#      minItems: 6   # 3 addr cells, 1 PCI IRQ cell, 1 phandle, 1+ parent addr and IRQ cells
+#      maxItems: 16
 
   interrupt-map-mask:
     items:
