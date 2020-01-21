@@ -78,7 +78,7 @@ properties:
   "#interrupt-cells":
     const: 1
 
-#  interrupt-map:
+  interrupt-map: true
 #    minItems: 1
 #    maxItems: 88    # 22 IDSEL x 4 IRQs
 #    items:
