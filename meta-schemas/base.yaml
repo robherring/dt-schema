@@ -76,4 +76,25 @@ required:
   - title
   - maintainers
 
+if:
+  oneOf:
+    - properties:
+        allOf:
+          contains:
+            required:
+              - $ref
+      required:
+        - allOf
+    - required:
+        - $ref
+then:
+  oneOf:
+    - required:
+        - unevaluatedProperties
+    - required:
+        - additionalProperties
+else:
+  required:
+    - additionalProperties
+
 additionalProperties: false
