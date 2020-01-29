@@ -13,7 +13,6 @@ import copy
 from ruamel.yaml.comments import CommentedMap
 
 import jsonschema
-import pkgutil
 
 schema_base_url = "http://devicetree.org/"
 schema_basedir = os.path.dirname(os.path.abspath(__file__))
@@ -21,6 +20,11 @@ schema_basedir = os.path.dirname(os.path.abspath(__file__))
 # We use a lot of regex's in schema and exceeding the cache size has noticeable
 # peformance impact.
 re._MAXCACHE = 2048
+
+class int_list(list):
+    def __init__(self, alist, size=32):
+        super().__init__(alist)
+        self.type_size = size
 
 class tagged_list(list):
 
@@ -488,6 +492,7 @@ def fixup_node_props(schema):
 
     schema['properties']['phandle'] = True
     schema['properties']['status'] = True
+    schema['properties']['$srcfile'] = True
 
     keys = list()
     if 'properties' in schema:
@@ -599,6 +604,9 @@ schema_cache = []
 def set_schema(schemas):
     global schema_cache
     schema_cache = schemas
+    for sch in schemas:
+        sch['$select_validator'] = jsonschema.Draft7Validator(sch['select'])
+
 
 def http_handler(uri):
     global schema_cache
@@ -620,7 +628,7 @@ def http_handler(uri):
 handlers = {"http": http_handler}
 
 def typeSize(validator, typeSize, instance, schema):
-    if (isinstance(instance[0], tagged_list)):
+    if isinstance(instance[0], int_list) or isinstance(instance[0], tagged_list):
         if typeSize != instance[0].type_size:
             yield jsonschema.ValidationError("size is %r, expected %r" % (instance[0].type_size, typeSize))
     elif isinstance(instance[0], list) and isinstance(instance[0][0], int) and \
@@ -772,3 +780,91 @@ def format_error(filename, error, prefix="", nodename=None, verbose=False):
             msg += '\n' + pprint.pformat(error.schema, width=72)
 
     return src + msg + submsg
+
+verbose = False
+show_matched = 0
+show_unmatched = 0
+
+def check_node(tree, node, nodename, fullname, filename):
+    # Skip any generated nodes
+    node['$nodename'] = [ nodename ]
+    node_matched = False
+    node_compatible_matched = False
+    matched_schemas = []
+    for schema in schema_cache:
+        if schema['$select_validator'].is_valid(node):
+            # We have a match if a conditional schema is selected
+            if schema['select'] != True:
+                matched_schemas.append(schema['$id'])
+                node_matched = True
+                if 'compatible' in schema['select']['properties'].keys():
+                    node_compatible_matched = True
+            try:
+                errors = sorted(DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
+                for error in errors:
+
+                    # Disabled nodes might not have all the required
+                    # properties filled in, such as a regulator or a
+                    # GPIO meant to be filled at the DTS level on
+                    # boards using that particular node. Thus, if the
+                    # node is marked as disabled, let's just ignore
+                    # any error message reporting a missing property.
+                    if 'status' in node and \
+                       'disabled' in node['status'] and \
+                       'required property' in error.message:
+                        continue
+
+                    if len(error.absolute_path) >= 1 and \
+                        not error.absolute_path[0].startswith('$'):
+                        prop = error.absolute_path[0]
+                        if isinstance(node[prop], dict):
+                            err_msg = node[prop]['$srcfile'][prop]
+                        else:
+                            err_msg = node['$srcfile'][prop]
+                    else:
+                        err_msg = node['$srcfile'][nodename]
+
+                    print(format_error(err_msg, error,
+                                                nodename=nodename,
+                                                verbose=verbose), file=sys.stderr)
+            except RecursionError as e:
+                print(": recursion error: Check for prior errors in a referenced schema")
+
+    if show_matched and matched_schemas:
+        print("%s: %s: matched on schema(s)\n\t" % (filename, fullname) +
+            '\n\t'.join(matched_schemas))
+
+    if show_unmatched >= 1 and 'compatible' in node.keys() and \
+       not node_compatible_matched:
+        if isinstance(node, ruamel.yaml.comments.CommentedBase):
+            line = node.lc.line
+            col = node.lc.col
+        else:
+            line = 0
+            col = 0
+        print("%s:%i:%i: %s: failed to match any schema with compatible(s): %s" %
+            (filename, line, col, fullname, ', '.join(node["compatible"])))
+
+    if show_unmatched >= 2 and not node_matched:
+        print("%s: %s: failed to match any schema" % (filename, fullname))
+
+def check_subtree(tree, subtree, nodename, fullname, filename):
+    if nodename.startswith('__') or nodename.startswith('$'):
+        return
+    check_node(tree, subtree, nodename, fullname, filename)
+    if fullname != "/":
+        fullname += "/"
+    for name,value in subtree.items():
+        if isinstance(value, dict):
+            check_subtree(tree, value, name, fullname + name, filename)
+
+def check_tree(dt, schema_file=False):
+    """Check the given DT against all schemas"""
+
+    if not schema_file:
+        set_schema(process_schemas([""]))
+    else:
+        set_schema(load_schema(schema_file))
+
+    for subtree in dt:
+        check_subtree(dt, subtree, "/", "/", "")
