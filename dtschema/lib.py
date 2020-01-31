@@ -101,6 +101,11 @@ def check_id_path(filename, id):
     if not id == base:
         print(filename + ": $id: relative path/filename doesn't match actual path or filename\n\texpected: http://devicetree.org/schemas/" + base + '#' , file=sys.stderr)
 
+def do_load(filename):
+    with open(filename, 'r', encoding='utf-8') as f:
+        # ruamel C loader doesn't support 1.2, but 1.1 is good enough for us
+        tmp = f.read().replace('YAML 1.2', 'YAML 1.1')
+        return yaml.load(tmp)
 
 def load_schema(schema):
     yaml.allow_duplicate_keys = False
@@ -112,11 +117,10 @@ def load_schema(schema):
         schema_file = os.path.join(path, schema_file)
         if not os.path.isfile(schema_file):
             continue
-        with open(schema_file, 'r', encoding='utf-8') as f:
-            return yaml.load(f.read())
 
-    with open(os.path.join(schema_basedir, schema), 'r', encoding='utf-8') as f:
-        return yaml.load(f.read())
+        return do_load(schema_file)
+
+    return do_load(os.path.join(schema_basedir, schema))
 
 def _value_is_type(subschema, key, type):
     if not ( isinstance(subschema, dict) and key in subschema.keys() ):
