@@ -2,7 +2,7 @@
 # Copyright 2019 Linaro Ltd.
 %YAML 1.2
 ---
-$id: http://devicetree.org/schemas/cache.yaml#
+$id: http://devicetree.org/schemas/cache-controller.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
 title: Common Cache Binding
