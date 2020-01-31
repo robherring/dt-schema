@@ -84,7 +84,23 @@ schema_user_paths = []
 
 def add_schema_path(path):
     if os.path.isdir(path):
-        schema_user_paths.append(path)
+        schema_user_paths.append(os.path.abspath(path))
+
+def check_id_path(filename, id):
+    id = id.replace('http://devicetree.org/schemas/', '')
+    id = id.replace('#', '')
+
+    base = os.path.abspath(filename)
+
+    for p in schema_user_paths:
+        base = base.replace(p + '/', '')
+
+    base = base.replace(os.path.join(schema_basedir, 'schemas/'), '')
+    base = base.replace(os.path.abspath('schemas/') + '/', '')
+
+    if not id == base:
+        print(filename + ": $id: relative path/filename doesn't match actual path or filename\n\texpected: http://devicetree.org/schemas/" + base + '#' , file=sys.stderr)
+
 
 def load_schema(schema):
     yaml.allow_duplicate_keys = False
@@ -591,7 +607,7 @@ class DTValidator(DTVal):
                 self._check_schema_refs(schema[i])
 
     @classmethod
-    def check_schema_refs(self, err_msg, schema):
+    def check_schema_refs(self, filename, schema):
         scope = self.ID_OF(schema)
         if scope:
             self.resolver.push_scope(scope)
@@ -599,7 +615,10 @@ class DTValidator(DTVal):
         try:
             self._check_schema_refs(schema)
         except jsonschema.RefResolutionError as exc:
-            print(err_msg, exc, file=sys.stderr)
+            print(filename + ':', exc, file=sys.stderr)
+
+        check_id_path(filename, schema['$id'])
+
 
     @classmethod
     def _check_str(self, err_msg, schema, key, v):
