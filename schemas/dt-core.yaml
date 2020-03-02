@@ -18,10 +18,7 @@ properties:
   $nodename:
     $ref: "types.yaml#/definitions/string"
   compatible:
-    allOf:
-      - $ref: "types.yaml#/definitions/string-array"
-    items:
-      pattern: "^[a-zA-Z][a-zA-Z0-9,+\\-._]+$"
+    $ref: "types.yaml#/definitions/string-array"
   dma-coherent:
     $ref: "types.yaml#/definitions/flag"
   dma-ranges:
