@@ -219,6 +219,14 @@ def _fixup_items_size(schema):
 def fixup_vals(schema):
     # Now we should be a the schema level to do actual fixups
 #    print(schema)
+
+    # This can be removed once draft 2019.09 is supported
+    if '$ref' in schema.keys() and \
+        ((len(schema) > 1 and not 'description' in schema.keys()) or \
+        (len(schema) > 2 and 'description' in schema.keys())):
+        schema['allOf'] = [ {'$ref': schema['$ref']} ]
+        schema.pop('$ref')
+
     _fixup_int_array_to_matrix(schema)
     _fixup_string_to_array(schema)
     _fixup_scalar_to_array(schema)
