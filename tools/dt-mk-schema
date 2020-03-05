@@ -27,6 +27,8 @@ if __name__ == "__main__":
     ap.add_argument("schemas", nargs='*', type=str,
                     help="Filename of YAML encoded devicetree input file")
     ap.add_argument('-u', '--useronly', help="Only process user schemas", action="store_true")
+    ap.add_argument('-V', '--version', help="Print version number",
+                    action="version", version=dtschema.__version__)
     args = ap.parse_args()
 
     schemas = dtschema.process_schemas(args.schemas, core_schema=(not args.useronly))

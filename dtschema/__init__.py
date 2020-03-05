@@ -7,3 +7,7 @@ from dtschema.lib import (
     DTValidator,
     format_error,
 )
+
+from dtschema.version import (
+    __version__
+)

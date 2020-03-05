@@ -7,6 +7,7 @@ import os
 import sys
 import ruamel.yaml
 import argparse
+import dtschema
 
 example_template = """
     example-{example_num} {{
@@ -38,6 +39,8 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("yamlfile", type=str,
                     help="Filename of YAML encoded schema input file")
+    ap.add_argument('-V', '--version', help="Print version number",
+                    action="version", version=dtschema.__version__)
     args = ap.parse_args()
 
     binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())

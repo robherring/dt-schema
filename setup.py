@@ -19,7 +19,10 @@ os.chdir('..')
 
 setuptools.setup(
     name="dtschema",
-    use_scm_version=True,
+    use_scm_version={
+        'write_to': 'dtschema/version.py',
+        'write_to_template': '__version__ = "{version}"',
+    },
     setup_requires = ['setuptools_scm'],
     author="Rob Herring",
     author_email="robh@kernel.org",
