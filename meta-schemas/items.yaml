@@ -27,8 +27,11 @@ allOf:
   - if:
       required:
         - items
-        - minItems
-        - maxItems
+      anyOf:
+        - required:
+            - minItems
+        - required:
+            - maxItems
       oneOf:
         - properties:
             items:

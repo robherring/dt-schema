@@ -128,8 +128,7 @@ properties:
   vendor,string-list-prop:
     allOf:
      - $ref: "/schemas/types.yaml#/definitions/string-array"
-     - minItems: 2
-       items:
+     - items:
          - const: foobar
          - const: foobaz
     description: Vendor specific string list property
