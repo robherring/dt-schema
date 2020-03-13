@@ -19,9 +19,7 @@ properties:
     $ref: "cell.yaml#array"
 
 patternProperties:
-  '.*-gpio$':
-    $ref: "cell.yaml#array"
-  '.*-gpios$':
+  '(?<!,nr)-gpios?$':
     $ref: "cell.yaml#array"
 
 dependencies:

@@ -34,7 +34,7 @@ properties:
       - $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
 patternProperties:
-  ".*-gpios?$":
+  "(?<!,nr)-gpios?$":
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
   "^gpios$":
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
