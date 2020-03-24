@@ -193,10 +193,8 @@ def _fixup_int_array_to_matrix(subschema):
                 continue
             subschema.pop(k)
 
-    if isinstance(subschema['items'],list) and not \
-        ('items' in subschema['items'][0].keys() or \
-         'minItems' in subschema['items'][0].keys() or \
-         'maxitems' in subschema['items'][0].keys()):
+    if isinstance(subschema['items'],list) and \
+        not subschema['items'][0].keys() & {'items', 'maxItems', 'minItems'}:
         subschema['items'] = [ {'items': subschema['items']} ]
 
 def _fixup_scalar_to_array(subschema):
@@ -411,7 +409,7 @@ def fixup_interrupts(schema):
     schema['required'].remove('interrupts')
 
 def fixup_node_props(schema):
-    if not ('properties' in schema.keys() or 'patternProperties' in schema.keys()):
+    if not schema.keys() & {'properties', 'patternProperties'}:
         return
 
     if 'properties' in schema.keys():
@@ -468,7 +466,7 @@ def process_schema(filename):
 
     remove_description(schema)
 
-    if not ('properties' in schema.keys() or 'patternProperties' in schema.keys()):
+    if not schema.keys() & {'properties', 'patternProperties'}:
         return schema
 
     if not 'properties' in schema.keys():
