@@ -123,7 +123,7 @@ def load_schema(schema):
     return do_load(os.path.join(schema_basedir, schema))
 
 def _value_is_type(subschema, key, type):
-    if not ( isinstance(subschema, dict) and key in subschema.keys() ):
+    if not key in subschema:
         return False
 
     if isinstance(subschema[key], list):
@@ -151,7 +151,7 @@ def _extract_single_schemas(subschema):
     tmpsch = {}
 
     for match in ['const', 'enum', 'pattern', 'minimum', 'maximum']:
-        if not match in subschema.keys():
+        if not match in subschema:
             continue
         tmpsch[match] = subschema[match]
         del subschema[match]
@@ -166,25 +166,25 @@ def _fixup_string_to_array(subschema):
     subschema['items'] = [ _extract_single_schemas(subschema) ]
 
 def _fixup_int_array_to_matrix(subschema):
-    if 'allOf' in subschema.keys() and '$ref' in subschema['allOf'][0].keys():
+    if 'allOf' in subschema and '$ref' in subschema['allOf'][0]:
         if not re.match('.*uint(8|16|32)-array', subschema['allOf'][0]['$ref']):
             return
 
         # Find 'items'. It may be under the 'allOf' or at the same level
         for item in subschema['allOf']:
-            if isinstance(item, dict) and 'items' in item.keys():
+            if 'items' in item:
                 subschema = item
                 break
 
-        if not 'items' in subschema.keys():
+        if not 'items' in subschema:
             return
 
-    elif not 'items' in subschema.keys() or \
+    elif not 'items' in subschema or \
         (isinstance(subschema['items'],list) and not _is_int_schema(subschema['items'][0])) or \
         (isinstance(subschema['items'],dict) and not _is_int_schema(subschema['items'])):
         return
 
-    if isinstance(subschema['items'],dict) and not 'items' in subschema['items'].keys():
+    if isinstance(subschema['items'],dict) and not 'items' in subschema['items']:
         subschema['items'] = copy.deepcopy(subschema)
         # Don't copy 'allOf'
         subschema['items'].pop('allOf', None)
@@ -209,21 +209,21 @@ def _fixup_items_size(schema):
         for l in schema:
             _fixup_items_size(l)
     elif isinstance(schema, dict):
-        if 'items' in schema.keys():
+        if 'items' in schema:
             schema['type'] = 'array'
 
             if isinstance(schema['items'], list):
                 c = len(schema['items'])
-                if not 'minItems' in schema.keys():
+                if not 'minItems' in schema:
                     schema['minItems'] = c
-                if not 'maxItems' in schema.keys():
+                if not 'maxItems' in schema:
                     schema['maxItems'] = c
 
-                if not 'additionalItems' in schema.keys():
+                if not 'additionalItems' in schema:
                     schema['additionalItems'] = False
-        elif 'maxItems' in schema.keys() and not 'minItems' in schema.keys():
+        elif 'maxItems' in schema and not 'minItems' in schema:
             schema['minItems'] = schema['maxItems']
-        elif 'minItems' in schema.keys() and not 'maxItems' in schema.keys():
+        elif 'minItems' in schema and not 'maxItems' in schema:
             schema['maxItems'] = schema['minItems']
 
         for prop,val in schema.items():
@@ -234,9 +234,9 @@ def fixup_vals(schema):
 #    print(schema)
 
     # This can be removed once draft 2019.09 is supported
-    if '$ref' in schema.keys() and \
-        ((len(schema) > 1 and not 'description' in schema.keys()) or \
-        (len(schema) > 2 and 'description' in schema.keys())):
+    if '$ref' in schema and \
+        ((len(schema) > 1 and not 'description' in schema) or \
+        (len(schema) > 2 and 'description' in schema)):
         schema['allOf'] = [ {'$ref': schema['$ref']} ]
         schema.pop('$ref')
 
@@ -338,10 +338,10 @@ def add_select_schema(schema):
     If it has a $nodename property, then create a select schema from that.
     If it has none of those, then return a match-nothing schema
     '''
-    if "select" in schema.keys():
+    if "select" in schema:
         return
 
-    if 'compatible' in schema['properties'].keys():
+    if 'compatible' in schema['properties']:
         sch = schema['properties']['compatible']
         compatible_list = [ ]
         for l in item_generator(sch, 'enum'):
@@ -350,7 +350,7 @@ def add_select_schema(schema):
         for l in item_generator(sch, 'const'):
             compatible_list.extend(l)
 
-        if 'contains' in sch.keys():
+        if 'contains' in sch:
             for l in item_generator(sch['contains'], 'enum'):
                 compatible_list.extend(l)
 
@@ -391,7 +391,7 @@ def remove_description(schema):
 
 def fixup_interrupts(schema):
     # Supporting 'interrupts' implies 'interrupts-extended' is also supported.
-    if not ('properties' in schema.keys() and 'interrupts' in schema['properties'].keys()):
+    if not ('properties' in schema and 'interrupts' in schema['properties']):
         return
 
     # Any node with 'interrupts' can have 'interrupt-parent'
@@ -399,7 +399,7 @@ def fixup_interrupts(schema):
 
     schema['properties']['interrupts-extended'] = copy.deepcopy(schema['properties']['interrupts']);
 
-    if not ('required' in schema.keys() and 'interrupts' in schema['required']):
+    if not ('required' in schema and 'interrupts' in schema['required']):
         return
 
     # Currently no better way to express either 'interrupts' or 'interrupts-extended'
@@ -409,20 +409,18 @@ def fixup_interrupts(schema):
     schema['required'].remove('interrupts')
 
 def fixup_node_props(schema):
-    if not schema.keys() & {'properties', 'patternProperties'}:
+    if not (isinstance(schema, dict) and schema.keys() & {'properties', 'patternProperties'}):
         return
 
-    if 'properties' in schema.keys():
+    if 'properties' in schema:
         for k,v in schema['properties'].items():
-            if isinstance(v, dict) and 'type' in v.keys() and v['type'] == 'object':
-                fixup_node_props(v)
+            fixup_node_props(v)
 
-    if 'patternProperties' in schema.keys():
+    if 'patternProperties' in schema:
         for k,v in schema['patternProperties'].items():
-            if isinstance(v, dict) and 'type' in v.keys() and v['type'] == 'object':
-                fixup_node_props(v)
+            fixup_node_props(v)
 
-    if not 'properties' in schema.keys():
+    if not 'properties' in schema:
         schema['properties'] = {}
 
     schema['properties']['phandle'] = True
@@ -469,10 +467,10 @@ def process_schema(filename):
     if not schema.keys() & {'properties', 'patternProperties'}:
         return schema
 
-    if not 'properties' in schema.keys():
+    if not 'properties' in schema:
         schema['properties'] = {}
 
-    if not '$nodename' in schema['properties'].keys():
+    if not '$nodename' in schema['properties']:
         schema['properties']['$nodename'] = True
 
     # Add any implicit properties
@@ -480,7 +478,7 @@ def process_schema(filename):
     _fixup_items_size(schema)
 
     add_select_schema(schema)
-    if not 'select' in schema.keys():
+    if not 'select' in schema:
         return
 
     schema["$filename"] = filename
