@@ -109,6 +109,14 @@ properties:
           - const: 10
     description: Vendor specific integer array property
 
+  vendor,int-array-size-only-prop:
+    allOf:
+      - $ref: "/schemas/types.yaml#/definitions/uint32-array"
+    minItems: 2
+    maxItems: 5
+    description: Vendor specific integer array property with only a size
+      range. This can use either form of brackets.
+
   vendor,string-prop:
     allOf:
       - $ref: "/schemas/types.yaml#/definitions/string"

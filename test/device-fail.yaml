@@ -105,6 +105,10 @@
     compatible: [ "vendor,soc1-ip" ]
     vendor,int-array-prop-2: [ [5, 4] ]
 
+  bad-vendor-int-array-3-test:
+    compatible: [ "vendor,soc1-ip" ]
+    vendor,int-array-size-only-prop: [ [5, 6, 7, 8, 9, 10] ]
+
   bad-vendor-string-test:
     compatible: [ "vendor,soc1-ip" ]
     vendor,string-prop: [ "foobaz" ]

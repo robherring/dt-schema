@@ -165,7 +165,36 @@ def _fixup_string_to_array(subschema):
 
     subschema['items'] = [ _extract_single_schemas(subschema) ]
 
-def _fixup_int_array_to_matrix(subschema):
+# Fixup an int array that only defines the number of items.
+# In this case, we allow either form [[ 0, 1, 2]] or [[0], [1], [2]]
+def _fixup_int_array_min_max_to_matrix(subschema):
+    if not ('allOf' in subschema and \
+            '$ref' in subschema['allOf'][0] and \
+            re.match('.*uint(8|16|32)-array', subschema['allOf'][0]['$ref'])):
+        return
+
+    # Find 'min/maxItems'. It may be under the 'allOf' or at the same level
+    for item in subschema['allOf']:
+        if item.keys() & {'minItems', 'maxItems'}:
+            subschema = item
+            break
+
+    if 'items' in subschema:
+        return
+
+    tmpsch = {}
+    if 'minItems' in subschema:
+        tmpsch['minItems'] = subschema.pop('minItems')
+    if 'maxItems' in subschema:
+        tmpsch['maxItems'] = subschema.pop('maxItems')
+
+    if tmpsch:
+        subschema['oneOf'] = [ copy.deepcopy(tmpsch), {'items': [ copy.deepcopy(tmpsch) ]} ]
+        subschema['oneOf'][0].update({'items': { 'maxItems': 1 }})
+        if 'minItems' in subschema['oneOf'][0]:
+            subschema['oneOf'][0]['minItems'] += 1
+
+def _fixup_int_array_items_to_matrix(subschema):
     if 'allOf' in subschema and '$ref' in subschema['allOf'][0]:
         if not re.match('.*uint(8|16|32)-array', subschema['allOf'][0]['$ref']):
             return
@@ -240,7 +269,8 @@ def fixup_vals(schema):
         schema['allOf'] = [ {'$ref': schema['$ref']} ]
         schema.pop('$ref')
 
-    _fixup_int_array_to_matrix(schema)
+    _fixup_int_array_min_max_to_matrix(schema)
+    _fixup_int_array_items_to_matrix(schema)
     _fixup_string_to_array(schema)
     _fixup_scalar_to_array(schema)
 #    print(schema)
