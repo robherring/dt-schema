@@ -421,11 +421,15 @@ def remove_description(schema):
 
 def fixup_interrupts(schema):
     # Supporting 'interrupts' implies 'interrupts-extended' is also supported.
-    if not ('properties' in schema and 'interrupts' in schema['properties']):
+    if not 'properties' in schema:
         return
 
     # Any node with 'interrupts' can have 'interrupt-parent'
-    schema['properties']['interrupt-parent'] = True
+    if schema['properties'].keys() & {'interrupts', 'interrupt-controller'}:
+        schema['properties']['interrupt-parent'] = True
+
+    if not 'interrupts' in schema['properties']:
+        return
 
     schema['properties']['interrupts-extended'] = copy.deepcopy(schema['properties']['interrupts']);
 
