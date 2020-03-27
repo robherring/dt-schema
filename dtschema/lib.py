@@ -233,7 +233,7 @@ def _fixup_scalar_to_array(subschema):
     if not _is_int_schema(subschema):
         return
 
-    subschema['items'] = { 'items': _extract_single_schemas(subschema) }
+    subschema['items'] = [ {'items': [ _extract_single_schemas(subschema) ] } ]
 
 def _fixup_items_size(schema):
     # Make items list fixed size-spec
