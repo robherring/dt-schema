@@ -191,7 +191,10 @@ def _fixup_int_array_min_max_to_matrix(subschema):
     if tmpsch:
         subschema['oneOf'] = [ copy.deepcopy(tmpsch), {'items': [ copy.deepcopy(tmpsch) ]} ]
         subschema['oneOf'][0].update({'items': { 'maxItems': 1 }})
-        if 'minItems' in subschema['oneOf'][0]:
+
+        # if minItems can be 1, then both oneOf clauses can be true so increment
+        # minItems in one clause to prevent that.
+        if subschema['oneOf'][0].get('minItems') == 1:
             subschema['oneOf'][0]['minItems'] += 1
 
 def _fixup_int_array_items_to_matrix(subschema):
