@@ -165,6 +165,19 @@ def _fixup_string_to_array(subschema):
 
     subschema['items'] = [ _extract_single_schemas(subschema) ]
 
+def _is_matrix_schema(subschema):
+    if not 'items' in subschema:
+        return False
+
+    if isinstance(subschema['items'], list):
+        for l in subschema['items']:
+            if l.keys() & {'items', 'maxItems', 'minItems'}:
+                return True
+    elif subschema['items'].keys() & {'items', 'maxItems', 'minItems'}:
+        return True
+
+    return False
+
 # Fixup an int array that only defines the number of items.
 # In this case, we allow either form [[ 0, 1, 2]] or [[0], [1], [2]]
 def _fixup_int_array_min_max_to_matrix(subschema):
@@ -179,7 +192,7 @@ def _fixup_int_array_min_max_to_matrix(subschema):
             subschema = item
             break
 
-    if 'items' in subschema:
+    if _is_matrix_schema(subschema):
         return
 
     tmpsch = {}
@@ -216,17 +229,20 @@ def _fixup_int_array_items_to_matrix(subschema):
         (isinstance(subschema['items'],dict) and not _is_int_schema(subschema['items'])):
         return
 
-    if isinstance(subschema['items'],dict) and not 'items' in subschema['items']:
+    if _is_matrix_schema(subschema):
+        return
+
+    if isinstance(subschema['items'],dict):
         subschema['items'] = copy.deepcopy(subschema)
         # Don't copy 'allOf'
         subschema['items'].pop('allOf', None)
+        subschema['items'].pop('oneOf', None)
         for k in list(subschema.keys()):
-            if k == 'items' or k == 'allOf':
+            if k in ['items', 'allOf', 'oneOf']:
                 continue
             subschema.pop(k)
 
-    if isinstance(subschema['items'],list) and \
-        not subschema['items'][0].keys() & {'items', 'maxItems', 'minItems'}:
+    if isinstance(subschema['items'],list):
         subschema['items'] = [ {'items': subschema['items']} ]
 
 def _fixup_scalar_to_array(subschema):
