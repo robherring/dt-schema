@@ -394,6 +394,7 @@ def add_select_schema(schema):
         except:
             pass
 
+        compatible_list.sort()
         if len(compatible_list) != 0:
             schema['select'] = {
                 'required': ['compatible'],
