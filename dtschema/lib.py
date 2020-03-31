@@ -440,7 +440,13 @@ def fixup_interrupts(schema):
     # Currently no better way to express either 'interrupts' or 'interrupts-extended'
     # is required. If this fails validation, the error reporting is the whole
     # schema file fails validation
-    schema['oneOf'] = [ {'required': ['interrupts']}, {'required': ['interrupts-extended']} ]
+    reqlist = [ {'required': ['interrupts']}, {'required': ['interrupts-extended']} ]
+    if 'oneOf' in schema:
+        if not 'allOf' in schema:
+            schema['allOf'] = []
+        schema['allOf'].append(reqlist)
+    else:
+        schema['oneOf'] = reqlist
     schema['required'].remove('interrupts')
 
 def fixup_node_props(schema):
