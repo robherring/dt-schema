@@ -463,7 +463,7 @@ def fixup_interrupts(schema):
     if 'oneOf' in schema:
         if not 'allOf' in schema:
             schema['allOf'] = []
-        schema['allOf'].append(reqlist)
+        schema['allOf'].append({ 'oneOf': reqlist })
     else:
         schema['oneOf'] = reqlist
     schema['required'].remove('interrupts')
