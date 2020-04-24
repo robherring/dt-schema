@@ -506,14 +506,14 @@ def process_schema(filename):
     try:
         schema = load_schema(filename)
     except ruamel.yaml.error.YAMLError as exc:
-        print(filename + ": ignoring, error parsing file")
+        print(filename + ": ignoring, error parsing file", file=sys.stderr)
         return
 
     # Check that the validation schema is valid
     try:
         DTValidator.check_schema(schema)
     except jsonschema.SchemaError as exc:
-        print(filename + ": ignoring, error in schema: " + ': '.join(str(x) for x in exc.path))
+        print(filename + ": ignoring, error in schema: " + ': '.join(str(x) for x in exc.path), file=sys.stderr)
         #print(exc.message)
         return
 

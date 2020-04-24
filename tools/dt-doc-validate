@@ -24,14 +24,14 @@ def check_doc(filename):
     try:
         testtree = dtschema.load(filename, line_number=line_number, duplicate_keys=False)
     except (ruamel.yaml.scanner.ScannerError, ruamel.yaml.parser.ParserError) as exc:
-        print(filename + ": ", exc)
+        print(filename + ": ", exc, file=sys.stderr)
         return 1
     except ruamel.yaml.YAMLError as exc:
-        print(filename + ":", exc.path[-1], exc.message)
+        print(filename + ":", exc.path[-1], exc.message, file=sys.stderr)
         return 1
 
     for error in sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.linecol):
-        print(dtschema.format_error(filename, error, verbose=args.verbose))
+        print(dtschema.format_error(filename, error, verbose=args.verbose), file=sys.stderr)
         ret = 1
 
     dtschema.DTValidator.check_schema_refs(filename, testtree)

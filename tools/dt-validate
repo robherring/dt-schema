@@ -65,13 +65,13 @@ class schema_group():
 
                         print(dtschema.format_error(filename, error,
                                                     nodename=nodename,
-                                                    verbose=verbose))
+                                                    verbose=verbose), file=sys.stderr)
                 except RecursionError as e:
-                    print(ap.prog + ": recursion error: Check for prior errors in a referenced schema")
+                    print(ap.prog + ": recursion error: Check for prior errors in a referenced schema", file=sys.stderr)
 
         if show_matched and matched_schemas:
             print("%s: %s: matched on schema(s)\n\t" % (filename, fullname) +
-                '\n\t'.join(matched_schemas))
+                '\n\t'.join(matched_schemas), file=sys.stderr)
 
         if show_unmatched >= 1 and 'compatible' in node.keys() and \
            not node_compatible_matched:
@@ -82,10 +82,10 @@ class schema_group():
                 line = 0
                 col = 0
             print("%s:%i:%i: %s: failed to match any schema with compatible(s): %s" %
-                (filename, line, col, fullname, ', '.join(node["compatible"])))
+                (filename, line, col, fullname, ', '.join(node["compatible"])), file=sys.stderr)
 
         if show_unmatched >= 2 and not node_matched:
-            print("%s: %s: failed to match any schema" % (filename, fullname))
+            print("%s: %s: failed to match any schema" % (filename, fullname), file=sys.stderr)
 
     def check_subtree(self, tree, subtree, nodename, fullname, filename):
         if nodename.startswith('__'):
