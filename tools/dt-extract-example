@@ -15,8 +15,7 @@ example_template = """
         #address-cells = <1>;
         #size-cells = <1>;
 
-{example}
-
+        {example}
     }};
 }};
 """
