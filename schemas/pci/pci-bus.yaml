@@ -114,6 +114,10 @@ properties:
   supports-clkreq:
     type: boolean
 
+  aspm-no-l0s:
+    description: Disables ASPM L0s capability
+    type: boolean
+
   vendor-id:
     description: The PCI vendor ID
     allOf:
