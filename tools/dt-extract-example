@@ -4,6 +4,7 @@
 # Copyright 2019 Arm Ltd.
 
 import os
+import re
 import sys
 import ruamel.yaml
 import argparse
@@ -14,14 +15,16 @@ example_template = """
         #address-cells = <1>;
         #size-cells = <1>;
 
-{example}
-
+        {example}
     }};
+}};
 """
 
 example_header = """
 /dts-v1/;
 /plugin/; // silence any missing phandle references
+"""
+example_start = """
 /{
     compatible = "foo";
     model = "foo";
@@ -49,7 +52,15 @@ if __name__ == "__main__":
 
     if 'examples' in binding.keys():
         for idx,ex in enumerate(binding['examples']):
-            ex = '        '.join(ex.splitlines(True))
-            print(example_template.format(example=ex,example_num=idx))
+            # Check if example contains a root node "/{"
+            root_node = re.search('^/\s*{', ex)
 
-    print("\n};")
+            if not root_node:
+                print(example_start)
+                ex = '        '.join(ex.splitlines(True))
+                print(example_template.format(example=ex,example_num=idx))
+            else:
+                print(ex)
+    else:
+        print(example_start)
+        print("\n};")
