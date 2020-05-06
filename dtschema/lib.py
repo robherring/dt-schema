@@ -620,6 +620,10 @@ def typeSize(validator, typeSize, instance, schema):
     if (isinstance(instance[0], tagged_list)):
         if typeSize != instance[0].type_size:
             yield jsonschema.ValidationError("size is %r, expected %r" % (instance[0].type_size, typeSize))
+    elif isinstance(instance[0], list) and isinstance(instance[0][0], int) and \
+        typeSize == 32:
+        # 32-bit sizes aren't explicitly tagged
+        return
     else:
         yield jsonschema.ValidationError("missing size tag in %r" % instance)
 

@@ -169,6 +169,11 @@ properties:
 
     description: Vendor specific 16-bit integer property
 
+  vendor,int64-array-prop:
+    allOf:
+      - $ref: /schemas/types.yaml#definitions/uint64-array
+    description: Vendor specific 64-bit integer array property
+
   vendor,phandle-prop:
     $ref: "/schemas/types.yaml#/definitions/phandle"
     description: Vendor specific single cell phandle property
