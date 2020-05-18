@@ -409,6 +409,9 @@ def add_select_schema(schema):
         compatible_list = list(set(compatible_list))
         try:
             compatible_list.remove('syscon')
+        except:
+            pass
+        try:
             compatible_list.remove('simple-mfd')
         except:
             pass
