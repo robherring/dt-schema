@@ -30,7 +30,7 @@ dependencies:
   interrupt-controller: ['#interrupt-cells']
   interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
   "#interrupt-cells":
-    oneOf:
+    anyOf:
       - required:
           - interrupt-controller
       - required:
