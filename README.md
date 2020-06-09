@@ -74,7 +74,7 @@ Found in `./meta-schemas`
 
 *Devicetree Meta-Schemas* describe the data format of Devicetree Schema files.
 The Meta-schemas make sure all the binding schemas are in the correct format
-and the tool will emit an error is the format is incorrect.
+and the tool will emit an error if the format is incorrect.
 
 As a developer you normally will not need to write metaschema files.
 
@@ -89,9 +89,9 @@ them against the DT meta-schema.
 
 tools/dt-mk-schema
 This tool takes user provided schema file(s) plus the core schema files in this
-repo, removed everything not needed for validation, applies fix-ups to the
-schemas, and outputs a single file with the processed schema. This is step is
-done separately to speed up subsequent validate of YAML Devicetrees.
+repo, removes everything not needed for validation, applies fix-ups to the
+schemas, and outputs a single file with the processed schema. This step is
+done separately to speed up subsequent validation of YAML Devicetrees.
 
 tools/dt-validate
 This tool takes user provided YAML Devicetree(s) and either a schema directory
