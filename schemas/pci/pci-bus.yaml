@@ -145,7 +145,6 @@ patternProperties:
       - reg
 
 required:
-  - compatible
   - device_type
   - ranges
   - "#address-cells"
