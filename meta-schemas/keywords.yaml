@@ -79,7 +79,11 @@ properties:
   additionalItems:
     type: boolean
   additionalProperties:
-    type: boolean
+    oneOf:
+      - type: object
+        allOf:
+          - $ref: "#/definitions/sub-schemas"
+      - type: boolean
   allOf:
     items:
       $ref: "#/definitions/sub-schemas"
@@ -140,7 +144,11 @@ properties:
   type: true
   typeSize: true
   unevaluatedProperties:
-    type: boolean
+    oneOf:
+      - type: object
+        allOf:
+          - $ref: "#/definitions/sub-schemas"
+      - type: boolean
   uniqueItems:
     type: boolean
 
