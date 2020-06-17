@@ -28,19 +28,21 @@ properties:
     pattern: "^pcie?@"
 
   ranges:
-    minItems: 1
-    maxItems: 32    # Should be enough
-    items:
-      minItems: 5
-      maxItems: 7
-      additionalItems: true
-      items:
-        - enum:
-            - 0x01000000
-            - 0x02000000
-            - 0x03000000
-            - 0x42000000
-            - 0x43000000
+    oneOf:
+      - $ref: "/schemas/types.yaml#/definitions/flag"
+      - minItems: 1
+        maxItems: 32    # Should be enough
+        items:
+          minItems: 5
+          maxItems: 7
+          additionalItems: true
+          items:
+            - enum:
+                - 0x01000000
+                - 0x02000000
+                - 0x03000000
+                - 0x42000000
+                - 0x43000000
 
   dma-ranges:
     oneOf:
