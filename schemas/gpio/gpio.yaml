@@ -33,12 +33,6 @@ properties:
       - type: object
       - $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
-patternProperties:
-  "(?<!,nr)-gpios?$":
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-  "^gpios$":
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-
 dependencies:
   gpio-controller: ['#gpio-cells']
   '#gpio-cells': [ gpio-controller ]
