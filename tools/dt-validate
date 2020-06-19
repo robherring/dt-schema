@@ -58,8 +58,8 @@ class schema_group():
                         # boards using that particular node. Thus, if the
                         # node is marked as disabled, let's just ignore
                         # any error message reporting a missing property.
-                        if 'status' in node and \
-                           'disabled' in node['status'] and \
+                        if 'status' in error.instance and \
+                           'disabled' in error.instance['status'] and \
                            'required property' in error.message:
                             continue
 
