@@ -29,6 +29,8 @@ setuptools.setup(
     description="DeviceTree validation schema and tools",
     long_description=long_description,
     url="https://github.com/devicetree-org/dt-schema",
+    license="BSD",
+    license_files=["LICENSE.txt"],
 
     packages=['dtschema'],
     package_data={'dtschema': data_files},
