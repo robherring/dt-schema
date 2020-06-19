@@ -28,6 +28,7 @@ setuptools.setup(
     author_email="robh@kernel.org",
     description="DeviceTree validation schema and tools",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/devicetree-org/dt-schema",
     license="BSD",
     license_files=["LICENSE.txt"],
