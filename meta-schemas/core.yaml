@@ -30,6 +30,8 @@ definitions:
         $ref: "string-array.yaml"
       memory-region:
         $ref: "cell.yaml#array"
+      memory-region-names:
+        $ref: "string-array.yaml"
     propertyNames:
       # Ensure DT property names are not json-schema vocabulary names
       not:
@@ -73,6 +75,7 @@ definitions:
 
     dependencies:
       "#size-cells": [ "#address-cells" ]
+      memory-region-names: [ memory-region ]
 
 properties:
   patternProperties:
