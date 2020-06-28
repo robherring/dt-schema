@@ -86,13 +86,15 @@ properties:
   linux,usable-memory-range:
     allOf:
       - $ref: types.yaml#definitions/uint64-array
-      - maxItems: 2
+      - items:
+          maxItems: 2
     description: |
-      This property (arm64 only) holds a base address and size, describing a
-      limited region in which memory may be considered available for use by
-      the kernel. Memory outside of this range is not available for use.
+      This property (arm64 only) holds base address and size of memory regions,
+      describing limited regions in which memory may be considered available
+      for use by the kernel. Memory outside of these ranges is not available
+      for use.
 
-      This property describes a limitation: memory within this range is only
+      This property describes a limitation: memory within these ranges are only
       valid when also described through another mechanism that the kernel
       would otherwise use to determine available memory (e.g. memory nodes
       or the EFI memory map). Valid memory may be sparse within the range.
