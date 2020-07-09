@@ -74,3 +74,5 @@ patternProperties:
 required:
   - compatible
   - child-node-fixed-name
+
+additionalProperties: false

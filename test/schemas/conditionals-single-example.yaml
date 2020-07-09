@@ -30,3 +30,5 @@ else:
   properties:
     vendor,property:
       const: test5678
+
+unevaluatedProperties: false

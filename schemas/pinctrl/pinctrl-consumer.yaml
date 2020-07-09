@@ -24,3 +24,5 @@ patternProperties:
 
 dependencies:
   pinctrl-names: [ pinctrl-0 ]
+
+additionalProperties: true

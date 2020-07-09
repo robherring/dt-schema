@@ -16,7 +16,6 @@ maintainers:
 properties:
   $nodename:
     const: "/"
-  compatible: {}
   model: { "$ref" : "types.yaml#definitions/string-array"}
   "#address-cells":
     enum: [1, 2]
@@ -29,6 +28,8 @@ required:
   - model
   - "#address-cells"
   - "#size-cells"
+
+additionalProperties: true
 
 examples:
   - |

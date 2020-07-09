@@ -198,6 +198,8 @@ properties:
 required:
   - compatible
 
+additionalProperties: false
+
 examples:
   - |
       /dts-v1/;

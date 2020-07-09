@@ -89,3 +89,5 @@ patternProperties:
   "-kpascal$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: kiloPascal
+
+additionalProperties: true

@@ -16,6 +16,8 @@ properties:
       - vendor,conditionals-allof-test-controller
       - vendor,second-conditionals-allof-test-controller
 
+unevaluatedProperties: false
+
 allOf:
   - if:
       properties:

@@ -13,3 +13,5 @@ maintainers:
 properties:
   $nodename:
     pattern: "^serial(@[0-9a-f,]+)*$"
+
+additionalProperties: true

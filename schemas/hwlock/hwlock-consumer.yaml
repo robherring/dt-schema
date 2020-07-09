@@ -23,3 +23,5 @@ properties:
 
 dependencies:
   hwlock-names: [ hwlocks ]
+
+additionalProperties: true

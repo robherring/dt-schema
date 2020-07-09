@@ -17,6 +17,8 @@ select: true
 
 properties: {}
 
+additionalProperties: true
+
 allOf:
   - if:
       properties:

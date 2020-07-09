@@ -45,3 +45,5 @@ if:
 then:
   required:
     - cache-level
+
+additionalProperties: true

@@ -21,3 +21,5 @@ properties:
 
 dependencies:
   dma-names: [ dmas ]
+
+additionalProperties: true

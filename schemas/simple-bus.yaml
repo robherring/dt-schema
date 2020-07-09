@@ -49,7 +49,7 @@ patternProperties:
       - required:
           - ranges
 
-#additionalProperties: false
+additionalProperties: true
 
 required:
   - compatible

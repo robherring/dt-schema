@@ -27,3 +27,5 @@ properties:
   clock-frequency:
     minimum: 1000
     maximum: 3000000
+
+additionalProperties: true
