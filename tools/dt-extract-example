@@ -33,8 +33,7 @@ example_start = """
 
 """
 
-# Need pure until YAML 1.2 is supported
-yaml = ruamel.yaml.YAML(typ='safe', pure=True)
+yaml = ruamel.yaml.YAML(typ='safe')
 
 if __name__ == "__main__":
     ex = '// empty'
