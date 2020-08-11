@@ -17,6 +17,7 @@ import dtschema
 import argparse
 import glob
 import jsonschema
+import json
 
 
 
@@ -24,6 +25,8 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("-o", "--outfile", type=str,
                     help="Filename of the processed schema")
+    ap.add_argument("-j", "--json", help="Encode the processed schema in json",
+                    action="store_true")
     ap.add_argument("schemas", nargs='*', type=str,
                     help="Names of directories, or YAML encoded schema files")
     ap.add_argument('-u', '--useronly', help="Only process user schemas", action="store_true")
@@ -40,5 +43,8 @@ if __name__ == "__main__":
     else:
         f = sys.stdout
 
-    yaml = ruamel.yaml.YAML(typ='safe')
-    yaml.dump(schemas, f)
+    if (args.json):
+        json.dump(schemas, f)
+    else:
+        yaml = ruamel.yaml.YAML(typ='safe')
+        yaml.dump(schemas, f)
