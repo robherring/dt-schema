@@ -9,6 +9,7 @@ import ruamel.yaml
 import re
 import pprint
 import copy
+import json
 
 from ruamel.yaml.comments import CommentedMap
 
@@ -103,6 +104,9 @@ def check_id_path(filename, id):
 
 def do_load(filename):
     with open(filename, 'r', encoding='utf-8') as f:
+        if filename.endswith('.json'):
+            return json.load(f)
+
         # ruamel C loader doesn't support 1.2, but 1.1 is good enough for us
         tmp = f.read().replace('YAML 1.2', 'YAML 1.1')
         return yaml.load(tmp)
