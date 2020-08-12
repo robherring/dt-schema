@@ -41,7 +41,7 @@ def check_doc(filename):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("yamldt", type=str,
+    ap.add_argument("yamldt", nargs='*', type=str,
                     help="Filename of YAML encoded devicetree input file")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     ap.add_argument('-n', '--line-number', help="Print line and column numbers (slower)", action="store_true")
@@ -55,12 +55,14 @@ if __name__ == "__main__":
     if args.url_path:
         dtschema.add_schema_path(args.url_path)
 
-    if os.path.isdir(args.yamldt):
-        for filename in glob.iglob(args.yamldt + "/**/*.yaml", recursive=True):
-            ret = check_doc(filename)
-            if ret != 0:
-                break
-    else:
-        ret = check_doc(args.yamldt)
+    ret = 0
+    for f in args.yamldt:
+        if os.path.isdir(f):
+            for filename in glob.iglob(f + "/**/*.yaml", recursive=True):
+                ret = check_doc(filename)
+                if ret != 0:
+                    break
+        else:
+            ret = check_doc(f)
 
     exit(ret)
