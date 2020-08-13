@@ -22,7 +22,8 @@ import json
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
+        epilog='Arguments can also be passed in a file prefixed with a "@" character.')
     ap.add_argument("-o", "--outfile", type=str,
                     help="Filename of the processed schema")
     ap.add_argument("-j", "--json", help="Encode the processed schema in json",

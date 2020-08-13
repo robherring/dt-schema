@@ -40,7 +40,8 @@ def check_doc(filename):
     return ret
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
+        epilog='Arguments can also be passed in a file prefixed with a "@" character.')
     ap.add_argument("yamldt", nargs='*', type=str,
                     help="Filename of YAML encoded devicetree input file")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")

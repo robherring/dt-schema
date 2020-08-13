@@ -108,7 +108,8 @@ class schema_group():
             self.check_subtree(dt, subtree, "/", "/", filename)
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
+        epilog='Arguments can also be passed in a file prefixed with a "@" character.')
     ap.add_argument("yamldt", nargs='*',
                     help="Filename or directory of YAML encoded devicetree input file(s)")
     ap.add_argument('-s', '--schema', help="path to additional additional schema files")
