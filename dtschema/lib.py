@@ -329,7 +329,7 @@ def fixup_schema(schema):
 
         # If, then and else contain subschemas that we'll want to
         # fixup as well. Let's recurse into those subschemas.
-        if k in ['if', 'then', 'else']:
+        if k in ['if', 'then', 'else', 'additionalProperties']:
             fixup_schema(v)
 
         # allOf can contain a list of if, then and else statements,
@@ -486,6 +486,9 @@ def fixup_node_props(schema):
     if 'patternProperties' in schema:
         for k,v in schema['patternProperties'].items():
             fixup_node_props(v)
+
+    if 'additionalProperties' in schema:
+        fixup_node_props(schema['additionalProperties'])
 
     if not 'properties' in schema:
         schema['properties'] = {}
