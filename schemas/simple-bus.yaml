@@ -39,7 +39,7 @@ patternProperties:
         oneOf:
           - items:
               minItems: 3
-              maxItems: 6
+              maxItems: 7
             minItems: 0
             maxItems: 1024
           - $ref: "types.yaml#/definitions/flag"
