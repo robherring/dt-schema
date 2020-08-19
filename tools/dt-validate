@@ -64,9 +64,9 @@ class schema_group():
                            'required property' in error.message:
                             continue
 
-                        print(dtschema.format_error(filename, error,
-                                                    nodename=nodename,
-                                                    verbose=verbose), file=sys.stderr)
+                        print(dtschema.format_error(filename, error, nodename=nodename, verbose=verbose) +
+                            '\n\tFrom schema: ' + schema['$filename'],
+                            file=sys.stderr)
                 except RecursionError as e:
                     print(ap.prog + ": recursion error: Check for prior errors in a referenced schema", file=sys.stderr)
 
