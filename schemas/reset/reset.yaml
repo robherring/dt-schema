@@ -22,3 +22,5 @@ properties:
 
 dependencies:
   reset-names: [ resets ]
+
+additionalProperties: true

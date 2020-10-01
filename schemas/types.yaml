@@ -364,3 +364,5 @@ definitions:
               const: 0
       additionalItems:
         $ref: "#/definitions/cell"
+
+additionalProperties: true

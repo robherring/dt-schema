@@ -144,4 +144,6 @@ required:
   - '#address-cells'
   - '#size-cells'
 
+additionalProperties: true
+
 ...

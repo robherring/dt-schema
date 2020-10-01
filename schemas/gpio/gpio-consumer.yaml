@@ -19,3 +19,5 @@ properties:
 patternProperties:
   "(?<!,nr)-gpios?$":
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
+
+additionalProperties: true

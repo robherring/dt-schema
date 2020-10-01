@@ -36,4 +36,6 @@ dependencies:
       - required:
           - interrupt-map
 
+additionalProperties: true
+
 ...

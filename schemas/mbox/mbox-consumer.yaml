@@ -23,3 +23,5 @@ properties:
 
 dependencies:
   mbox-names: [ mboxes ]
+
+additionalProperties: true

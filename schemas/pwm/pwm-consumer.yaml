@@ -23,3 +23,5 @@ properties:
 
 dependencies:
   pwm-names: [ pwms ]
+
+additionalProperties: true

@@ -23,3 +23,5 @@ properties:
 
 dependencies:
   phy-names: [ phys ]
+
+additionalProperties: true

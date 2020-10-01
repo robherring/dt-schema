@@ -98,3 +98,5 @@ dependencies:
   assigned-clocks: [clocks]
   assigned-clock-parents: [assigned-clocks]
   assigned-clock-rates: [assigned-clocks]
+
+additionalProperties: true

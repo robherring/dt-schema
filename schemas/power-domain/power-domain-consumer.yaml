@@ -23,3 +23,5 @@ properties:
 
 dependencies:
   power-domain-names: [ power-domains ]
+
+additionalProperties: true

@@ -28,3 +28,5 @@ dependencies:
           - interrupts
       - required:
           - interrupts-extended
+
+additionalProperties: true

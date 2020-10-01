@@ -27,3 +27,5 @@ required:
   - reg
 
 additionalProperties: true
+
+...
