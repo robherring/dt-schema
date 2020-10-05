@@ -45,7 +45,9 @@ properties:
   additionalProperties: true
   dependencies: true
   patternProperties: true
-  properties: true
+  properties:
+    propertyNames:
+      pattern:  "^[#$a-zA-Z][a-zA-Z0-9,+\\-._@]{0,63}$"
   if: true
   then: true
   else: true
