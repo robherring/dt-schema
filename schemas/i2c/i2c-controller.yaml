@@ -16,7 +16,7 @@ properties:
 
   i2c-bus:
     type: object
-    $ref: "#/properties"
+    $ref: "#"
 
   "#address-cells":
     const: 1
