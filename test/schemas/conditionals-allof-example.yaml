@@ -16,7 +16,15 @@ properties:
       - vendor,conditionals-allof-test-controller
       - vendor,second-conditionals-allof-test-controller
 
-unevaluatedProperties: false
+  vendor,property:
+    description: A vendor prop
+    $ref: /schemas/types.yaml#/definitions/string
+
+  vendor,other-property:
+    description: Other vendor prop
+    type: boolean
+
+additionalProperties: false
 
 allOf:
   - if:
@@ -40,8 +48,5 @@ allOf:
           const: vendor,second-conditionals-allof-test-controller
 
     then:
-      properties:
-        vendor,other-property: true
-
       required:
         - vendor,other-property

@@ -16,6 +16,10 @@ properties:
       - vendor,test-controller
       - vendor,second-test-controller
 
+  vendor,property:
+    description: A vendor prop
+    $ref: /schemas/types.yaml#/definitions/string
+
 if:
   properties:
     compatible:
@@ -31,4 +35,4 @@ else:
     vendor,property:
       const: test5678
 
-unevaluatedProperties: false
+additionalProperties: false
