@@ -743,7 +743,6 @@ class DTValidator(DTVal):
                 self.check_quotes(err_msg, s)
 
 def format_error(filename, error, prefix="", nodename=None, verbose=False):
-    submsg = ""
     src = prefix + os.path.abspath(filename) + ':'
 
     if error.linecol[0] >= 0 :
@@ -759,23 +758,24 @@ def format_error(filename, error, prefix="", nodename=None, verbose=False):
             src += str(path) + ":"
         src += ' '
 
-    # An error on a conditional will have context with sub-errors
-    if error.context:
-        submsg = " (Possible causes of the failure):\n"
-        best = jsonschema.exceptions.best_match(error.context)
-        submsg += format_error(filename, best, prefix=prefix+"\t", nodename=nodename, verbose=verbose) + "\n"
-
-        for suberror in sorted(error.context, key=lambda e: e.path):
-            if suberror != best and len(suberror.path) > 0:
-                submsg += format_error(filename, suberror, prefix=prefix+"\t", nodename=nodename, verbose=verbose) + "\n"
-
+    #print(error.__dict__)
     if verbose:
         msg = str(error)
+    elif error.context:
+        # An error on a conditional will have context with sub-errors
+        msg = "'" + error.schema_path[-1] + "' conditional failed, one must be fixed:"
+
+        for suberror in sorted(error.context, key=lambda e: e.path):
+            if suberror.context:
+                msg += '\n' + format_error(filename, suberror, prefix=prefix+"\t", nodename=nodename, verbose=verbose)
+            else:
+                msg += '\n' + prefix + '\t' + suberror.message
+
+    elif error.schema_path[-1] == 'oneOf':
+        msg = 'More than one condition true in oneOf schema:\n\t' + \
+            '\t'.join(pprint.pformat(error.schema, width=72).splitlines(True))
+
     else:
         msg = error.message
-        # Failures under 'oneOf', 'allOf', or 'anyOf' schema don't give useful
-        # error messages, so dump the schema in those cases.
-        if not error.path and error.validator in ['oneOf', 'allOf', 'anyOf']:
-            msg += '\n' + pprint.pformat(error.schema, width=72)
 
-    return src + msg + submsg
+    return src + msg
