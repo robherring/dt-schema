@@ -768,7 +768,7 @@ def format_error(filename, error, prefix="", nodename=None, verbose=False):
         for suberror in sorted(error.context, key=lambda e: e.path):
             if suberror.context:
                 msg += '\n' + format_error(filename, suberror, prefix=prefix+"\t", nodename=nodename, verbose=verbose)
-            else:
+            elif not suberror.message in msg:
                 msg += '\n' + prefix + '\t' + suberror.message
 
     elif error.schema_path[-1] == 'oneOf':
