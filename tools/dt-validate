@@ -60,9 +60,15 @@ class schema_group():
                         # any error message reporting a missing property.
                         if isinstance(error.instance, dict) and \
                            'status' in error.instance and \
-                           'disabled' in error.instance['status'] and \
-                           'required property' in error.message:
-                            continue
+                           'disabled' in error.instance['status']:
+                            if 'required property' in error.message:
+                                continue
+                            elif error.context:
+                                for e in error.context:
+                                    if not 'required property' in e.message:
+                                        break
+                                else:
+                                    continue
 
                         print(dtschema.format_error(filename, error, nodename=nodename, verbose=verbose) +
                             '\n\tFrom schema: ' + schema['$filename'],
