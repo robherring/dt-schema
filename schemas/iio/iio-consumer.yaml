@@ -30,15 +30,7 @@ properties:
       to the device. Note: if the IIO provider specifies '0' for
       #io-channel-cells, then only the phandle portion of the pair will appear.
 
-  io-channel-ranges:
-    type: boolean
-    description: >
-      Empty property indicating that child nodes can inherit named IIO channels
-      from this node. Useful for bus nodes to provide and IIO channel to their
-      children.
-
 dependencies:
   io-channel-names: [io-channels]
-  io-channel-ranges: [io-channels]
 
 additionalProperties: true
