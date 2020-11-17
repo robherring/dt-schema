@@ -69,9 +69,12 @@ definitions:
                 - type
             then:
               $ref: "nodes.yaml#"
-
-        dependencies:
-          properties: [ type ]
+          - if:
+              required: [ properties ]
+            then:
+              anyOf:
+                - required: [ type ]
+                - required: [ $ref ]
 
     dependencies:
       "#size-cells": [ "#address-cells" ]
