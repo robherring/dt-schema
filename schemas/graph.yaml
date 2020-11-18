@@ -33,8 +33,19 @@ maintainers:
 
 select: false
 
-properties:
-  port:
+$defs:
+  endpoint-base:
+    type: object
+    properties:
+      reg:
+        maxItems: 1
+
+      remote-endpoint:
+        description: |
+          phandle to an 'endpoint' subnode of a remote device node.
+        $ref: /schemas/types.yaml#/definitions/phandle
+
+  port-base:
     type: object
     description:
       If there is more than one endpoint node or 'reg' property present in
@@ -48,17 +59,30 @@ properties:
       "#size-cells":
         const: 0
 
+      reg:
+        maxItems: 1
+
+      endpoint:
+        type: object
+
+    patternProperties:
+      "^endpoint@[0-9a-f]+$":
+        $ref: "#/$defs/endpoint-base"
+        required:
+          - reg
+
+properties:
+  endpoint:
+    $ref: "#/$defs/endpoint-base"
+    unevaluatedProperties: false
+
+  port:
+    $ref: "#/$defs/port-base"
+    unevaluatedProperties: false
+
     patternProperties:
       "^endpoint(@[0-9a-f]+)?$":
-        type: object
-        properties:
-          reg:
-            maxItems: 1
-
-          remote-endpoint:
-            description: |
-              phandle to an 'endpoint' subnode of a remote device node.
-            $ref: /schemas/types.yaml#/definitions/phandle
+        $ref: "#/properties/endpoint"
 
   ports:
     type: object
@@ -75,15 +99,12 @@ properties:
       "#size-cells":
         const: 0
 
-    patternProperties:
-      "^port(@[0-9a-f]+)?$":
-        $ref: "#/properties/port"
+      port:
         type: object
 
-        properties:
-          reg:
-            maxItems: 1
-
+    patternProperties:
+      "^port@[0-9a-f]+$":
+        type: object
         required:
           - reg
 
