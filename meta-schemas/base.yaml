@@ -42,6 +42,7 @@ properties:
   anyOf: true
   oneOf: true
   definitions: true
+  $defs: true
   additionalProperties: true
   dependencies: true
   patternProperties: true

@@ -94,6 +94,7 @@ properties:
     $ref: "#/definitions/sub-schemas"
   const: true
   default: true
+  $defs: true
   definitions: true
   dependencies: true
   deprecated: true

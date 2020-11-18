@@ -344,7 +344,7 @@ def fixup_schema(schema):
             for prop in v:
                 fixup_schema(v[prop])
 
-        if not k in ['properties', 'patternProperties']:
+        if not k in ['properties', 'patternProperties', '$defs']:
             continue
 
         walk_properties(v)
