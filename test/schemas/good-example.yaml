@@ -135,12 +135,12 @@ properties:
     description: Vendor specific string list property
 
   vendor,int8-prop:
-    $ref: /schemas/types.yaml#definitions/uint8
+    $ref: /schemas/types.yaml#/definitions/uint8
     description: Vendor specific 8-bit integer property
 
   vendor,int8-array-prop:
     allOf:
-      - $ref: /schemas/types.yaml#definitions/uint8-array
+      - $ref: /schemas/types.yaml#/definitions/uint8-array
       - items:
           - minItems: 2
             maxItems: 3
@@ -148,13 +148,13 @@ properties:
 
   vendor,int16-prop:
     allOf:
-      - $ref: /schemas/types.yaml#definitions/uint16
+      - $ref: /schemas/types.yaml#/definitions/uint16
       - enum: [ 1, 2, 3 ]
     description: Vendor specific 16-bit integer property
 
   vendor,int16-array-prop:
     allOf:
-      - $ref: /schemas/types.yaml#definitions/uint16-array
+      - $ref: /schemas/types.yaml#/definitions/uint16-array
       - items:
           - const: 1
           - const: 2
@@ -162,7 +162,7 @@ properties:
 
   vendor,int64-prop:
     allOf:
-      - $ref: /schemas/types.yaml#definitions/uint64
+      - $ref: /schemas/types.yaml#/definitions/uint64
       - items:
         - items:
             - minimum: 0x1234
@@ -171,7 +171,7 @@ properties:
 
   vendor,int64-array-prop:
     allOf:
-      - $ref: /schemas/types.yaml#definitions/uint64-array
+      - $ref: /schemas/types.yaml#/definitions/uint64-array
     description: Vendor specific 64-bit integer array property
 
   vendor,phandle-prop:

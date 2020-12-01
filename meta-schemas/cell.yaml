@@ -13,11 +13,11 @@ array:
             maxItems:
               const: 1
           required: [maxItems]
-        - $ref: '#single-array'
+        - $ref: '#/single-array'
         - propertyNames:
             oneOf:
               - enum: [maxItems]
-              - $ref: '#single-array-names'
+              - $ref: '#/single-array-names'
     - properties:
         minItems:
           minimum: 1
@@ -26,19 +26,19 @@ array:
         oneOf:
           type: array
           items:
-            $ref: '#array'
+            $ref: '#/array'
         anyOf:
           type: array
           items:
-            $ref: '#array'
+            $ref: '#/array'
         items:
           oneOf:
             - type: object
               allOf:
-                - $ref: '#array'
+                - $ref: '#/array'
             - type: array
               items:
-                $ref: '#single'
+                $ref: '#/single'
         additionalItems:
           type: boolean
           const: true
@@ -46,7 +46,7 @@ array:
 
       additionalProperties: false
 
-    - $ref: '#single'
+    - $ref: '#/single'
 
 single-array:
   properties:
@@ -71,6 +71,6 @@ single-array-names:
 
 single:
   allOf:
-    - $ref: '#single-array'
+    - $ref: '#/single-array'
     - propertyNames:
-        $ref: '#single-array-names'
+        $ref: '#/single-array-names'

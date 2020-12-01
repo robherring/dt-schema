@@ -12,15 +12,15 @@ properties:
   gpio-line-names:
     $ref: "string-array.yaml"
   ngpios:
-    $ref: "cell.yaml#single"
+    $ref: "cell.yaml#/single"
   gpio-ranges:
-    $ref: "cell.yaml#array"
+    $ref: "cell.yaml#/array"
   gpios:
-    $ref: "cell.yaml#array"
+    $ref: "cell.yaml#/array"
 
 patternProperties:
   '(?<!,nr)-gpios?$':
-    $ref: "cell.yaml#array"
+    $ref: "cell.yaml#/array"
 
 dependencies:
   gpio-controller: ['#gpio-cells']

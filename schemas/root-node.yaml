@@ -16,7 +16,7 @@ maintainers:
 properties:
   $nodename:
     const: "/"
-  model: { "$ref" : "types.yaml#definitions/string-array"}
+  model: { "$ref" : "types.yaml#/definitions/string-array"}
   "#address-cells":
     enum: [1, 2]
   "#size-cells":

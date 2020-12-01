@@ -8,15 +8,15 @@ $schema: "http://json-schema.org/draft-07/schema#"
 
 properties:
   interrupts:
-    $ref: "cell.yaml#array"
+    $ref: "cell.yaml#/array"
   interrupts-extended:
     properties:
       # interrupts-extended should just refer back to interrupts
       $ref: true
   interrupt-map:
-    $ref: "cell.yaml#array"
+    $ref: "cell.yaml#/array"
   interrupt-map-mask:
-    $ref: "cell.yaml#array"
+    $ref: "cell.yaml#/array"
   interrupt-controller:
     oneOf:
       - $ref: "boolean.yaml"

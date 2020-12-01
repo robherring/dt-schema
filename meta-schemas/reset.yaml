@@ -8,7 +8,7 @@ $schema: "http://json-schema.org/draft-07/schema#"
 
 properties:
   resets:
-    $ref: "cell.yaml#array"
+    $ref: "cell.yaml#/array"
 
 dependencies:
   reset-names: [resets]

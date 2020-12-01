@@ -45,7 +45,7 @@ properties:
 
 patternProperties:
   "^[a-z][a-z0-9\\-]*$":
-    $ref: types.yaml#definitions/string
+    $ref: types.yaml#/definitions/string
 additionalProperties: false
 
 examples:

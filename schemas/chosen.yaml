@@ -30,10 +30,10 @@ properties:
   ranges: true
 
   bootargs:
-    $ref: types.yaml#definitions/string
+    $ref: types.yaml#/definitions/string
 
   kaslr-seed:
-    $ref: types.yaml#definitions/uint64
+    $ref: types.yaml#/definitions/uint64
     description:
       This property is used when booting with CONFIG_RANDOMIZE_BASE as the
       entropy used to randomize the kernel image base address location. Since
@@ -53,7 +53,7 @@ properties:
       EFI_RNG_PROTOCOL).
 
   rng-seed:
-    $ref: types.yaml#definitions/uint8-array
+    $ref: types.yaml#/definitions/uint8-array
     description:
       This property served as an entropy to add device randomness. It is parsed
       as a byte array, e.g.
@@ -76,7 +76,7 @@ properties:
 
   linux,elfcorehdr:
     allOf:
-      - $ref: types.yaml#definitions/uint64-array
+      - $ref: types.yaml#/definitions/uint64-array
       - maxItems: 2
     description:
       This property (currently used only on arm64) holds the memory range,
@@ -85,7 +85,7 @@ properties:
 
   linux,usable-memory-range:
     allOf:
-      - $ref: types.yaml#definitions/uint64-array
+      - $ref: types.yaml#/definitions/uint64-array
       - maxItems: 2
     description: |
       This property (arm64 only) holds a base address and size, describing a
@@ -112,14 +112,14 @@ properties:
       respectively, of the root node.
 
   linux,initrd-start:
-    $ref: types.yaml#definitions/uint32
+    $ref: types.yaml#/definitions/uint32
     description:
       These properties hold the physical start and end address of an initrd that\'s
       loaded by the bootloader. Note that linux,initrd-start is inclusive, but
       linux,initrd-end is exclusive.
 
   linux,initrd-end:
-    $ref: types.yaml#definitions/uint32
+    $ref: types.yaml#/definitions/uint32
     description:
       These properties hold the physical start and end address of an initrd that\'s
       loaded by the bootloader. Note that linux,initrd-start is inclusive, but
@@ -127,7 +127,7 @@ properties:
 
   linux,pci-probe-only:
     allOf:
-      - $ref: types.yaml#definitions/uint32
+      - $ref: types.yaml#/definitions/uint32
     enum: [ 0, 1 ]
     description:
       Optional property which takes a single-cell argument. If '0', then Linux
@@ -136,7 +136,7 @@ properties:
 
   stdout-path:
     allOf:
-      - $ref: types.yaml#definitions/string
+      - $ref: types.yaml#/definitions/string
       - pattern: "^[a-zA-Z0-9@/,+\\-._]*(:[0-9]*[noe]?[78]?[r]?)?$"
     description: |
       Device trees may specify the device to be used for boot console output

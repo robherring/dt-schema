@@ -13,7 +13,7 @@ allOf:
 definitions:
   all-properties:
     allOf:
-      - $ref: "#definitions/core-properties"
+      - $ref: "#/definitions/core-properties"
       - $ref: "clocks.yaml#"
       - $ref: "gpios.yaml#"
       - $ref: "interrupts.yaml#"
@@ -23,13 +23,13 @@ definitions:
   core-properties:
     properties:
       reg:
-        $ref: "cell.yaml#array"
+        $ref: "cell.yaml#/array"
       compatible:
         $ref: "string-array.yaml"
       $nodename:
         $ref: "string-array.yaml"
       memory-region:
-        $ref: "cell.yaml#array"
+        $ref: "cell.yaml#/array"
       memory-region-names:
         $ref: "string-array.yaml"
     propertyNames:
@@ -46,7 +46,7 @@ definitions:
         $ref: "string-array.yaml"
 
       '^#.*-cells$':
-        $ref: "cell.yaml#single"
+        $ref: "cell.yaml#/single"
 
       '^.*$':
         properties:
@@ -82,9 +82,9 @@ definitions:
 
 properties:
   patternProperties:
-    $ref: "#definitions/all-properties"
+    $ref: "#/definitions/all-properties"
   properties:
-    $ref: "#definitions/all-properties"
+    $ref: "#/definitions/all-properties"
 
 anyOf:
   - required:
