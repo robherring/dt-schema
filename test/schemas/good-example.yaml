@@ -88,50 +88,44 @@ properties:
     description: A vendor specific boolean property
 
   vendor,int-prop:
-    allOf:
-      - $ref: "/schemas/types.yaml#/definitions/uint32"
-      - enum: [ 1, 2, 3 ]
+    $ref: "/schemas/types.yaml#/definitions/uint32"
+    enum: [ 1, 2, 3 ]
     description: Vendor specific single cell integer property
 
   vendor,int-array-prop:
-    allOf:
-      - $ref: "/schemas/types.yaml#/definitions/uint32-array"
-      - items:
-          minimum: 5
-          maximum: 10
+    $ref: "/schemas/types.yaml#/definitions/uint32-array"
+    items:
+      minimum: 5
+      maximum: 10
     description: Vendor specific integer array property
 
   vendor,int-array-prop-2:
-    allOf:
-      - $ref: "/schemas/types.yaml#/definitions/uint32-array"
-      - items:
-          - const: 5
-          - const: 10
+    $ref: "/schemas/types.yaml#/definitions/uint32-array"
+    items:
+      - const: 5
+      - const: 10
     description: Vendor specific integer array property
 
   vendor,int-array-size-only-prop:
-    allOf:
-      - $ref: "/schemas/types.yaml#/definitions/uint32-array"
+    $ref: "/schemas/types.yaml#/definitions/uint32-array"
     minItems: 2
     maxItems: 5
     description: Vendor specific integer array property with only a size
       range. This can use either form of brackets.
 
   vendor,string-prop:
-    allOf:
-      - $ref: "/schemas/types.yaml#/definitions/string"
-      - enum:
-          - foo
-          - bar
+    $ref: "/schemas/types.yaml#/definitions/string"
+    enum:
+      - foo
+      - bar
     description: Vendor specific single string property
 
   vendor,string-list-prop:
-    allOf:
-     - $ref: "/schemas/types.yaml#/definitions/string-array"
-     - minItems: 2
-       items:
-         - const: foobar
-         - const: foobaz
+    $ref: "/schemas/types.yaml#/definitions/string-array"
+    minItems: 2
+    items:
+      - const: foobar
+      - const: foobaz
     description: Vendor specific string list property
 
   vendor,int8-prop:
@@ -139,39 +133,32 @@ properties:
     description: Vendor specific 8-bit integer property
 
   vendor,int8-array-prop:
-    allOf:
-      - $ref: /schemas/types.yaml#/definitions/uint8-array
-      - items:
-          - minItems: 2
-            maxItems: 3
+    $ref: /schemas/types.yaml#/definitions/uint8-array
+    items:
+      - minItems: 2
+        maxItems: 3
     description: A vendor specific uint8 array property with 2 or 3 entries
 
   vendor,int16-prop:
-    allOf:
-      - $ref: /schemas/types.yaml#/definitions/uint16
-      - enum: [ 1, 2, 3 ]
+    $ref: /schemas/types.yaml#/definitions/uint16
+    enum: [ 1, 2, 3 ]
     description: Vendor specific 16-bit integer property
 
   vendor,int16-array-prop:
-    allOf:
-      - $ref: /schemas/types.yaml#/definitions/uint16-array
-      - items:
-          - const: 1
-          - const: 2
+    $ref: /schemas/types.yaml#/definitions/uint16-array
+    items:
+      - const: 1
+      - const: 2
     description: Vendor specific 16-bit integer array property
 
   vendor,int64-prop:
-    allOf:
-      - $ref: /schemas/types.yaml#/definitions/uint64
-      - items:
-        - items:
-            - minimum: 0x1234
+    $ref: /schemas/types.yaml#/definitions/uint64
+    minimum: 0x1234
 
     description: Vendor specific 16-bit integer property
 
   vendor,int64-array-prop:
-    allOf:
-      - $ref: /schemas/types.yaml#/definitions/uint64-array
+    $ref: /schemas/types.yaml#/definitions/uint64-array
     description: Vendor specific 64-bit integer array property
 
   vendor,phandle-prop:
@@ -179,19 +166,17 @@ properties:
     description: Vendor specific single cell phandle property
 
   vendor,phandle-array-prop:
-    allOf:
-      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
-      - minItems: 2
+    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    minItems: 2
     description: Vendor specific array of phandles property
 
   vendor,phandle-with-fixed-cells:
-    allOf:
-      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    items:
       - items:
-          - items:
-            - description: the phandle to something
-            - description: the 1st cell data
-            - description: the 2nd cell data
+          - description: the phandle to something
+          - description: the 1st cell data
+          - description: the 2nd cell data
     description: Vendor specific array of phandles property
 
 

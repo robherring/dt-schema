@@ -19,11 +19,10 @@ properties:
   ngpios:
     $ref: "/schemas/types.yaml#/definitions/uint32"
   gpio-reserved-ranges:
-    allOf:
-      - $ref: "/schemas/types.yaml#/definitions/uint32-matrix"
-      - items:
-          minItems: 2
-          maxItems: 2
+    $ref: "/schemas/types.yaml#/definitions/uint32-matrix"
+    items:
+      minItems: 2
+      maxItems: 2
   gpio-ranges:
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
 

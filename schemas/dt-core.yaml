@@ -18,8 +18,7 @@ properties:
   $nodename:
     $ref: "types.yaml#/definitions/string"
   compatible:
-    allOf:
-      - $ref: "types.yaml#/definitions/string-array"
+    $ref: "types.yaml#/definitions/string-array"
     items:
       pattern: "^[a-zA-Z][a-zA-Z0-9,+\\-._]+$"
   dma-coherent:
@@ -35,17 +34,13 @@ properties:
   reg:
     $ref: "types.yaml#/definitions/uint32-matrix"
   status:
-    allOf:
-      - $ref: "types.yaml#/definitions/string"
-      - items:
-          - enum: [ okay, disabled ]
+    $ref: "types.yaml#/definitions/string"
+    enum: [ okay, disabled ]
 patternProperties:
   "^#.*-cells$":
-    allOf:
-      - $ref: "types.yaml#/definitions/uint32"
-      - items:
-          - items:
-              maximum: 8
+    $ref: "types.yaml#/definitions/uint32"
+    items:
+      maximum: 8
 
   ".*-names$":
     $ref: "types.yaml#/definitions/non-unique-string-array"

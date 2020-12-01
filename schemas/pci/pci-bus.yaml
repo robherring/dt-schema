@@ -75,8 +75,7 @@ properties:
     const: pci
 
   bus-range:
-    allOf:
-      - $ref: /schemas/types.yaml#/definitions/uint32-array
+    $ref: /schemas/types.yaml#/definitions/uint32-array
     minItems: 2
     maxItems: 2
     items:
@@ -106,12 +105,10 @@ properties:
         maximum: 7
 
   linux,pci-domain:
-    allOf:
-      - $ref: /schemas/types.yaml#/definitions/uint32
+    $ref: /schemas/types.yaml#/definitions/uint32
 
   max-link-speed:
-    allOf:
-      - $ref: /schemas/types.yaml#/definitions/uint32
+    $ref: /schemas/types.yaml#/definitions/uint32
     enum: [ 1, 2, 3, 4 ]
 
   reset-gpios:
@@ -127,13 +124,11 @@ properties:
 
   vendor-id:
     description: The PCI vendor ID
-    allOf:
-      - $ref: /schemas/types.yaml#/definitions/uint32
+    $ref: /schemas/types.yaml#/definitions/uint32
 
   device-id:
     description: The PCI device ID
-    allOf:
-      - $ref: /schemas/types.yaml#/definitions/uint32
+    $ref: /schemas/types.yaml#/definitions/uint32
 
 patternProperties:
   "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@1?[0-9a-f](,[0-7])?$":

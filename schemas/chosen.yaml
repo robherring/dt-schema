@@ -75,18 +75,16 @@ properties:
       a different secondary CPU release mechanism).
 
   linux,elfcorehdr:
-    allOf:
-      - $ref: types.yaml#/definitions/uint64-array
-      - maxItems: 2
+    $ref: types.yaml#/definitions/uint64-array
+    maxItems: 2
     description:
       This property (currently used only on arm64) holds the memory range,
       the address and the size, of the elf core header which mainly describes
       the panicked kernel\'s memory layout as PT_LOAD segments of elf format.
 
   linux,usable-memory-range:
-    allOf:
-      - $ref: types.yaml#/definitions/uint64-array
-      - maxItems: 2
+    $ref: types.yaml#/definitions/uint64-array
+    maxItems: 2
     description: |
       This property (arm64 only) holds a base address and size, describing a
       limited region in which memory may be considered available for use by
@@ -126,8 +124,7 @@ properties:
       linux,initrd-end is exclusive.
 
   linux,pci-probe-only:
-    allOf:
-      - $ref: types.yaml#/definitions/uint32
+    $ref: types.yaml#/definitions/uint32
     enum: [ 0, 1 ]
     description:
       Optional property which takes a single-cell argument. If '0', then Linux
@@ -135,9 +132,8 @@ properties:
       assign devices and instead use them as they are configured already.
 
   stdout-path:
-    allOf:
-      - $ref: types.yaml#/definitions/string
-      - pattern: "^[a-zA-Z0-9@/,+\\-._]*(:[0-9]*[noe]?[78]?[r]?)?$"
+    $ref: types.yaml#/definitions/string
+    pattern: "^[a-zA-Z0-9@/,+\\-._]*(:[0-9]*[noe]?[78]?[r]?)?$"
     description: |
       Device trees may specify the device to be used for boot console output
       with a stdout-path property under /chosen, as described in the Devicetree
