@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2020 Arm Ltd.
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/phy.yaml#"
+$schema: "http://json-schema.org/draft-07/schema#"
+
+properties:
+  phys:
+    $ref: "cell.yaml#/array"
+
+dependencies:
+  phy-names: [phys]

@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2020 Arm Ltd.
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/power-domain.yaml#"
+$schema: "http://json-schema.org/draft-07/schema#"
+
+properties:
+  power-domains:
+    $ref: "cell.yaml#/array"
+
+dependencies:
+  power-domain-names: [power-domains]

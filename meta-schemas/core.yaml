@@ -15,13 +15,22 @@ definitions:
     allOf:
       - $ref: "#/definitions/core-properties"
       - $ref: "clocks.yaml#"
+      - $ref: "dma.yaml#"
       - $ref: "gpios.yaml#"
+      - $ref: "iio.yaml#"
       - $ref: "interrupts.yaml#"
+      - $ref: "iommu.yaml#"
+      - $ref: "mailbox.yaml#"
+      - $ref: "phy.yaml#"
+      - $ref: "power-domain.yaml#"
+      - $ref: "pwm.yaml#"
       - $ref: "reset.yaml#"
       - $ref: "mailbox.yaml#"
       - $ref: "vendor-props.yaml#"
   core-properties:
     properties:
+      ranges:
+        $ref: "cell.yaml#/array"
       reg:
         $ref: "cell.yaml#/array"
       compatible:
@@ -47,6 +56,10 @@ definitions:
 
       '^#.*-cells$':
         $ref: "cell.yaml#/single"
+
+      '-supply$':
+        propertyNames:
+          enum: [ description, deprecated ]
 
       '^.*$':
         properties:
@@ -79,6 +92,7 @@ definitions:
     dependencies:
       "#size-cells": [ "#address-cells" ]
       memory-region-names: [ memory-region ]
+      reg-names: [ reg ]
 
 properties:
   patternProperties:
