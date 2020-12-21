@@ -115,7 +115,8 @@ properties:
       - type: array
         items:
           $ref: "#/definitions/sub-schemas"
-  minItems: true
+  minItems:
+    minimum: 1
   minimum: true
   maintainers: true
   maxItems: true
