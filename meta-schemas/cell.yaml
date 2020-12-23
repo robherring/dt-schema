@@ -8,16 +8,12 @@ $schema: "http://json-schema.org/draft-07/schema#"
 
 array:
   anyOf:
-    - allOf:
-        - properties:
-            maxItems:
-              const: 1
-          required: [maxItems]
-        - $ref: '#/single-array'
-        - propertyNames:
-            oneOf:
-              - enum: [maxItems]
-              - $ref: '#/single-array-names'
+    - properties:
+        maxItems:
+          const: 1
+      required: [maxItems]
+      propertyNames:
+        enum: [maxItems, description, deprecated]
     - properties:
         minItems:
           minimum: 1
@@ -48,7 +44,7 @@ array:
 
     - $ref: '#/single'
 
-single-array:
+single:
   properties:
     description: true
     const:
@@ -65,12 +61,5 @@ single-array:
     minimum: [maximum]
     maximum: [minimum]
 
-single-array-names:
-  enum: [ description, deprecated, const, enum, minimum, maximum, default, $ref ]
-
-
-single:
-  allOf:
-    - $ref: '#/single-array'
-    - propertyNames:
-        $ref: '#/single-array-names'
+  propertyNames:
+    enum: [ description, deprecated, const, enum, minimum, maximum, default, $ref ]
