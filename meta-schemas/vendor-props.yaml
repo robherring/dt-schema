@@ -47,12 +47,12 @@ additionalProperties:
 
       - properties:   # A property with a type and additional constraints
           $ref:
-            pattern: "types.yaml#[\/]{0,1}definitions\/.*"
+            pattern: "types.yaml#\/definitions\/"
           allOf:
             items:
               - properties:
                   $ref:
-                    pattern: "types.yaml#[\/]{0,1}definitions\/.*"
+                    pattern: "types.yaml#\/definitions\/"
                 required:
                   - $ref
         oneOf:
