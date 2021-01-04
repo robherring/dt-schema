@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2021 Arm Ltd.
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/nvmem.yaml#"
+$schema: "http://json-schema.org/draft-07/schema#"
+
+properties:
+  nvmem:
+    $ref: "cell.yaml#/array"
+
+  nvmem-cells:
+    $ref: "cell.yaml#/array"
+
+dependencies:
+  nvmem-names: [nvmem]
+  nvmem-cell-names: [nvmem-cells]

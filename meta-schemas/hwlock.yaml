@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2021 Arm Ltd.
+%YAML 1.2
+---
+$id: "http://devicetree.org/meta-schemas/hwlock.yaml#"
+$schema: "http://json-schema.org/draft-07/schema#"
+
+properties:
+  hwlocks:
+    $ref: "cell.yaml#/array"
+
+dependencies:
+  hwlock-names: [hwlocks]
