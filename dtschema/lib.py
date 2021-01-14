@@ -516,6 +516,11 @@ def fixup_node_props(schema):
         schema.setdefault('patternProperties', dict())
         schema['patternProperties']['pinctrl-[0-9]+'] = True
 
+    if "clocks" in keys and not "assigned-clocks" in keys:
+        schema['properties']['assigned-clocks'] = True
+        schema['properties']['assigned-clock-rates'] = True
+        schema['properties']['assigned-clock-parents'] = True
+
 def process_schema(filename):
     try:
         schema = load_schema(filename)
