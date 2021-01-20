@@ -28,7 +28,8 @@ properties:
 
 dependencies:
   interrupt-controller: ['#interrupt-cells']
-  interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
+  interrupt-map: ['#interrupt-cells' ]
+  interrupt-map-mask: [ interrupt-map ]
   "#interrupt-cells":
     anyOf:
       - required:

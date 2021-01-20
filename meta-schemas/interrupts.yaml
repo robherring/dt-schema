@@ -24,7 +24,8 @@ properties:
   interrupt-parent: false # interrupt-parent is implicit
 
 dependencies:
-  interrupt-map: ['#interrupt-cells', 'interrupt-map-mask']
+  interrupt-map: ['#interrupt-cells']
+  'interrupt-map-mask': [ interrupt-map ]
   '#interrupt-cells':
     anyOf:
       - required:
