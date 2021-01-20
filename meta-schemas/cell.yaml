@@ -35,6 +35,13 @@ array:
             - type: array
               items:
                 $ref: '#/single'
+            - type: array
+              maxItems: 1 # for more than 1, outer 'items' should be a schema
+              items:
+                allOf:
+                  - $ref: '#/array'
+                required:
+                  - items
         additionalItems:
           type: boolean
           const: true
