@@ -476,7 +476,7 @@ def fixup_interrupts(schema):
     schema['required'].remove('interrupts')
 
 def fixup_node_props(schema):
-    if not (isinstance(schema, dict) and schema.keys() & {'properties', 'patternProperties'}):
+    if not (isinstance(schema, dict) and schema.keys() & {'properties', 'patternProperties', '$defs'}):
         return
 
     if 'properties' in schema:
@@ -485,6 +485,10 @@ def fixup_node_props(schema):
 
     if 'patternProperties' in schema:
         for k,v in schema['patternProperties'].items():
+            fixup_node_props(v)
+
+    if '$defs' in schema:
+        for k,v in schema['$defs'].items():
             fixup_node_props(v)
 
     if 'additionalProperties' in schema:
