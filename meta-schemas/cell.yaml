@@ -46,6 +46,7 @@ array:
           type: boolean
           const: true
         description: true
+        deprecated: true
 
       additionalProperties: false
 
@@ -69,4 +70,4 @@ single:
     maximum: [minimum]
 
   propertyNames:
-    enum: [ description, deprecated, const, enum, minimum, maximum, default, $ref ]
+    enum: [ description, deprecated, const, enum, minimum, maximum, multipleOf, default, $ref ]
