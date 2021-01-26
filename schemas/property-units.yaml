@@ -26,6 +26,11 @@ patternProperties:
   "-bits$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: Number of bits
+
+  "-percent$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: percentage
+
   # Time/Frequency
   "-mhz$":
     $ref: "types.yaml#/definitions/uint32-array"
