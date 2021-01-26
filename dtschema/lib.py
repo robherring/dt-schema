@@ -214,6 +214,9 @@ def _fixup_int_array_min_max_to_matrix(subschema):
         if subschema['oneOf'][0].get('minItems') == 1:
             subschema['oneOf'][0]['minItems'] += 1
 
+        # Since we added an 'oneOf' the tree walking code won't find it and we need to do fixups
+        _fixup_items_size(subschema['oneOf'])
+
 def _fixup_int_array_items_to_matrix(subschema):
     if 'allOf' in subschema and '$ref' in subschema['allOf'][0]:
         if not re.match('.*uint(8|16|32)-array', subschema['allOf'][0]['$ref']):
@@ -261,6 +264,7 @@ def _fixup_items_size(schema):
         for l in schema:
             _fixup_items_size(l)
     elif isinstance(schema, dict):
+        schema.pop('description', None)
         if 'items' in schema:
             schema['type'] = 'array'
 
@@ -273,13 +277,13 @@ def _fixup_items_size(schema):
 
                 if not 'additionalItems' in schema:
                     schema['additionalItems'] = False
+
+            _fixup_items_size(schema['items'])
+
         elif 'maxItems' in schema and not 'minItems' in schema:
             schema['minItems'] = schema['maxItems']
         elif 'minItems' in schema and not 'maxItems' in schema:
             schema['maxItems'] = schema['minItems']
-
-        for prop,val in schema.items():
-            _fixup_items_size(val)
 
 def fixup_vals(schema):
     # Now we should be a the schema level to do actual fixups
@@ -292,65 +296,95 @@ def fixup_vals(schema):
         schema['allOf'] = [ {'$ref': schema['$ref']} ]
         schema.pop('$ref')
 
+    schema.pop('description', None)
+
     _fixup_int_array_min_max_to_matrix(schema)
     _fixup_int_array_items_to_matrix(schema)
     _fixup_string_to_array(schema)
     _fixup_scalar_to_array(schema)
+    _fixup_items_size(schema)
 #    print(schema)
 
-def walk_conditionals(schema):
+def walk_properties(schema):
+    if not isinstance(schema, dict):
+        return
     # Recurse until we don't hit a conditional
     # Note we expect to encounter conditionals first.
     # For example, a conditional below 'items' is not supported
     for cond in ['allOf', 'oneOf', 'anyOf']:
         if cond in schema.keys():
             for l in schema[cond]:
-                walk_conditionals(l)
-    else:
-        fixup_vals(schema)
+                walk_properties(l)
 
-def walk_properties(props):
-    for prop in props:
-        if not isinstance(props[prop], dict):
-            continue
-
-        walk_conditionals(props[prop])
+    fixup_vals(schema)
 
 def fixup_schema(schema):
+    # Remove parts not necessary for validation
+    schema.pop('examples', None)
+    schema.pop('maintainers', None)
+    schema.pop('historical', None)
+
+    add_select_schema(schema)
+    fixup_sub_schema(schema, True)
+
+def fixup_sub_schema(schema, is_prop):
     if not isinstance(schema, dict):
         return
 
+    schema.pop('description', None)
     fixup_interrupts(schema)
+    if is_prop:
+        fixup_node_props(schema)
 
     for k,v in schema.items():
-        # select is a subschema that we want to fixup
-        if k in ['select']:
-            fixup_schema(v)
+        if k in ['select', 'if', 'then', 'else', 'additionalProperties']:
+            fixup_sub_schema(v, False)
 
-        # If, then and else contain subschemas that we'll want to
-        # fixup as well. Let's recurse into those subschemas.
-        if k in ['if', 'then', 'else', 'additionalProperties']:
-            fixup_schema(v)
-
-        # allOf can contain a list of if, then and else statements,
-        # that in turn will contain subschemas that we'll want to
-        # fixup. Let's recurse into each of those subschemas.
         if k in ['allOf', 'anyOf', 'oneOf']:
             for subschema in v:
-                fixup_schema(subschema)
+                fixup_sub_schema(subschema, True)
 
-        # properties within dependencies can be a schema
-        if k in ['dependencies']:
-            for prop in v:
-                fixup_schema(v[prop])
-
-        if not k in ['properties', 'patternProperties', '$defs']:
+        if not k in ['dependencies', 'properties', 'patternProperties', '$defs']:
             continue
 
-        walk_properties(v)
         for prop in v:
+            walk_properties(v[prop])
             # Recurse to check for {properties,patternProperties} in each prop
-            fixup_schema(v[prop])
+            fixup_sub_schema(v[prop], True)
+
+def fixup_node_props(schema):
+    if not {'properties', 'patternProperties'} & schema.keys():
+        return
+    if not ('additionalProperties' in schema and schema['additionalProperties'] is not True) and \
+       not ('unevaluatedProperties' in schema and schema['unevaluatedProperties'] is not True):
+        return
+
+    schema.setdefault('properties', dict())
+    schema['properties']['phandle'] = True
+    schema['properties']['status'] = True
+
+    if not '$nodename' in schema['properties']:
+        schema['properties']['$nodename'] = True
+
+    keys = list()
+    if 'properties' in schema:
+        keys.extend(schema['properties'])
+
+    if 'patternProperties' in schema:
+        keys.extend(schema['patternProperties'])
+
+    for key in keys:
+        if "pinctrl" in key:
+            break
+    else:
+        schema['properties']['pinctrl-names'] = True
+        schema.setdefault('patternProperties', dict())
+        schema['patternProperties']['pinctrl-[0-9]+'] = True
+
+    if "clocks" in keys and not "assigned-clocks" in keys:
+        schema['properties']['assigned-clocks'] = True
+        schema['properties']['assigned-clock-rates'] = True
+        schema['properties']['assigned-clock-parents'] = True
 
 def item_generator(json_input, lookup_key):
     if isinstance(json_input, dict):
@@ -394,6 +428,10 @@ def add_select_schema(schema):
     if "select" in schema:
         return
 
+    if not 'properties' in schema:
+        schema['select'] = False
+        return
+
     if 'compatible' in schema['properties']:
         sch = schema['properties']['compatible']
         compatible_list = [ ]
@@ -428,7 +466,7 @@ def add_select_schema(schema):
 
             return
 
-    if schema['properties']['$nodename'] != True:
+    if '$nodename' in schema['properties'] and schema['properties']['$nodename'] != True:
         schema['select'] = {
             'required': ['$nodename'],
             'properties': {'$nodename': convert_to_dict(schema['properties']['$nodename']) }}
@@ -436,15 +474,6 @@ def add_select_schema(schema):
         return
 
     schema['select'] = False
-
-def remove_description(schema):
-    if isinstance(schema, list):
-        for s in schema:
-            remove_description(s)
-    if isinstance(schema, dict):
-        schema.pop('description', None)
-        for k,v in schema.items():
-            remove_description(v)
 
 def fixup_interrupts(schema):
     # Supporting 'interrupts' implies 'interrupts-extended' is also supported.
@@ -475,52 +504,6 @@ def fixup_interrupts(schema):
         schema['oneOf'] = reqlist
     schema['required'].remove('interrupts')
 
-def fixup_node_props(schema):
-    if not (isinstance(schema, dict) and schema.keys() & {'properties', 'patternProperties', '$defs'}):
-        return
-
-    if 'properties' in schema:
-        for k,v in schema['properties'].items():
-            fixup_node_props(v)
-
-    if 'patternProperties' in schema:
-        for k,v in schema['patternProperties'].items():
-            fixup_node_props(v)
-
-    if '$defs' in schema:
-        for k,v in schema['$defs'].items():
-            fixup_node_props(v)
-
-    if 'additionalProperties' in schema:
-        fixup_node_props(schema['additionalProperties'])
-
-    if not 'properties' in schema:
-        schema['properties'] = {}
-
-    schema['properties']['phandle'] = True
-    schema['properties']['status'] = True
-
-    keys = list()
-    if 'properties' in schema:
-        keys.extend(schema['properties'])
-
-    if 'patternProperties' in schema:
-        keys.extend(schema['patternProperties'])
-
-    for key in keys:
-        if "pinctrl" in key:
-            break
-
-    else:
-        schema['properties']['pinctrl-names'] = True
-        schema.setdefault('patternProperties', dict())
-        schema['patternProperties']['pinctrl-[0-9]+'] = True
-
-    if "clocks" in keys and not "assigned-clocks" in keys:
-        schema['properties']['assigned-clocks'] = True
-        schema['properties']['assigned-clock-rates'] = True
-        schema['properties']['assigned-clock-parents'] = True
-
 def process_schema(filename):
     try:
         schema = load_schema(filename)
@@ -536,27 +519,6 @@ def process_schema(filename):
         #print(exc.message)
         return
 
-    # Remove parts not necessary for validation
-    schema.pop('examples', None)
-    schema.pop('maintainers', None)
-    schema.pop('historical', None)
-
-    remove_description(schema)
-
-    if not schema.keys() & {'properties', 'patternProperties'}:
-        return schema
-
-    if not 'properties' in schema:
-        schema['properties'] = {}
-
-    if not '$nodename' in schema['properties']:
-        schema['properties']['$nodename'] = True
-
-    # Add any implicit properties
-    fixup_node_props(schema)
-    _fixup_items_size(schema)
-
-    add_select_schema(schema)
     if not 'select' in schema:
         return
 
