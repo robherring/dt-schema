@@ -63,6 +63,9 @@ definitions:
         propertyNames:
           enum: [ description, deprecated ]
 
+      '-(bits|-kBps|percent|mhz|hz|sec|ms|us|ns|ps|mm|microamp(-hours)?|(micro-)?ohms|microwatt-hours|microvolt|(femto|pico)farads|(milli)?celsius|kpascal)$':
+        $ref: "cell.yaml#/array"
+
       '^.*$':
         properties:
           # 'boolean' and 'object' are the only native types allowed
