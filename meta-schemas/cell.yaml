@@ -65,9 +65,5 @@ single:
     default:
       type: integer
 
-  dependencies:
-    minimum: [maximum]
-    maximum: [minimum]
-
   propertyNames:
     enum: [ description, deprecated, const, enum, minimum, maximum, multipleOf, default, $ref ]
