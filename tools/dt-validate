@@ -46,8 +46,8 @@ class schema_group():
                 if schema['select'] != True:
                     matched_schemas.append(schema['$id'])
                     node_matched = True
-                    if 'properties' in schema:
-                        node_compatible_matched = 'compatible' in schema['properties']
+                    if 'properties' in schema and 'compatible' in schema['properties']:
+                        node_compatible_matched = True
                 try:
                     errors = sorted(dtschema.DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
                     for error in errors:
