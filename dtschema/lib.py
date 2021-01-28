@@ -396,14 +396,38 @@ def fixup_node_props(schema):
         schema['properties']['assigned-clock-rates'] = True
         schema['properties']['assigned-clock-parents'] = True
 
+def extract_node_compatibles(schema):
+    if not isinstance(schema, dict):
+        return set()
+
+    compatible_list = set()
+
+    for l in item_generator(schema, 'enum'):
+        compatible_list.update(l)
+
+    for l in item_generator(schema, 'const'):
+        compatible_list.update([str(l)])
+
+    for l in item_generator(schema, 'pattern'):
+        compatible_list.update([l])
+
+    return compatible_list
+
+def extract_compatibles(schema):
+    if not isinstance(schema, dict):
+        return set()
+
+    compatible_list = set()
+    for sch in item_generator(schema, 'compatible'):
+        compatible_list.update(extract_node_compatibles(sch))
+
+    return compatible_list
+
 def item_generator(json_input, lookup_key):
     if isinstance(json_input, dict):
         for k, v in json_input.items():
             if k == lookup_key:
-                if isinstance(v, str):
-                    yield [v]
-                else:
-                    yield v
+                yield v
             else:
                 for child_val in item_generator(v, lookup_key):
                     yield child_val
@@ -443,38 +467,24 @@ def add_select_schema(schema):
         return
 
     if 'compatible' in schema['properties']:
-        sch = schema['properties']['compatible']
-        compatible_list = [ ]
-        for l in item_generator(sch, 'enum'):
-            compatible_list.extend(l)
+        compatible_list = extract_node_compatibles(schema['properties']['compatible'])
 
-        for l in item_generator(sch, 'const'):
-            compatible_list.extend(l)
+        if len(compatible_list):
+            try:
+                compatible_list.remove('syscon')
+            except:
+                pass
+            try:
+                compatible_list.remove('simple-mfd')
+            except:
+                pass
 
-        if 'contains' in sch:
-            for l in item_generator(sch['contains'], 'enum'):
-                compatible_list.extend(l)
+            if len(compatible_list) != 0:
+                schema['select'] = {
+                    'required': ['compatible'],
+                    'properties': {'compatible': {'contains': {'enum': list(compatible_list)}}}}
 
-            for l in item_generator(sch['contains'], 'const'):
-                compatible_list.extend(l)
-
-        compatible_list = list(set(compatible_list))
-        try:
-            compatible_list.remove('syscon')
-        except:
-            pass
-        try:
-            compatible_list.remove('simple-mfd')
-        except:
-            pass
-
-        compatible_list.sort()
-        if len(compatible_list) != 0:
-            schema['select'] = {
-                'required': ['compatible'],
-                'properties': {'compatible': {'contains': {'enum': compatible_list}}}}
-
-            return
+                return
 
     if '$nodename' in schema['properties'] and schema['properties']['$nodename'] != True:
         schema['select'] = {
@@ -513,6 +523,38 @@ def fixup_interrupts(schema):
     else:
         schema['oneOf'] = reqlist
     schema['required'].remove('interrupts')
+
+def make_compatible_schema(schemas):
+    compat_sch = [{'enum': []}]
+    compatible_list = set()
+    for sch in schemas:
+        compatible_list |= extract_compatibles(sch)
+
+    # Allow 'foo' values for examples
+    compat_sch += [{'pattern': '^foo'}]
+
+    prog = re.compile('.*[\^\[{\(\$].*')
+    for c in compatible_list:
+        if prog.match(c):
+            # Exclude the generic pattern
+            if c != '^[a-zA-Z][a-zA-Z0-9,+\-._]+$':
+                compat_sch += [{'pattern': c }]
+        else:
+            compat_sch[0]['enum'].append(c)
+
+    compat_sch[0]['enum'].sort()
+    schemas += [{
+        '$id': 'generated-compatibles',
+        '$filename': 'Generated schema of documented compatible strings',
+        'select': True,
+        'properties': {
+            'compatible': {
+                'items': {
+                    'anyOf': compat_sch
+                }
+            }
+        }
+    }]
 
 def process_schema(filename):
     try:
@@ -570,6 +612,8 @@ def process_schemas(schema_paths, core_schema=True):
 
         if count == 0:
             print("warning: no schema found in path: %s" % path, file=sys.stderr)
+
+    make_compatible_schema(schemas)
 
     return schemas
 

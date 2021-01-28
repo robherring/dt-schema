@@ -6,6 +6,7 @@ from dtschema.lib import (
     set_schema,
     DTValidator,
     format_error,
+    extract_compatibles,
 )
 
 from dtschema.version import (
