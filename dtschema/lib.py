@@ -182,19 +182,34 @@ def _is_matrix_schema(subschema):
 
     return False
 
+def is_int_array_schema(propname, subschema):
+    if 'allOf' in subschema:
+        # Find 'items'. It may be under the 'allOf' or at the same level
+        for item in subschema['allOf']:
+            if 'items' in item:
+                subschema = item
+                continue
+            if '$ref' in item:
+                return re.match('.*uint(8|16|32)-array', item['$ref'])
+    elif re.match('.*-(bits|percent|mhz|hz|sec|ms|us|ns|ps|mm|microamp|microamp-hours|ohms|micro-ohms|microwatt-hours|microvolt|picofarads|celsius|millicelsius|kpascal)$', propname):
+        return True
+
+    return 'items' in subschema and \
+        ((isinstance(subschema['items'],list) and _is_int_schema(subschema['items'][0])) or \
+        (isinstance(subschema['items'],dict) and _is_int_schema(subschema['items'])))
+
 # Fixup an int array that only defines the number of items.
 # In this case, we allow either form [[ 0, 1, 2]] or [[0], [1], [2]]
 def _fixup_int_array_min_max_to_matrix(propname, subschema):
-    if not ('allOf' in subschema and \
-            '$ref' in subschema['allOf'][0] and \
-            re.match('.*uint(8|16|32)-array', subschema['allOf'][0]['$ref'])):
+    if not is_int_array_schema(propname, subschema):
         return
 
-    # Find 'min/maxItems'. It may be under the 'allOf' or at the same level
-    for item in subschema['allOf']:
-        if item.keys() & {'minItems', 'maxItems'}:
-            subschema = item
-            break
+    if 'allOf' in subschema:
+        # Find 'min/maxItems'. It may be under the 'allOf' or at the same level
+        for item in subschema['allOf']:
+            if item.keys() & {'minItems', 'maxItems'}:
+                subschema = item
+                break
 
     if _is_matrix_schema(subschema):
         return
@@ -218,25 +233,17 @@ def _fixup_int_array_min_max_to_matrix(propname, subschema):
         _fixup_items_size(subschema['oneOf'])
 
 def _fixup_int_array_items_to_matrix(propname, subschema):
-    if 'allOf' in subschema and '$ref' in subschema['allOf'][0]:
-        if not re.match('.*uint(8|16|32)-array', subschema['allOf'][0]['$ref']):
-            return
+    if not is_int_array_schema(propname, subschema):
+        return
 
+    if 'allOf' in subschema:
         # Find 'items'. It may be under the 'allOf' or at the same level
         for item in subschema['allOf']:
             if 'items' in item:
                 subschema = item
                 break
 
-        if not 'items' in subschema:
-            return
-
-    elif not 'items' in subschema or \
-        (isinstance(subschema['items'],list) and not _is_int_schema(subschema['items'][0])) or \
-        (isinstance(subschema['items'],dict) and not _is_int_schema(subschema['items'])):
-        return
-
-    if _is_matrix_schema(subschema):
+    if not 'items' in subschema or _is_matrix_schema(subschema):
         return
 
     if isinstance(subschema['items'],dict):
