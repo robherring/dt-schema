@@ -162,7 +162,7 @@ def _extract_single_schemas(subschema):
 
     return tmpsch
 
-def _fixup_string_to_array(subschema):
+def _fixup_string_to_array(propname, subschema):
     # nothing to do if we don't have a set of string schema
     if not _is_string_schema(subschema):
         return
@@ -184,7 +184,7 @@ def _is_matrix_schema(subschema):
 
 # Fixup an int array that only defines the number of items.
 # In this case, we allow either form [[ 0, 1, 2]] or [[0], [1], [2]]
-def _fixup_int_array_min_max_to_matrix(subschema):
+def _fixup_int_array_min_max_to_matrix(propname, subschema):
     if not ('allOf' in subschema and \
             '$ref' in subschema['allOf'][0] and \
             re.match('.*uint(8|16|32)-array', subschema['allOf'][0]['$ref'])):
@@ -217,7 +217,7 @@ def _fixup_int_array_min_max_to_matrix(subschema):
         # Since we added an 'oneOf' the tree walking code won't find it and we need to do fixups
         _fixup_items_size(subschema['oneOf'])
 
-def _fixup_int_array_items_to_matrix(subschema):
+def _fixup_int_array_items_to_matrix(propname, subschema):
     if 'allOf' in subschema and '$ref' in subschema['allOf'][0]:
         if not re.match('.*uint(8|16|32)-array', subschema['allOf'][0]['$ref']):
             return
@@ -252,7 +252,7 @@ def _fixup_int_array_items_to_matrix(subschema):
     if isinstance(subschema['items'],list):
         subschema['items'] = [ {'items': subschema['items']} ]
 
-def _fixup_scalar_to_array(subschema):
+def _fixup_scalar_to_array(propname, subschema):
     if not _is_int_schema(subschema):
         return
 
@@ -285,7 +285,7 @@ def _fixup_items_size(schema):
         elif 'minItems' in schema and not 'maxItems' in schema:
             schema['maxItems'] = schema['minItems']
 
-def fixup_vals(schema):
+def fixup_vals(propname, schema):
     # Now we should be a the schema level to do actual fixups
 #    print(schema)
 
@@ -298,14 +298,14 @@ def fixup_vals(schema):
 
     schema.pop('description', None)
 
-    _fixup_int_array_min_max_to_matrix(schema)
-    _fixup_int_array_items_to_matrix(schema)
-    _fixup_string_to_array(schema)
-    _fixup_scalar_to_array(schema)
+    _fixup_int_array_min_max_to_matrix(propname, schema)
+    _fixup_int_array_items_to_matrix(propname, schema)
+    _fixup_string_to_array(propname, schema)
+    _fixup_scalar_to_array(propname, schema)
     _fixup_items_size(schema)
 #    print(schema)
 
-def walk_properties(schema):
+def walk_properties(propname, schema):
     if not isinstance(schema, dict):
         return
     # Recurse until we don't hit a conditional
@@ -314,9 +314,9 @@ def walk_properties(schema):
     for cond in ['allOf', 'oneOf', 'anyOf']:
         if cond in schema.keys():
             for l in schema[cond]:
-                walk_properties(l)
+                walk_properties(propname, l)
 
-    fixup_vals(schema)
+    fixup_vals(propname, schema)
 
 def fixup_schema(schema):
     # Remove parts not necessary for validation
@@ -348,7 +348,7 @@ def fixup_sub_schema(schema, is_prop):
             continue
 
         for prop in v:
-            walk_properties(v[prop])
+            walk_properties(prop, v[prop])
             # Recurse to check for {properties,patternProperties} in each prop
             fixup_sub_schema(v[prop], True)
 
