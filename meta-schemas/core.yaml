@@ -103,6 +103,33 @@ properties:
     $ref: "#/definitions/all-properties"
   properties:
     $ref: "#/definitions/all-properties"
+  allOf:
+    items:
+      properties:
+        properties:
+          $ref: "#/definitions/all-properties"
+        patternProperties:
+          $ref: "#/definitions/all-properties"
+  anyOf:
+    items:
+      properties:
+        properties:
+          $ref: "#/definitions/all-properties"
+        patternProperties:
+          $ref: "#/definitions/all-properties"
+  oneOf:
+    items:
+      properties:
+        properties:
+          $ref: "#/definitions/all-properties"
+        patternProperties:
+          $ref: "#/definitions/all-properties"
+  if:
+    properties:
+      properties:
+        $ref: "#/definitions/all-properties"
+      patternProperties:
+        $ref: "#/definitions/all-properties"
 
 anyOf:
   - required:
