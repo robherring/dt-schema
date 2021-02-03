@@ -403,7 +403,8 @@ def extract_node_compatibles(schema):
     compatible_list = set()
 
     for l in item_generator(schema, 'enum'):
-        compatible_list.update(l)
+        if isinstance(l[0], str):
+            compatible_list.update(l)
 
     for l in item_generator(schema, 'const'):
         compatible_list.update([str(l)])
