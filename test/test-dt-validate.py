@@ -18,10 +18,8 @@ import dtschema
 
 class TestDTMetaSchema(unittest.TestCase):
     def setUp(self):
-        self.schema = dtschema.load(os.path.join(basedir, 'schemas/good-example.yaml'),
-            duplicate_keys=False)
-        self.bad_schema = dtschema.load(os.path.join(basedir, 'schemas/bad-example.yaml'),
-            duplicate_keys=False)
+        self.schema = dtschema.load(os.path.join(basedir, 'schemas/good-example.yaml'))
+        self.bad_schema = dtschema.load(os.path.join(basedir, 'schemas/bad-example.yaml'))
 
     def test_metaschema_valid(self):
         '''The DTValidator metaschema must be a valid Draft7 schema'''

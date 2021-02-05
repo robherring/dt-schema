@@ -45,7 +45,7 @@ class phandle_int(int):
         return phandle_int(loader.construct_yaml_int(node))
 
 rtyaml = ruamel.yaml.YAML(typ='rt')
-rtyaml.allow_duplicate_keys = True
+rtyaml.allow_duplicate_keys = False
 rtyaml.preserve_quotes=True
 rtyaml.Constructor.add_constructor(u'!u8', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!u16', tagged_list.constructor)
@@ -54,7 +54,7 @@ rtyaml.Constructor.add_constructor(u'!u64', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!phandle', phandle_int.constructor)
 
 yaml = ruamel.yaml.YAML(typ='safe')
-yaml.allow_duplicate_keys = True
+yaml.allow_duplicate_keys = False
 yaml.Constructor.add_constructor(u'!u8', tagged_list.constructor)
 yaml.Constructor.add_constructor(u'!u16', tagged_list.constructor)
 yaml.Constructor.add_constructor(u'!u32', tagged_list.constructor)
@@ -112,7 +112,6 @@ def do_load(filename):
         return yaml.load(tmp)
 
 def load_schema(schema):
-    yaml.allow_duplicate_keys = False
     for path in schema_user_paths:
         if schema.startswith('schemas/'):
             schema_file = schema.partition('/')[2]
@@ -618,13 +617,11 @@ def process_schemas(schema_paths, core_schema=True):
 
     return schemas
 
-def load(filename, line_number=False, duplicate_keys=True):
+def load(filename, line_number=False):
     with open(filename, 'r', encoding='utf-8') as f:
         if line_number:
-            rtyaml.allow_duplicate_keys = duplicate_keys
             return rtyaml.load(f.read())
         else:
-            yaml.allow_duplicate_keys = duplicate_keys
             return yaml.load(f.read())
 
 schema_cache = []
