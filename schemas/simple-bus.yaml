@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
+# Copyright 2021 Arm Ltd.
 %YAML 1.2
 ---
 $id: http://devicetree.org/schemas/simple-bus.yaml#
@@ -19,6 +20,7 @@ properties:
     contains:
       const: simple-bus
   ranges: true
+  dma-ranges: true
   "#address-cells":
     enum: [ 1, 2 ]
   "#size-cells":
@@ -26,7 +28,7 @@ properties:
 
 patternProperties:
   # All other properties should be child nodes with unit-address and 'reg'
-  "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+$":
+  "@(0|[1-9a-f][0-9a-f]*)$":
     type: object
     properties:
       reg:
@@ -49,7 +51,12 @@ patternProperties:
       - required:
           - ranges
 
-additionalProperties: true
+  "^[^@]+$":
+    # Only additional properties should be properties, not nodes.
+    not:
+      type: object
+
+additionalProperties: false
 
 required:
   - compatible
