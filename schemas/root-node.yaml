@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
-# Copyright 2018 Arm Ltd.
+# Copyright 2018,2021 Arm Ltd.
 %YAML 1.2
 ---
 $id: http://devicetree.org/schemas/root-node.yaml#
@@ -23,13 +23,40 @@ properties:
     enum: [1, 2]
   memory: false
 
+patternProperties:
+  "@(0|[1-9a-f][0-9a-f]*)$":
+    type: object
+    properties:
+      reg:
+        items:
+          minItems: 2
+          maxItems: 4
+        minItems: 1
+        maxItems: 1024
+      ranges:
+        oneOf:
+          - items:
+              minItems: 3
+              maxItems: 7
+            minItems: 1
+            maxItems: 1024
+          - $ref: "types.yaml#/definitions/flag"
+    anyOf:
+      - required:
+          - reg
+      - required:
+          - ranges
+
+  # Anything else should not have a unit-address
+  "^[^@]+$": true
+
 required:
   - compatible
   - model
   - "#address-cells"
   - "#size-cells"
 
-additionalProperties: true
+additionalProperties: false
 
 examples:
   - |
