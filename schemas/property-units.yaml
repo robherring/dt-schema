@@ -27,6 +27,10 @@ patternProperties:
     $ref: "types.yaml#/definitions/uint32-array"
     description: Number of bits
 
+  "-kBps$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: Kilobytes per second
+
   "-percent$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: percentage
