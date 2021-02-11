@@ -81,6 +81,9 @@ patternProperties:
   "-picofarads$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: picofarads
+  "-femtofarads$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: femtofarads
 
   # Temperature
   "-celsius$":
