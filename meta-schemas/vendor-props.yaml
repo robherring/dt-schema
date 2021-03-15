@@ -18,6 +18,11 @@ patternProperties:
   '-(microamp|microamp-hours|ohms|micro-ohms|microwatt-hours)$': true
   '-(microvolt|(femto|pico)farads|celsius|millicelsius|kpascal)$': true
 
+  ",.*-names$":
+    type: object
+    required:
+      - description
+
 additionalProperties:
     type: object
     required:
