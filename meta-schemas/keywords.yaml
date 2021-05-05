@@ -6,8 +6,7 @@ $id: "http://devicetree.org/meta-schemas/keywords.yaml#"
 $schema: "http://json-schema.org/draft-07/schema#"
 
 description:
-  Metaschema to only allow for known json-schema vocabulary keywords. This is a
-  subset of json-schema vocabulary plus our additional keywords.
+  Keywords must be a subset of known json-schema keywords
 
 definitions:
   sub-schemas:
@@ -51,15 +50,19 @@ definitions:
         - uniqueItems
 
   scalar-prop-list:
-    properties:
-      enum: false
-      exclusiveMaximum: false
-      exclusiveMinimum: false
-      const: false
-      maximum: false
-      minimum: false
-      multipleOf: false
-      pattern: false
+    propertyNames:
+      description:
+        Scalar and array keywords cannot be mixed
+      not:
+        enum:
+          - const
+          - enum
+          - exclusiveMaximum
+          - exclusiveMinimum
+          - minimum
+          - maximum
+          - multipleOf
+          - pattern
 
 # Array keywords should not be mixed with scalar keywords
 dependencies:

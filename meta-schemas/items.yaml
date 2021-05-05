@@ -154,6 +154,8 @@ allOf:
             maxItems:
               const: 32
     then:
+      description:
+        '"minItems/maxItems" equal to the "items" list length are not necessary'
       properties:
         minItems: false
         maxItems: false

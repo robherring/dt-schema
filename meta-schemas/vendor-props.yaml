@@ -27,8 +27,11 @@ additionalProperties:
     type: object
     required:
       - description
+    description: Vendor specific properties must have a type and description
+      unless they have a defined, common suffix.
     oneOf:
-      - properties:   # A boolean property
+      - description: 'A vendor boolean property can use "type: boolean"'
+        properties:
           description: true
           type:
             const: boolean
@@ -37,7 +40,9 @@ additionalProperties:
           - type
         additionalProperties: false
 
-      - properties:   # A string property with exact values
+      - description: A vendor string property with exact values has an implicit
+          type
+        properties:   # A string property with exact values
           description: true
           enum:
             items:
@@ -50,7 +55,8 @@ additionalProperties:
           - required: [ const ]
         additionalProperties: false
 
-      - properties:   # A property with a type and additional constraints
+      - description: A vendor property needs a $ref to types.yaml
+        properties:   # A property with a type and additional constraints
           $ref:
             pattern: "types.yaml#\/definitions\/"
           allOf:

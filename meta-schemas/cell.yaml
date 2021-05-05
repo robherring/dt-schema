@@ -7,14 +7,20 @@ $id: "http://devicetree.org/meta-schemas/cell.yaml#"
 $schema: "http://json-schema.org/draft-07/schema#"
 
 array:
+  description: cell array properties must define how many entries and what the
+    entries are when there is more than one entry.
   anyOf:
-    - properties:
+    - description: 'Only "maxItems" is required for a single entry if there are
+        no constraints defined for the values.'
+      properties:
         maxItems:
           const: 1
       required: [maxItems]
       propertyNames:
         enum: [maxItems, description, deprecated]
-    - properties:
+    - description:
+        Arrays must be described with a combination of minItems/maxItems/items
+      properties:
         minItems:
           minimum: 1
         maxItems:
@@ -28,6 +34,9 @@ array:
           items:
             $ref: '#/array'
         items:
+          description: '"items" can be a list defining each entry or a schema
+            applying to all items. A list has an implicit size. A schema
+            requires minItems/maxItems to define the size.'
           oneOf:
             - type: object
               allOf:
@@ -53,6 +62,7 @@ array:
     - $ref: '#/single'
 
 single:
+  description: A singular entry should be described with scalar constraints
   properties:
     description: true
     const:

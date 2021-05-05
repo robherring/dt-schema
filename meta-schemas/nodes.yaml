@@ -7,6 +7,8 @@ $schema: "http://json-schema.org/draft-07/schema#"
 
 type: object
 
+description: 'DT nodes ("object" type in schemas) can only use a subset of json-schema keywords'
+
 properties:
   type:
     const: object

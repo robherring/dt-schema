@@ -44,7 +44,7 @@ definitions:
       memory-region-names:
         $ref: "string-array.yaml"
     propertyNames:
-      # Ensure DT property names are not json-schema vocabulary names
+      description: A json-schema keyword was found instead of a DT property name.
       not:
         enum: [ $ref, additionalItems, additionalProperties, allOf, anyOf,
                 const, contains, default, dependencies, deprecated, description,
