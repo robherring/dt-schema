@@ -25,12 +25,10 @@ properties:
       - "http://devicetree.org/meta-schemas/base.yaml#"
   title:
     maxLength: 100
-  description: true
   examples:
     type: array
     items:
       type: string
-  required: true
   allOf:
     items:
       propertyNames:
@@ -39,21 +37,9 @@ properties:
           - if
           - then
           - else
-  anyOf: true
-  oneOf: true
-  definitions: true
-  $defs: true
-  additionalProperties: true
-  dependencies: true
-  patternProperties: true
   properties:
     propertyNames:
       pattern:  "^[#$a-zA-Z][a-zA-Z0-9,+\\-._@]{0,63}$"
-  if: true
-  then: true
-  else: true
-  unevaluatedProperties: true
-  deprecated: true
 
   maintainers:
     type: array
@@ -71,6 +57,12 @@ properties:
               properties: true
               required: true
           - type: boolean
+
+propertyNames:
+  enum: [ $id, $schema, title, description, examples, required, allOf, anyOf, oneOf,
+          definitions, $defs, additionalProperties, dependencies, patternProperties,
+          properties, if, then, else, unevaluatedProperties, deprecated, maintainers,
+          select ]
 
 required:
   - $id
@@ -105,4 +97,3 @@ else:
   required:
     - additionalProperties
 
-additionalProperties: false
