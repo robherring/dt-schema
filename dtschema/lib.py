@@ -682,15 +682,55 @@ class DTValidator(DTVal):
                                             format_checker=self.format_checker)
 
     @classmethod
+    def annotate_error(self, error, schema, path):
+        error.note = None
+        error.schema_file = None
+
+        for e in error.context:
+            self.annotate_error(e, schema, path + e.schema_path)
+
+        scope = self.ID_OF(schema)
+        self.resolver.push_scope(scope)
+        ref_depth = 1
+
+        for p in path:
+            if p == 'if':
+                continue
+            if '$ref' in schema and isinstance(schema['$ref'], str):
+                ref = self.resolver.resolve(schema['$ref'])
+                schema = ref[1]
+                self.resolver.push_scope(ref[0])
+                ref_depth += 1
+
+            if '$id' in schema and isinstance(schema['$id'], str):
+                error.schema_file = schema['$id']
+
+            schema = schema[p]
+
+            if isinstance(schema, dict):
+                if 'description' in schema and isinstance(schema['description'], str):
+                    error.note = schema['description']
+
+        while ref_depth > 0:
+            self.resolver.pop_scope()
+            ref_depth -= 1
+
+        if isinstance(error.schema, dict) and 'description' in error.schema:
+            error.note = error.schema['description']
+
+    @classmethod
     def iter_schema_errors(cls, schema):
         meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
         for error in cls(meta_schema).iter_errors(schema):
+            cls(meta_schema).annotate_error(error, meta_schema, error.schema_path)
             error.linecol = get_line_col(schema, error.path)
             yield error
 
     def iter_errors(self, instance, _schema=None):
         for error in jsonschema.Draft7Validator.iter_errors(self, instance, _schema):
             error.linecol = get_line_col(instance, error.path)
+            error.note = None
+            error.schema_file = None
             yield error
 
     @classmethod
@@ -793,6 +833,8 @@ def format_error(filename, error, prefix="", nodename=None, verbose=False):
                 msg += '\n' + format_error(filename, suberror, prefix=prefix+"\t", nodename=nodename, verbose=verbose)
             elif not suberror.message in msg:
                 msg += '\n' + prefix + '\t' + suberror.message
+                if suberror.note and suberror.note != error.note:
+                    msg += '\n\t\t' + prefix + 'hint: ' + suberror.note
 
     elif error.schema_path[-1] == 'oneOf':
         msg = 'More than one condition true in oneOf schema:\n\t' + \
@@ -800,5 +842,11 @@ def format_error(filename, error, prefix="", nodename=None, verbose=False):
 
     else:
         msg = error.message
+
+    if error.note:
+        msg += '\n\t' + prefix + 'hint: ' + error.note
+
+    if error.schema_file:
+        msg += '\n\t' + prefix + 'from schema $id: ' + error.schema_file
 
     return src + msg
