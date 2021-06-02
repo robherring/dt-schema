@@ -707,6 +707,151 @@ def process_schemas(schema_paths, core_schema=True):
     return schemas
 
 
+def _get_array_range(subschema):
+    if isinstance(subschema, list):
+        if len(subschema) != 1:
+            return (0, 0)
+        subschema = subschema[0]
+    if 'items' in subschema and isinstance(subschema['items'], list):
+        max = len(subschema['items'])
+        min = subschema.get('minItems', max)
+    else:
+        min = subschema.get('minItems', 1)
+        max = subschema.get('maxItems', subschema.get('minItems', 0))
+
+    return (min, max)
+
+
+def _merge_dim(dim1, dim2):
+    d = []
+    for i in range(0, 2):
+        if dim1[i] == (0, 0):
+            d.insert(i, dim2[i])
+        elif dim2[i] == (0, 0):
+            d.insert(i, dim1[i])
+        else:
+            d.insert(i, (min(dim1[i] + dim2[i]), max(dim1[i] + dim2[i])))
+
+    return tuple(d)
+
+
+type_re = re.compile('(flag|u?int(8|16|32|64)(-(array|matrix))?|string(-array)?|phandle(-array)?)')
+
+
+def _extract_prop_type(props, schema, propname, subschema):
+    if not isinstance(subschema, dict):
+        return
+
+    if subschema.keys() & {'properties', 'patternProperties', 'additionalProperties'}:
+        _extract_subschema_types(props, schema, subschema)
+
+    # We only support local refs
+    if '$ref' in subschema and subschema['$ref'].startswith('#/'):
+        sch_path = subschema['$ref'].split('/')[1:]
+        subschema = schema
+        for p in sch_path:
+            subschema = subschema[p]
+        #print(propname, sch_path, subschema, file=sys.stderr)
+        _extract_prop_type(props, schema, propname, subschema)
+
+    try:
+        prop_type = type_re.search(subschema['$ref']).group(0)
+    except:
+        if 'type' in subschema and subschema['type'] == 'boolean':
+            prop_type = 'flag'
+        elif 'items' in subschema:
+            items = subschema['items']
+            if (isinstance(items, list) and _is_string_schema(items[0])) or \
+               (isinstance(items, dict) and _is_string_schema(items)):
+                # implicit string type
+                prop_type = 'string-array'
+            else:
+                prop_type = None
+        else:
+            prop_type = None
+
+    if prop_type:
+        props.setdefault(propname, {})
+
+        if prop_type == 'phandle-array' or prop_type.endswith('-matrix'):
+            dim = (_get_array_range(subschema), _get_array_range(subschema.get('items', {})))
+            if dim != ((0, 0), (0, 0)):
+                if not 'dim' in props[propname]:
+                    props[propname]['dim'] = dim
+                elif props[propname]['dim'] != dim:
+                    # Conflicting dimensions
+                    props[propname]['dim'] = _merge_dim(props[propname]['dim'], dim)
+
+        if 'type' in props[propname]:
+            if prop_type in props[propname]['type']:
+                # Already have the same type
+                return
+            for t in props[propname]['type']:
+                if prop_type in t:
+                    # Already have the looser type
+                    return
+                if t in prop_type:
+                    # Replace scalar type with array type
+                    i = props[propname]['type'].index(t)
+                    props[propname]['type'][i] = prop_type
+                    props[propname]['$id'][i] = schema['$id']
+                    return
+        else:
+            props[propname]['type'] = []
+            props[propname]['$id'] = []
+
+        props[propname]['type'] += [ prop_type ]
+        props[propname]['$id'] += [ schema['$id'] ]
+        return
+
+    for k in subschema.keys() & {'allOf', 'oneOf', 'anyOf'}:
+        for v in subschema[k]:
+            _extract_prop_type(props, schema, propname, v)
+
+
+def _extract_subschema_types(props, schema, subschema):
+    if not isinstance(subschema, dict):
+        return
+
+    for k in subschema.keys() & {'properties', 'patternProperties', 'additionalProperties'}:
+        if isinstance(subschema[k], dict):
+            for p,v in subschema[k].items():
+                _extract_prop_type(props, schema, p, v)
+
+
+def extract_types(schemas):
+    if not isinstance(schemas, list):
+        return
+
+    props = {}
+    for sch in schemas:
+        _extract_subschema_types(props, sch, sch)
+
+    return props
+
+
+def get_prop_types():
+    global schema_cache
+    pat_props = {}
+
+    props = dtschema.extract_types(schema_cache)
+
+    # hack to remove aliases pattern
+    del props['^[a-z][a-z0-9\-]*$']
+
+    # Remove all properties without a type
+    for key in [key for key in props if 'type' not in props[key] ]: del props[key]
+
+    # Split out pattern properties
+    for key in [key for key in props if re.fullmatch('(^\^.*|.*\$$|.*[*[].*)', key) ]:
+        #print(key, props[key])
+        pat_props[key] = props[key]
+        pat_props[key]['regex'] = re.compile(key)
+        del props[key]
+
+    return [ props, pat_props ]
+
+
 def load(filename, line_number=False):
     with open(filename, 'r', encoding='utf-8') as f:
         if line_number:

@@ -40,7 +40,8 @@ setuptools.setup(
         'tools/dt-validate',
         'tools/dt-doc-validate',
         'tools/dt-mk-schema',
-        'tools/dt-extract-example'
+        'tools/dt-extract-example',
+        'tools/dt-extract-props'
     ],
 
     python_requires='>=3.5',
