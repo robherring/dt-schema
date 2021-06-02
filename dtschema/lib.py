@@ -574,6 +574,7 @@ def process_schema(filename):
     if not 'select' in schema:
         return
 
+    schema["type"] = "object"
     schema["$filename"] = filename
     return schema
 
