@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-2-Clause
-# Copyright 2019 Arm Ltd.
+# Copyright 2019-2021 Arm Ltd.
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/items.yaml#"
@@ -25,139 +25,105 @@ properties:
 
 allOf:
   - if:
+      type: object
+      properties:
+        items:
+          type: array
+        additionalItems: false
       required:
         - items
         - maxItems
+    then:
+      description: '"maxItems" is not needed with an "items" list'
+      not:
+        required:
+          - maxItems
+  - if:
+      type: object
+      properties:
+        items:
+          type: array
+        additionalItems: false
+      required:
+        - items
+        - minItems
+    then:
+      description:
+        '"minItems" is only needed if less than the "items" list length'
       oneOf:
         - properties:
             items:
-              type: array
               minItems: 1
               maxItems: 1
-            maxItems:
-              const: 1
+            minItems: false
         - properties:
             items:
-              type: array
               minItems: 2
               maxItems: 2
             minItems:
-              const: 2
-            maxItems:
-              const: 2
+              const: 1
         - properties:
             items:
-              type: array
               minItems: 3
               maxItems: 3
             minItems:
-              const: 3
-            maxItems:
-              const: 3
+              maximum: 2
         - properties:
             items:
-              type: array
               minItems: 4
               maxItems: 4
             minItems:
-              const: 4
-            maxItems:
-              const: 4
+              maximum: 3
         - properties:
             items:
-              type: array
               minItems: 5
               maxItems: 5
             minItems:
-              const: 5
-            maxItems:
-              const: 5
+              maximum: 4
         - properties:
             items:
-              type: array
               minItems: 6
               maxItems: 6
             minItems:
-              const: 6
-            maxItems:
-              const: 6
+              maximum: 5
         - properties:
             items:
-              type: array
               minItems: 7
               maxItems: 7
             minItems:
-              const: 7
-            maxItems:
-              const: 7
+              maximum: 6
         - properties:
             items:
-              type: array
               minItems: 8
               maxItems: 8
             minItems:
-              const: 8
-            maxItems:
-              const: 8
+              maximum: 7
         - properties:
             items:
-              type: array
               minItems: 9
               maxItems: 9
             minItems:
-              const: 9
-            maxItems:
-              const: 9
+              maximum: 8
         - properties:
             items:
-              type: array
               minItems: 10
               maxItems: 10
             minItems:
-              const: 10
-            maxItems:
-              const: 10
+              maximum: 9
         - properties:
             items:
-              type: array
               minItems: 11
               maxItems: 11
             minItems:
-              const: 11
-            maxItems:
-              const: 11
+              maximum: 10
         - properties:
             items:
-              type: array
               minItems: 12
               maxItems: 12
             minItems:
-              const: 12
-            maxItems:
-              const: 12
+              maximum: 11
         - properties:
             items:
-              type: array
-              minItems: 16
-              maxItems: 16
-            minItems:
-              const: 16
-            maxItems:
-              const: 16
-        - properties:
-            items:
-              type: array
-              minItems: 32
-              maxItems: 32
-            minItems:
-              const: 32
-            maxItems:
-              const: 32
-    then:
-      description:
-        '"minItems/maxItems" equal to the "items" list length are not necessary'
-      properties:
-        minItems: false
-        maxItems: false
+              minItems: 13
 
 ...
