@@ -107,9 +107,7 @@ def do_load(filename):
         if filename.endswith('.json'):
             return json.load(f)
 
-        # ruamel C loader doesn't support 1.2, but 1.1 is good enough for us
-        tmp = f.read().replace('YAML 1.2', 'YAML 1.1')
-        return yaml.load(tmp)
+        return yaml.load(f.read())
 
 def load_schema(schema):
     for path in schema_user_paths:
