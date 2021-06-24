@@ -80,7 +80,7 @@ patternProperties:
     $ref: "types.yaml#/definitions/uint32-array"
     description: micro Watt-hours
   "-microvolt$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: "types.yaml#/definitions/uint32-matrix"
     description: micro volts
   "-picofarads$":
     $ref: "types.yaml#/definitions/uint32-array"
