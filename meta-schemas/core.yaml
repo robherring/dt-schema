@@ -4,7 +4,7 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/core.yaml#"
-$schema: "http://json-schema.org/draft-07/schema#"
+$schema: "http://json-schema.org/draft/2019-09/schema#"
 description: "Metaschema for devicetree binding documentation"
 
 allOf:
@@ -102,7 +102,7 @@ definitions:
                 - required: [ type ]
                 - required: [ $ref ]
 
-    dependencies:
+    dependentRequired:
       "#size-cells": [ "#address-cells" ]
       memory-region-names: [ memory-region ]
       reg-names: [ reg ]

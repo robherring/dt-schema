@@ -4,7 +4,7 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/interrupts.yaml#"
-$schema: "http://json-schema.org/draft-07/schema#"
+$schema: "http://json-schema.org/draft/2019-09/schema#"
 
 properties:
   interrupts:
@@ -23,9 +23,11 @@ properties:
       - $ref: "nodes.yaml"
   interrupt-parent: false # interrupt-parent is implicit
 
-dependencies:
+dependentRequired:
   interrupt-map: ['#interrupt-cells']
   'interrupt-map-mask': [ interrupt-map ]
+
+dependentSchemas:
   '#interrupt-cells':
     anyOf:
       - required:

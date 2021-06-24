@@ -4,7 +4,7 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/mailbox.yaml#"
-$schema: "http://json-schema.org/draft-07/schema#"
+$schema: "http://json-schema.org/draft/2019-09/schema#"
 
 properties:
   mboxes:
@@ -12,6 +12,6 @@ properties:
   shmem:
     $ref: cell.yaml#/array
 
-dependencies:
+dependentRequired:
   mbox-names: [mboxes]
   shmem: [mboxes]

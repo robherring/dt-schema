@@ -4,11 +4,11 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/reset.yaml#"
-$schema: "http://json-schema.org/draft-07/schema#"
+$schema: "http://json-schema.org/draft/2019-09/schema#"
 
 properties:
   resets:
     $ref: "cell.yaml#/array"
 
-dependencies:
+dependentRequired:
   reset-names: [resets]

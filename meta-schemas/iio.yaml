@@ -3,11 +3,11 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/iio.yaml#"
-$schema: "http://json-schema.org/draft-07/schema#"
+$schema: "http://json-schema.org/draft/2019-09/schema#"
 
 properties:
   io-channels:
     $ref: "cell.yaml#/array"
 
-dependencies:
+dependentRequired:
   io-channel-names: [io-channels]
