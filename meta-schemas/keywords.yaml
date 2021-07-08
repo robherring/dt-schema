@@ -112,9 +112,6 @@ properties:
     items:
       $ref: "#/definitions/sub-schemas"
   patternProperties:
-    propertyNames:
-      not:
-        pattern:  '^\^[a-zA-Z0-9,\-._#]+\$$'
     additionalProperties:
       $ref: "#/definitions/sub-schemas"
   properties:
