@@ -481,7 +481,7 @@ def add_select_schema(schema):
             if len(compatible_list) != 0:
                 schema['select'] = {
                     'required': ['compatible'],
-                    'properties': {'compatible': {'contains': {'enum': list(compatible_list)}}}}
+                    'properties': {'compatible': {'contains': {'enum': sorted(compatible_list)}}}}
 
                 return
 
