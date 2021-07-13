@@ -247,7 +247,7 @@ def _fixup_int_array_items_to_matrix(propname, subschema):
         subschema['items'] = {k: subschema.pop(k) for k in itemkeys if k in subschema}
 
     if isinstance(subschema['items'],list):
-        subschema['items'] = [ {'items': subschema['items']} ]
+        subschema['items'] = [ {k: subschema.pop(k) for k in itemkeys if k in subschema} ]
 
 def _fixup_scalar_to_array(propname, subschema):
     if not _is_int_schema(subschema):
