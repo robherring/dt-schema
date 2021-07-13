@@ -297,14 +297,12 @@ def fixup_vals(propname, schema):
     # Now we should be a the schema level to do actual fixups
 #    print(schema)
 
+    schema.pop('description', None)
+
     # This can be removed once draft 2019.09 is supported
-    if '$ref' in schema and \
-        ((len(schema) > 1 and not 'description' in schema) or \
-        (len(schema) > 2 and 'description' in schema)):
+    if '$ref' in schema and (len(schema) > 1):
         schema['allOf'] = [ {'$ref': schema['$ref']} ]
         schema.pop('$ref')
-
-    schema.pop('description', None)
 
     _fixup_int_array_min_max_to_matrix(propname, schema)
     _fixup_int_array_items_to_matrix(propname, schema)
