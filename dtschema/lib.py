@@ -209,6 +209,9 @@ def _fixup_int_array_min_max_to_matrix(propname, subschema):
                 subschema = item
                 break
 
+    if 'items' in subschema and isinstance(subschema['items'],list):
+        return
+
     if _is_matrix_schema(subschema):
         return
 
