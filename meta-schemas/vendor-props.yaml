@@ -25,8 +25,6 @@ patternProperties:
 
 additionalProperties:
     type: object
-    required:
-      - description
     description: Vendor specific properties must have a type and description
       unless they have a defined, common suffix.
     oneOf:
@@ -38,6 +36,7 @@ additionalProperties:
           deprecated: true
         required:
           - type
+          - description
         additionalProperties: false
 
       - description: A vendor string property with exact values has an implicit
@@ -50,6 +49,8 @@ additionalProperties:
           const:
               type: string
           deprecated: true
+        required:
+          - description
         oneOf:
           - required: [ enum ]
           - required: [ const ]
@@ -66,8 +67,15 @@ additionalProperties:
                     pattern: "types.yaml#\/definitions\/"
                 required:
                   - $ref
+        required:
+          - description
         oneOf:
           - required: [ $ref ]
           - required: [ allOf ]
+      - description: A vendor property can have a $ref to a a $defs schema
+        properties:   # A property with a type and additional constraints
+          $ref:
+            pattern: "^#\/(definitions|$defs)\/"
+        required: [ $ref ]
 
 ...
