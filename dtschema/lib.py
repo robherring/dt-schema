@@ -676,8 +676,8 @@ class DTValidator(DTVal):
     resolver = jsonschema.RefResolver('', None, handlers=handlers)
     format_checker = jsonschema.FormatChecker()
 
-    def __init__(self, schema, types=()):
-        jsonschema.Draft7Validator.__init__(self, schema, types, resolver=self.resolver,
+    def __init__(self, schema):
+        jsonschema.Draft7Validator.__init__(self, schema, resolver=self.resolver,
                                             format_checker=self.format_checker)
 
     @classmethod
