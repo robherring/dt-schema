@@ -676,8 +676,8 @@ class DTValidator(DTVal):
     format_checker = jsonschema.FormatChecker()
 
     def __init__(self, schema):
-        jsonschema.Draft7Validator.__init__(self, schema, resolver=self.resolver,
-                                            format_checker=self.format_checker)
+        super().__init__(schema, resolver=self.resolver,
+                         format_checker=self.format_checker)
 
     @classmethod
     def annotate_error(self, error, schema, path):
@@ -725,7 +725,7 @@ class DTValidator(DTVal):
             yield error
 
     def iter_errors(self, instance, _schema=None):
-        for error in jsonschema.Draft7Validator.iter_errors(self, instance, _schema):
+        for error in super().iter_errors(instance, _schema):
             error.linecol = get_line_col(instance, error.path)
             error.note = None
             error.schema_file = None
