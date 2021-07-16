@@ -24,14 +24,8 @@ properties:
 
   clock-frequency:
     $ref: "cell.yaml#/single"
-    properties:
-      default: {}
-    required: [default]
   bus-frequency:
     $ref: "cell.yaml#/single"
-    properties:
-      default: {}
-    required: [default]
 
 dependencies:
   clock-output-names: ['#clock-cells']
