@@ -12,6 +12,7 @@ import copy
 import json
 
 from ruamel.yaml.comments import CommentedMap
+from urllib.request import urlopen
 
 import jsonschema
 import pkgutil
@@ -641,7 +642,7 @@ def http_handler(uri):
                 return load_schema(uri.replace(schema_base_url, ''))
             return process_schema(uri.replace(schema_base_url, ''))
 
-        return yaml.load(jsonschema.compat.urlopen(uri).read().decode('utf-8'))
+        return yaml.load(urlopen(uri).read().decode('utf-8'))
     except FileNotFoundError as e:
         print('Unknown file referenced:', e, file=sys.stderr)
         exit(-1)
