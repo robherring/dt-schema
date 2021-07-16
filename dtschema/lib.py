@@ -363,8 +363,8 @@ def fixup_sub_schema(schema, is_prop):
 def fixup_node_props(schema):
     if not {'properties', 'patternProperties'} & schema.keys():
         return
-    if not ('additionalProperties' in schema and schema['additionalProperties'] is not True) and \
-       not ('unevaluatedProperties' in schema and schema['unevaluatedProperties'] is not True):
+    if ('additionalProperties' in schema and schema['additionalProperties'] is True) or \
+       ('unevaluatedProperties' in schema and schema['unevaluatedProperties'] is True):
         return
 
     schema.setdefault('properties', dict())
