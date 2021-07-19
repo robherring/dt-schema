@@ -111,6 +111,11 @@ properties:
     $ref: /schemas/types.yaml#/definitions/uint32
     enum: [ 1, 2, 3, 4 ]
 
+  num-lanes:
+    description: The number of PCIe lanes
+    $ref: /schemas/types.yaml#/definitions/uint32
+    enum: [ 1, 2, 4, 8, 16, 32 ]
+
   reset-gpios:
     description: GPIO controlled connection to PERST# signal
     maxItems: 1
