@@ -141,7 +141,7 @@ patternProperties:
     properties:
       compatible:
         contains:
-          pattern: "^(pci[0-9a-f]{3,4},[0-9a-f]{1,4}|pciclass[0-9a-f]{4,6})$"
+          pattern: "^(pci[0-9a-f]{3,4},[0-9a-f]{1,4}|pciclass,[0-9a-f]{4,6})$"
       reg:
         items:
           minItems: 5
