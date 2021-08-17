@@ -355,14 +355,14 @@ definitions:
     items:
       type: array
       minItems: 1
-      items:
+      prefixItems:
         - oneOf:
             - phandle: true
               type: integer
               maximum: 0xffffffff
             - type: integer
               const: 0
-      additionalItems:
+      items:
         $ref: "#/definitions/cell"
 
 additionalProperties: true
