@@ -101,7 +101,7 @@ class TestDTValidate(unittest.TestCase):
         self.schemas = dtschema.process_schemas([ os.path.join(os.path.abspath(basedir), "schemas/")])
 
         for schema in self.schemas:
-            schema["$select_validator"] = jsonschema.Draft7Validator(schema['select'])
+            schema["$select_validator"] = dtschema.DTValidator(schema['select'])
 
     def check_node(self, nodename, node, fail):
         if nodename == "/":

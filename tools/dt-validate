@@ -107,7 +107,7 @@ class schema_group():
         """Check the given DT against all schemas"""
 
         for schema in self.schemas:
-            schema["$select_validator"] = jsonschema.Draft7Validator(schema['select'])
+            schema["$select_validator"] = dtschema.DTValidator(schema['select'])
 
         for subtree in dt:
             self.check_subtree(dt, subtree, "/", "/", filename)
