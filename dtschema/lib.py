@@ -282,6 +282,45 @@ def _fixup_items_size(schema):
         elif 'minItems' in schema and not 'maxItems' in schema:
             schema['maxItems'] = schema['minItems']
 
+def fixup_schema_to_201909(schema):
+    if not isinstance(schema, dict):
+        return
+
+    # dependencies is now split into dependentRequired and dependentSchema
+    try:
+        val = schema.pop('dependencies')
+        for k,v in val.items():
+            if isinstance(v, list):
+                schema.setdefault('dependentRequired', {})
+                schema['dependentRequired'][k] = v
+            else:
+                schema.setdefault('dependentSchemas', {})
+                schema['dependentSchemas'][k] = v
+    except:
+        pass
+
+def fixup_schema_to_202012(schema):
+    if not isinstance(schema, dict):
+        return
+
+    fixup_schema_to_201909(schema)
+
+    try:
+        if isinstance(schema['items'], list):
+            schema['prefixItems'] = schema.pop('items')
+            for i in schema['prefixItems']:
+                fixup_schema_to_202012(i)
+        if isinstance(schema['items'], dict):
+            fixup_schema_to_202012(schema['items'])
+    except:
+        pass
+
+    try:
+        val = schema.pop('additionalItems')
+        schema['unevaluatedItems'] = val
+    except:
+        pass
+
 def fixup_vals(propname, schema):
     # Now we should be a the schema level to do actual fixups
 #    print(schema)
@@ -298,6 +337,8 @@ def fixup_vals(propname, schema):
     _fixup_string_to_array(propname, schema)
     _fixup_scalar_to_array(propname, schema)
     _fixup_items_size(schema)
+
+    fixup_schema_to_201909(schema)
 #    print(schema)
 
 def walk_properties(propname, schema):
@@ -339,13 +380,15 @@ def fixup_sub_schema(schema, is_prop):
             for subschema in v:
                 fixup_sub_schema(subschema, True)
 
-        if not k in ['dependencies', 'properties', 'patternProperties', '$defs']:
+        if not k in ['dependentRequired', 'dependentSchemas', 'dependencies', 'properties', 'patternProperties', '$defs']:
             continue
 
         for prop in v:
             walk_properties(prop, v[prop])
             # Recurse to check for {properties,patternProperties} in each prop
             fixup_sub_schema(v[prop], True)
+
+    fixup_schema_to_201909(schema)
 
 def fixup_node_props(schema):
     if not {'properties', 'patternProperties'} & schema.keys():
@@ -651,7 +694,7 @@ def phandle(validator, phandle, instance, schema):
     if not isinstance(instance, phandle_int):
         yield jsonschema.ValidationError("missing phandle tag in %r" % instance)
 
-DTVal = jsonschema.validators.extend(jsonschema.Draft7Validator, {'typeSize': typeSize, 'phandle': phandle})
+DTVal = jsonschema.validators.extend(jsonschema.Draft201909Validator, {'typeSize': typeSize, 'phandle': phandle})
 
 class DTValidator(DTVal):
     '''Custom Validator for Devicetree Schemas
