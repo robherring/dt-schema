@@ -343,7 +343,7 @@ def fixup_sub_schema(schema, is_prop):
         fixup_node_props(schema)
 
     for k,v in schema.items():
-        if k in ['select', 'if', 'then', 'else', 'additionalProperties']:
+        if k in ['select', 'if', 'then', 'else', 'additionalProperties', 'not']:
             fixup_sub_schema(v, False)
 
         if k in ['allOf', 'anyOf', 'oneOf']:
