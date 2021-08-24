@@ -109,8 +109,16 @@ properties:
   not:
     $ref: "#/definitions/sub-schemas"
   oneOf:
-    items:
-      $ref: "#/definitions/sub-schemas"
+    allOf:
+      - items:
+          $ref: "#/definitions/sub-schemas"
+      - description: Use 'enum' rather than 'oneOf' + 'const' entries
+        not:
+          items:
+            propertyNames:
+              const: const
+            required:
+              - const
   patternProperties:
     additionalProperties:
       $ref: "#/definitions/sub-schemas"

@@ -53,8 +53,9 @@ patternProperties:
         allOf:
           - $ref: "/schemas/types.yaml#/definitions/uint32"
           - oneOf:
-              # Testing for 'oneOf', otherwise this could just be an enum
-              - const: 2
+              - description: |
+                  Testing for 'oneOf', otherwise this could just be an enum
+                const: 2
               - const: 4
         description: test
       reg:
