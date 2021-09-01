@@ -77,10 +77,20 @@ properties:
   linux,elfcorehdr:
     $ref: types.yaml#/definitions/uint64-array
     maxItems: 2
-    description:
+    description: |
       This property holds the memory range, the address and the size, of the
       elf core header which mainly describes the panicked kernel\'s memory
       layout as PT_LOAD segments of elf format.
+
+      / {
+              chosen {
+                      linux,elfcorehdr = <0x9 0xfffff000 0x0 0x800>;
+              };
+      };
+
+      While this property does not represent a real hardware, the address
+      and the size are expressed in #address-cells and #size-cells,
+      respectively, of the root node.
 
   linux,usable-memory-range:
     $ref: types.yaml#/definitions/uint64-array
