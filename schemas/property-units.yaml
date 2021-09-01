@@ -25,11 +25,11 @@ select: true
 patternProperties:
   "-bits$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: Number of bits
+    description: number of bits
 
   "-kBps$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: Kilobytes per second
+    description: kilobytes per second
 
   "-percent$":
     $ref: "types.yaml#/definitions/uint32-array"
@@ -41,65 +41,65 @@ patternProperties:
     description: megahertz
   "-hz$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: Hertz (preferred)
+    description: hertz (preferred)
   "-sec$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: seconds
+    description: second
   "-ms$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: milliseconds
+    description: millisecond
   "-us$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: microseconds
+    description: microsecond
   "-ns$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: nanoseconds
+    description: nanosecond
   "-ps$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: picoseconds
+    description: picosecond
 
   # Distance
   "-mm$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: millimeters
+    description: millimeter
 
   # Electricity
   "-microamp$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: micro amps
+    description: microampere
   "-microamp-hours$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: micro amp-hours
+    description: microampere hour
   "-ohms$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: Ohms
+    description: ohm
   "-micro-ohms$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: micro Ohms
+    description: microohm
   "-microwatt-hours$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: micro Watt-hours
+    description: microwatt hour
   "-microvolt$":
     $ref: "types.yaml#/definitions/uint32-matrix"
-    description: micro volts
+    description: microvolt
   "-picofarads$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: picofarads
+    description: picofarad
   "-femtofarads$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: femtofarads
+    description: femtofarad
 
   # Temperature
   "-celsius$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: Degrees Celsius
+    description: degree Celsius
   "-millicelsius$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: Degreee milli-Celsius
+    description: millidegree Celsius
 
   # Pressure
   "-kpascal$":
     $ref: "types.yaml#/definitions/uint32-array"
-    description: kiloPascal
+    description: kilopascal
 
 additionalProperties: true
