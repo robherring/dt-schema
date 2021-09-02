@@ -64,7 +64,12 @@ definitions:
           enum: [ description, deprecated ]
 
       '-(bits|-kBps|percent|mhz|hz|sec|ms|us|ns|ps|mm|microamp(-hours)?|(micro-)?ohms|microwatt-hours|microvolt|(femto|pico)farads|(milli)?celsius|kpascal)$':
-        $ref: "cell.yaml#/array"
+        allOf:
+          - $ref: "cell.yaml#/array"
+          - description: Standard unit suffix properties don't need a type $ref
+            propertyNames:
+              not:
+                const: $ref
 
       '^.*$':
         properties:
