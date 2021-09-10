@@ -691,10 +691,14 @@ class DTValidator(DTVal):
         self.resolver.push_scope(scope)
         ref_depth = 1
 
+        lastp = ''
         for p in path:
-            if p == 'if':
+            # json-schema 3.2.0 includes 'if' in schema path
+            if lastp != 'properties' and p == 'if':
                 continue
-            if '$ref' in schema and isinstance(schema['$ref'], str):
+            lastp = p
+
+            while '$ref' in schema and isinstance(schema['$ref'], str):
                 ref = self.resolver.resolve(schema['$ref'])
                 schema = ref[1]
                 self.resolver.push_scope(ref[0])
