@@ -18,16 +18,15 @@ properties:
     const: "/"
   model: { "$ref" : "types.yaml#/definitions/string-array"}
   chassis-type:
-    items:
-      - const: desktop
-      - const: laptop
-      - const: convertible
-      - const: server
-      - const: tablet
-      - const: handset
-      - const: watch
-      - const: embedded
-    maxItems: 1
+    enum:
+      - desktop
+      - laptop
+      - convertible
+      - server
+      - tablet
+      - handset
+      - watch
+      - embedded
   "#address-cells":
     enum: [1, 2]
   "#size-cells":
