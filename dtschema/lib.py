@@ -150,15 +150,7 @@ def _is_string_schema(subschema):
     return False
 
 def _extract_single_schemas(subschema):
-    tmpsch = {}
-
-    for match in ['const', 'enum', 'pattern', 'minimum', 'maximum']:
-        if not match in subschema:
-            continue
-        tmpsch[match] = subschema[match]
-        del subschema[match]
-
-    return tmpsch
+    return { k: subschema.pop(k) for k in ('const', 'enum', 'pattern', 'minimum', 'maximum') if k in subschema }
 
 def _fixup_string_to_array(propname, subschema):
     # nothing to do if we don't have a set of string schema
@@ -237,6 +229,7 @@ def _fixup_int_array_min_max_to_matrix(propname, subschema):
         _fixup_items_size(subschema['oneOf'])
 
 def _fixup_int_array_items_to_matrix(propname, subschema):
+    itemkeys = ('items','minItems','maxItems', 'uniqueItems', 'default')
     if not is_int_array_schema(propname, subschema):
         return
 
@@ -251,14 +244,7 @@ def _fixup_int_array_items_to_matrix(propname, subschema):
         return
 
     if isinstance(subschema['items'],dict):
-        subschema['items'] = copy.deepcopy(subschema)
-        # Don't copy 'allOf'
-        subschema['items'].pop('allOf', None)
-        subschema['items'].pop('oneOf', None)
-        for k in list(subschema.keys()):
-            if k in ['items', 'allOf', 'oneOf']:
-                continue
-            subschema.pop(k)
+        subschema['items'] = {k: subschema.pop(k) for k in itemkeys if k in subschema}
 
     if isinstance(subschema['items'],list):
         subschema['items'] = [ {'items': subschema['items']} ]
