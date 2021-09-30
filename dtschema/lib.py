@@ -664,9 +664,10 @@ class DTValidator(DTVal):
     resolver = jsonschema.RefResolver('', None, handlers=handlers)
     format_checker = jsonschema.FormatChecker()
 
-    def __init__(self, schema):
-        super().__init__(schema, resolver=self.resolver,
-                         format_checker=self.format_checker)
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('resolver', self.resolver)
+        kwargs.setdefault('format_checker', self.format_checker)
+        super().__init__(*args, **kwargs)
 
     @classmethod
     def annotate_error(self, error, schema, path):
