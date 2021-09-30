@@ -105,7 +105,7 @@ class TestDTValidate(unittest.TestCase):
 
         self.schemas = dtschema.set_schemas([ os.path.join(os.path.abspath(basedir), "schemas/")])
 
-        for schema in self.schemas:
+        for schema in self.schemas.values():
             schema["$select_validator"] = dtschema.DTValidator(schema['select'])
 
     def check_node(self, nodename, node, fail):
@@ -117,13 +117,13 @@ class TestDTValidate(unittest.TestCase):
         if fail:
             node_matched = False
             with self.assertRaises(jsonschema.ValidationError, msg=nodename):
-                for schema in self.schemas:
+                for schema in self.schemas.values():
                     if schema['$select_validator'].is_valid(node):
                         node_matched = True
                         dtschema.DTValidator(schema).validate(node)
         else:
             node_matched = False
-            for schema in self.schemas:
+            for schema in self.schemas.values():
                 if schema['$select_validator'].is_valid(node):
                     node_matched = True
                     self.assertIsNone(dtschema.DTValidator(schema).validate(node))

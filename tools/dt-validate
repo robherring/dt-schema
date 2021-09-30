@@ -25,8 +25,6 @@ match_schema_file = None
 
 class schema_group():
     def __init__(self, schema_file=""):
-        self.schemas = list()
-
         if schema_file != "" and not os.path.exists(schema_file):
             exit(-1)
 
@@ -37,7 +35,7 @@ class schema_group():
         node['$nodename'] = [ nodename ]
         node_matched = False
         matched_schemas = []
-        for schema in self.schemas:
+        for schema in self.schemas.values():
             if '$select_validator' in schema and schema['$select_validator'].is_valid(node):
                 # We have a match if a conditional schema is selected
                 if schema['select'] != True:
@@ -110,7 +108,7 @@ class schema_group():
     def check_trees(self, filename, dt):
         """Check the given DT against all schemas"""
 
-        for schema in self.schemas:
+        for schema in self.schemas.values():
             if match_schema_file and match_schema_file not in schema['$filename']:
                 continue
             schema["$select_validator"] = dtschema.DTValidator(schema['select'])

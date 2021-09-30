@@ -675,7 +675,7 @@ def fixup_interrupts(schema):
 def make_compatible_schema(schemas):
     compat_sch = [{'enum': []}]
     compatible_list = set()
-    for sch in schemas:
+    for sch in schemas.values():
         compatible_list |= extract_compatibles(sch)
 
     # Allow 'foo' values for examples
@@ -691,7 +691,7 @@ def make_compatible_schema(schemas):
             compat_sch[0]['enum'].append(c)
 
     compat_sch[0]['enum'].sort()
-    schemas += [{
+    schemas['generated-compatibles'] = {
         '$id': 'generated-compatibles',
         '$filename': 'Generated schema of documented compatible strings',
         'select': True,
@@ -702,7 +702,7 @@ def make_compatible_schema(schemas):
                 }
             }
         }
-    }]
+    }
 
 
 def process_schema(filename):
@@ -735,8 +735,7 @@ def process_schema(filename):
 
 
 def process_schemas(schema_paths, core_schema=True):
-    ids = []
-    schemas = []
+    schemas = {}
 
     for filename in schema_paths:
         if not os.path.isfile(filename):
@@ -744,10 +743,10 @@ def process_schemas(schema_paths, core_schema=True):
         sch = process_schema(os.path.abspath(filename))
         if not sch:
             continue
-        schemas.append(sch)
-        if ids.count(sch['$id']):
+        if sch['$id'] in schemas:
             print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
-        ids.append(sch['$id'])
+        else:
+            schemas[sch['$id']] = sch
 
     if core_schema:
         schema_paths.append(os.path.join(schema_basedir, 'schemas/'))
@@ -761,10 +760,10 @@ def process_schemas(schema_paths, core_schema=True):
             sch = process_schema(os.path.abspath(filename))
             if sch:
                 count += 1
-                schemas.append(sch)
-                if ids.count(sch['$id']):
+                if sch['$id'] in schemas:
                     print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
-                ids.append(sch['$id'])
+                else:
+                    schemas[sch['$id']] = sch
 
         if count == 0:
             print("warning: no schema found in path: %s" % path, file=sys.stderr)
@@ -899,7 +898,7 @@ def extract_types():
     global schema_cache
 
     props = {}
-    for sch in schema_cache:
+    for sch in schema_cache.values():
         _extract_subschema_types(props, sch, sch)
 
     return props
@@ -938,7 +937,7 @@ def load(filename, line_number=False):
             return yaml.load(f.read())
 
 
-schema_cache = []
+schema_cache = {}
 
 
 def set_schemas(schema_files, core_schema=True):
@@ -947,6 +946,12 @@ def set_schemas(schema_files, core_schema=True):
     if len(schema_files) == 1 and os.path.isfile(schema_files[0]):
         # a processed schema file
         schema_cache = dtschema.load_schema(os.path.abspath(schema_files[0]))
+        # Convert old format to new
+        if isinstance(schema_cache, list):
+            d = {}
+            for sch in schema_cache:
+                d[sch['$id']] = sch
+            schema_cache = d
     else:
         schema_cache = process_schemas(schema_files, core_schema)
 
@@ -957,9 +962,9 @@ def http_handler(uri):
     '''Custom handler for http://devicetre.org YAML references'''
     try:
         if schema_base_url in uri:
-            for sch in schema_cache:
-                if uri in sch['$id']:
-                    return sch
+            my_uri = uri + '#'
+            if my_uri in schema_cache:
+                return schema_cache[my_uri]
             # If we have a schema_cache, then the schema should have been there unless the schema had errors
             if len(schema_cache):
                 return False
