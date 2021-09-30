@@ -47,7 +47,7 @@ setuptools.setup(
 
     install_requires=[
         'ruamel.yaml>0.15.69',
-        'jsonschema>=3.0.1,<4.0.0',
+        'jsonschema>=3.0.1',
         'rfc3987',
     ],
 
