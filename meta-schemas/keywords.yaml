@@ -24,6 +24,8 @@ definitions:
         - contains
         - default
         - dependencies
+        - dependentRequired
+        - dependentSchemas
         - deprecated
         - description
         - else

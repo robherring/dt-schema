@@ -18,6 +18,8 @@ propertyNames:
     - type
     - description
     - dependencies
+    - dependentRequired
+    - dependentSchemas
     - properties
     - patternProperties
     - additionalProperties

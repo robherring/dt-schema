@@ -47,9 +47,9 @@ definitions:
       description: A json-schema keyword was found instead of a DT property name.
       not:
         enum: [ $ref, additionalItems, additionalProperties, allOf, anyOf,
-                const, contains, default, dependencies, deprecated, description,
-                else, enum, if, items, maxItems, maximum, minItems, minimum,
-                multipleOf, not, oneOf, pattern, patternProperties, properties,
+                const, contains, default, dependencies, dependentRequired, dependentSchemas,
+                deprecated, description, else, enum, if, items, maxItems, maximum, minItems,
+                minimum, multipleOf, not, oneOf, pattern, patternProperties, properties,
                 propertyNames, required, then, unevaluatedProperties ]
 
     patternProperties:
