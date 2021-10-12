@@ -1,3 +1,6 @@
+# This is not the main dt-schema repository! Go to: https://github.com/devicetree-org/dt-schema
+# =================================================
+
 # Tooling for devicetree validation using YAML and jsonschema
 
 This repository contains test code for devicetree schema validation using the
