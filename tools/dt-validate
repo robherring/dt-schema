@@ -34,7 +34,7 @@ class schema_group():
         else:
             exit(-1)
 
-    def check_node(self, tree, node, nodename, fullname, filename):
+    def check_node(self, tree, node, disabled, nodename, fullname, filename):
         # Skip any generated nodes
         node['$nodename'] = [ nodename ]
         node_matched = False
@@ -55,9 +55,9 @@ class schema_group():
                         # boards using that particular node. Thus, if the
                         # node is marked as disabled, let's just ignore
                         # any error message reporting a missing property.
-                        if isinstance(error.instance, dict) and \
+                        if disabled or (isinstance(error.instance, dict) and \
                            'status' in error.instance and \
-                           'disabled' in error.instance['status']:
+                           'disabled' in error.instance['status']):
                             if 'required property' in error.message:
                                 continue
                             elif error.context:
@@ -93,15 +93,21 @@ class schema_group():
         if show_unmatched >= 2 and not node_matched:
             print("%s: %s: failed to match any schema" % (filename, fullname), file=sys.stderr)
 
-    def check_subtree(self, tree, subtree, nodename, fullname, filename):
+    def check_subtree(self, tree, subtree, disabled, nodename, fullname, filename):
         if nodename.startswith('__'):
             return
-        self.check_node(tree, subtree, nodename, fullname, filename)
+
+        try:
+            disabled = ('disabled' in subtree['status'])
+        except:
+            pass
+
+        self.check_node(tree, subtree, disabled, nodename, fullname, filename)
         if fullname != "/":
             fullname += "/"
         for name,value in subtree.items():
             if isinstance(value, dict):
-                self.check_subtree(tree, value, name, fullname + name, filename)
+                self.check_subtree(tree, value, disabled, name, fullname + name, filename)
 
     def check_trees(self, filename, dt):
         """Check the given DT against all schemas"""
@@ -110,7 +116,7 @@ class schema_group():
             schema["$select_validator"] = dtschema.DTValidator(schema['select'])
 
         for subtree in dt:
-            self.check_subtree(dt, subtree, "/", "/", filename)
+            self.check_subtree(dt, subtree, False, "/", "/", filename)
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
