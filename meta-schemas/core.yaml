@@ -97,6 +97,7 @@ definitions:
           - if:
               required: [ properties ]
             then:
+              description: node schemas must have a type or $ref
               anyOf:
                 - required: [ type ]
                 - required: [ $ref ]
