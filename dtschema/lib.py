@@ -530,7 +530,8 @@ def fixup_interrupts(schema):
         return
 
     # Any node with 'interrupts' can have 'interrupt-parent'
-    if schema['properties'].keys() & {'interrupts', 'interrupt-controller'}:
+    if schema['properties'].keys() & {'interrupts', 'interrupt-controller'} and \
+        not 'interrupt-parent' in schema['properties']:
         schema['properties']['interrupt-parent'] = True
 
     if not 'interrupts' in schema['properties']:
