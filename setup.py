@@ -41,7 +41,8 @@ setuptools.setup(
         'tools/dt-doc-validate',
         'tools/dt-mk-schema',
         'tools/dt-extract-example',
-        'tools/dt-extract-props'
+        'tools/dt-extract-props',
+        'tools/dtb2py'
     ],
 
     python_requires='>=3.5',
@@ -50,6 +51,7 @@ setuptools.setup(
         'ruamel.yaml>0.15.69',
         'jsonschema>=4.1.2',
         'rfc3987',
+        'pylibfdt',
     ],
 
     classifiers=[

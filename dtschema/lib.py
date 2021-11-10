@@ -13,6 +13,8 @@ import json
 
 import jsonschema
 
+import dtschema.dtb
+
 schema_base_url = "http://devicetree.org/"
 schema_basedir = os.path.dirname(os.path.abspath(__file__))
 
@@ -177,6 +179,26 @@ def _fixup_string_to_array(propname, subschema):
     subschema['items'] = [_extract_single_schemas(subschema)]
 
 
+def _fixup_reg_schema(propname, subschema):
+    # nothing to do if we don't have a set of string schema
+    if propname != 'reg':
+        return
+
+    if 'items' in subschema:
+        if isinstance(subschema['items'], list):
+            item_schema = subschema['items'][0]
+        else:
+            item_schema = subschema['items']
+        if not _is_int_schema(item_schema):
+            return
+    elif _is_int_schema(subschema):
+        item_schema = subschema
+    else:
+        return
+
+    subschema['items'] = [ {'items': [ _extract_single_schemas(item_schema) ] } ]
+
+
 def _is_matrix_schema(subschema):
     if 'items' not in subschema:
         return False
@@ -190,10 +212,27 @@ def _is_matrix_schema(subschema):
 
     return False
 
+# If we have a matrix with variable inner and outer dimensions, then drop the dimensions
+# because we have no way to reconstruct them.
+def _fixup_int_matrix(subschema):
+    if not _is_matrix_schema(subschema):
+        return
+
+    outer_dim = _get_array_range(subschema)
+    inner_dim = _get_array_range(subschema.get('items', {}))
+
+    if outer_dim[0] != outer_dim[1] and inner_dim[0] != inner_dim[1]:
+        subschema.pop('items', None)
+        subschema.pop('maxItems', None)
+        subschema.pop('minItems', None)
+        subschema['type'] = 'array'
+
 
 int_array_re = re.compile('int(8|16|32|64)-array')
 unit_types_re = re.compile('-(bits|percent|mhz|hz|sec|ms|us|ns|ps|mm|microamp|microamp-hours|ohms|micro-ohms|microwatt-hours|microvolt|picofarads|celsius|millicelsius|kpascal)$')
 
+# Remove this once we remove array to matrix fixups
+known_array_props = {'assigned-clock-rates', 'linux,keycodes'}
 
 def is_int_array_schema(propname, subschema):
     if 'allOf' in subschema:
@@ -206,7 +245,7 @@ def is_int_array_schema(propname, subschema):
                 return int_array_re.search(item['$ref'])
     if '$ref' in subschema:
         return int_array_re.search(subschema['$ref'])
-    elif unit_types_re.search(propname):
+    elif unit_types_re.search(propname) or propname in known_array_props:
         return True
 
     return 'items' in subschema and \
@@ -375,7 +414,9 @@ def fixup_vals(propname, schema):
 
     schema.pop('description', None)
 
+    _fixup_reg_schema(propname, schema)
     _fixup_remove_empty_items(schema)
+    _fixup_int_matrix(schema)
     _fixup_int_array_min_max_to_matrix(propname, schema)
     _fixup_int_array_items_to_matrix(propname, schema)
     _fixup_string_to_array(propname, schema)
@@ -853,6 +894,9 @@ def get_prop_types():
 
 
 def load(filename, line_number=False):
+    if filename.endswith('.dtb'):
+        with open(filename, 'rb') as f:
+            return [ dtschema.dtb.fdt_unflatten(f.read()) ]
     with open(filename, 'r', encoding='utf-8') as f:
         if line_number:
             return rtyaml.load(f.read())

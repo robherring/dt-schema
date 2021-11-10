@@ -8,6 +8,8 @@ from dtschema.lib import (
     format_error,
     extract_compatibles,
     extract_types,
+    get_prop_types,
+    sized_int,
 )
 
 from dtschema.version import (
