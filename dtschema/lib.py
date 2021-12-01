@@ -181,6 +181,8 @@ def is_int_array_schema(propname, subschema):
                 continue
             if '$ref' in item:
                 return re.match('.*uint(8|16|32)-array', item['$ref'])
+    elif '$ref' in subschema:
+        return re.match('.*uint(8|16|32)-array', subschema['$ref'])
     elif re.match('.*-(bits|percent|mhz|hz|sec|ms|us|ns|ps|mm|microamp|microamp-hours|ohms|micro-ohms|microwatt-hours|microvolt|picofarads|celsius|millicelsius|kpascal)$', propname):
         return True
 
@@ -326,11 +328,6 @@ def fixup_vals(propname, schema):
 #    print(schema)
 
     schema.pop('description', None)
-
-    # This can be removed once draft 2019.09 is supported
-    if '$ref' in schema and (len(schema) > 1):
-        schema['allOf'] = [ {'$ref': schema['$ref']} ]
-        schema.pop('$ref')
 
     _fixup_int_array_min_max_to_matrix(propname, schema)
     _fixup_int_array_items_to_matrix(propname, schema)
