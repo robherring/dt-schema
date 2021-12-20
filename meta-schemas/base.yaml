@@ -51,7 +51,7 @@ propertyNames:
   enum: [ $id, $schema, title, description, examples, required, allOf, anyOf, oneOf,
           definitions, $defs, additionalProperties, dependencies, dependentRequired,
           dependentSchemas, patternProperties, properties, if, then, else,
-          unevaluatedProperties, deprecated, maintainers, select ]
+          unevaluatedProperties, deprecated, maintainers, select, $ref ]
 
 required:
   - $id
