@@ -49,6 +49,8 @@ properties:
                 - 0xc2000000
                 - 0xc3000000
 
+  reg: true
+
   dma-ranges:
     oneOf:
       - type: boolean
@@ -154,6 +156,7 @@ patternProperties:
 required:
   - device_type
   - ranges
+  - reg
   - "#address-cells"
   - "#size-cells"
 
