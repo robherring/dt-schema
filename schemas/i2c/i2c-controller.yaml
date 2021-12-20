@@ -28,4 +28,8 @@ properties:
     minimum: 1000
     maximum: 3000000
 
+patternProperties:
+  '@[0-9a-f]+$':
+    type: object
+
 additionalProperties: true
