@@ -473,6 +473,11 @@ def fixup_sub_schema(schema, is_prop):
     if not isinstance(schema, dict):
         return
 
+    # 'additionalProperties: true' doesn't work with 'unevaluatedProperties', so
+    # remove it. It's in the schemas for common (incomplete) schemas.
+    if 'additionalProperties' in schema and schema['additionalProperties'] == True:
+        schema.pop('additionalProperties', None)
+
     schema.pop('description', None)
     fixup_interrupts(schema)
     if is_prop:
