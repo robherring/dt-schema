@@ -14,6 +14,7 @@ patternProperties:
   '^linux,.*$': true
   '-(gpio|gpios)$': true
   '-supply$': true
+  '^rcar_sound,': true
   '-(bits|-kBps|percent|mhz|hz|sec|ms|us|ns|ps|mm)$': true
   '-(microamp|microamp-hours|ohms|micro-ohms|microwatt-hours)$': true
   '-(microvolt|(femto|pico)farads|celsius|millicelsius|kpascal)$': true
