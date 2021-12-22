@@ -602,6 +602,7 @@ def process_schema(filename):
         return
 
     if not 'select' in schema:
+        print(filename + ": warning: no 'select' found in schema found", file=sys.stderr)
         return
 
     schema["type"] = "object"
@@ -616,13 +617,12 @@ def process_schemas(schema_paths, core_schema=True):
         if not os.path.isfile(filename):
             continue
         sch = process_schema(os.path.abspath(filename))
-        if sch:
-            schemas.append(sch)
-            if ids.count(sch['$id']):
-                print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
-            ids.append(sch['$id'])
-        else:
-            print("warning: no schema found in file: %s" % filename, file=sys.stderr)
+        if not sch:
+            continue
+        schemas.append(sch)
+        if ids.count(sch['$id']):
+            print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
+        ids.append(sch['$id'])
 
     if core_schema:
         schema_paths.append(os.path.join(schema_basedir, 'schemas/'))
