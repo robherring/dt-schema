@@ -180,7 +180,7 @@ def is_int_array_schema(propname, subschema):
                 subschema = item
                 continue
             if '$ref' in item:
-                return re.match('.*uint(8|16|32)-array', item['$ref'])
+                return re.match('.*int(8|16|32|64)-array', item['$ref'])
     elif re.match('.*-(bits|percent|mhz|hz|sec|ms|us|ns|ps|mm|microamp|microamp-hours|ohms|micro-ohms|microwatt-hours|microvolt|picofarads|celsius|millicelsius|kpascal)$', propname):
         return True
 
