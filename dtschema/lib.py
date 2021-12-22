@@ -589,7 +589,7 @@ def make_compatible_schema(schemas):
 def process_schema(filename):
     try:
         schema = load_schema(filename)
-    except ruamel.yaml.error.YAMLError as exc:
+    except:
         print(filename + ": ignoring, error parsing file", file=sys.stderr)
         return
 

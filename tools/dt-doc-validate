@@ -29,6 +29,9 @@ def check_doc(filename):
     except ruamel.yaml.YAMLError as exc:
         print(filename + ":", exc.path[-1], exc.message, file=sys.stderr)
         return 1
+    except ruamel.yaml.constructor.DuplicateKeyError as exc:
+        print(filename + ":", exc.problem, file=sys.stderr)
+        return 1
 
     for error in sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.linecol):
         print(dtschema.format_error(filename, error, verbose=args.verbose), file=sys.stderr)

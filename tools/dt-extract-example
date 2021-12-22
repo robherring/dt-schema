@@ -42,7 +42,11 @@ if __name__ == "__main__":
                     help="Filename of YAML encoded schema input file")
     args = ap.parse_args()
 
-    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
+    try:
+        binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
+    except ruamel.yaml.constructor.DuplicateKeyError as exc:
+        print(args.yamlfile + ":", exc.problem, file=sys.stderr)
+        exit(1)
 
     print(example_header)
 
