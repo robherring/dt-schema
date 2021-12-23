@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
-# Copyright 2019 Arm Ltd.
+# Copyright 2019-2022 Arm Ltd.
 
 import os
 import re
@@ -9,10 +9,17 @@ import sys
 import ruamel.yaml
 import argparse
 
+interrupt_template = """
+        interrupt-controller;
+        #interrupt-cells = < {int_cells} >;
+"""
+
 example_template = """
     example-{example_num} {{
         #address-cells = <1>;
         #size-cells = <1>;
+
+        {interrupt}
 
         {example}
     }};
@@ -27,7 +34,6 @@ example_start = """
 /{
     compatible = "foo";
     model = "foo";
-    interrupt-parent = <&foo>;
     #address-cells = <1>;
     #size-cells = <1>;
 
@@ -56,9 +62,20 @@ if __name__ == "__main__":
             root_node = re.search('^/\s*{', ex)
 
             if not root_node:
+                try:
+                    int_val = re.search('\sinterrupts\s*=\s*<([0-9a-zA-Z |()_]+)>', ex).group(1)
+                    int_val = re.sub(r'\(.+|\)', r'0', int_val)
+                    int_cells = len(int_val.strip().split())
+                except:
+                    int_cells = 0
                 print(example_start)
                 ex = '        '.join(ex.splitlines(True))
-                print(example_template.format(example=ex,example_num=idx))
+                if int_cells > 0:
+                    int_props = interrupt_template.format(int_cells=int_cells)
+                else:
+                    int_props = ""
+                print(example_template.format(example=ex, example_num=idx,
+                    interrupt=int_props))
             else:
                 print(ex)
     else:
