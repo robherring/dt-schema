@@ -38,6 +38,9 @@ properties:
   status:
     $ref: "types.yaml#/definitions/string"
     enum: [ okay, disabled, reserved ]
+  phandle:
+    $ref: "types.yaml#/definitions/uint32"
+
 patternProperties:
   "^#.*-cells$":
     $ref: "types.yaml#/definitions/uint32"
