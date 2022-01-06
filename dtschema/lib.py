@@ -398,8 +398,10 @@ def fixup_node_props(schema):
         return
 
     schema.setdefault('properties', dict())
-    schema['properties']['phandle'] = True
-    schema['properties']['status'] = True
+    if not 'phandle' in schema['properties']:
+        schema['properties']['phandle'] = True
+    if not 'status' in schema['properties']:
+        schema['properties']['status'] = True
 
     if not '$nodename' in schema['properties']:
         schema['properties']['$nodename'] = True
