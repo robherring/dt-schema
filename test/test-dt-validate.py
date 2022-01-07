@@ -16,6 +16,8 @@ basedir = os.path.dirname(__file__)
 import jsonschema
 import dtschema
 
+dtschema_dir = os.path.dirname(dtschema.__file__)
+
 class TestDTMetaSchema(unittest.TestCase):
     def setUp(self):
         self.schema = dtschema.load(os.path.join(basedir, 'schemas/good-example.yaml'))
@@ -27,7 +29,7 @@ class TestDTMetaSchema(unittest.TestCase):
 
     def test_all_metaschema_valid(self):
         '''The metaschema must all be a valid Draft7 schema'''
-        for filename in glob.iglob('meta-schemas/**/*.yaml', recursive=True):
+        for filename in glob.iglob(os.path.join(dtschema_dir, 'meta-schemas/**/*.yaml'), recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
                 jsonschema.Draft7Validator.check_schema(schema)
@@ -68,27 +70,27 @@ class TestDTMetaSchema(unittest.TestCase):
 
 class TestDTSchema(unittest.TestCase):
     def test_binding_schemas_valid(self):
-        '''Test that all schema files under ./schemas/ validate against the DT metaschema'''
-        for filename in glob.iglob('schemas/**/*.yaml', recursive=True):
+        '''Test that all schema files under ./dtschema/schemas/ validate against the DT metaschema'''
+        for filename in glob.iglob(os.path.join(dtschema_dir, 'schemas/**/*.yaml'), recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
                 dtschema.DTValidator.check_schema(schema)
 
     def test_binding_schemas_id_is_unique(self):
-        '''Test that all schema files under ./schemas/ validate against the DT metaschema'''
+        '''Test that all schema files under ./dtschema/schemas/ validate against the DT metaschema'''
         ids = []
-        for filename in glob.iglob('schemas/**/*.yaml', recursive=True):
+        for filename in glob.iglob(os.path.join(dtschema_dir, 'schemas/**/*.yaml'), recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
                 self.assertEqual(ids.count(schema['$id']), 0)
                 ids.append(schema['$id'])
 
     def test_binding_schemas_valid_draft7(self):
-        '''Test that all schema files under ./schemas/ validate against the Draft7 metaschema
+        '''Test that all schema files under ./dtschema/schemas/ validate against the Draft7 metaschema
         The DT Metaschema is supposed to force all schemas to be valid against
         Draft7. This test makes absolutely sure that they are.
         '''
-        for filename in glob.iglob('schemas/**/*.yaml', recursive=True):
+        for filename in glob.iglob(os.path.join(dtschema_dir, 'schemas/**/*.yaml'), recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
                 jsonschema.Draft7Validator.check_schema(schema)
