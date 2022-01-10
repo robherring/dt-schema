@@ -134,6 +134,9 @@ properties:
       not:
         $ref: "#/definitions/sub-schemas"
       description: A json-schema keyword was found instead of a DT property name.
+    propertyNames:
+      description: Expected a valid DT property name
+      pattern:  "^[#$a-zA-Z][a-zA-Z0-9,+\\-._@]{0,63}$"
     additionalProperties:
       $ref: "#/definitions/sub-schemas"
   required:
