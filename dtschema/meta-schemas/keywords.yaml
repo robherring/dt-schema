@@ -125,8 +125,15 @@ properties:
     additionalProperties:
       $ref: "#/definitions/sub-schemas"
   properties:
-    propertyNames:
-      pattern:  "^[#$a-zA-Z][a-zA-Z0-9,+\\-._@]{0,63}$"
+    if:
+      # Filter out overlapping json-schema and DT property names
+      not:
+        propertyNames:
+          const: type
+    then:
+      not:
+        $ref: "#/definitions/sub-schemas"
+      description: A json-schema keyword was found instead of a DT property name.
     additionalProperties:
       $ref: "#/definitions/sub-schemas"
   required:
