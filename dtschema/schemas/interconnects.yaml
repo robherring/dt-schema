@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2021 Arm Ltd.
+$id: "http://devicetree.org/schemas/interconnects.yaml#"
+$schema: "http://devicetree.org/meta-schemas/base.yaml#"
+
+title: Interconnects consumer schema
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+# always select the core schema
+select: true
+
+properties:
+  interconnects:
+    $ref: "types.yaml#/definitions/phandle-array"
+
+dependencies:
+  interconnect-names: [interconnects]
+
+additionalProperties: true
