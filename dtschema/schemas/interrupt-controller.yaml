@@ -21,7 +21,7 @@ properties:
     $ref: "types.yaml#/definitions/flag"
 
   interrupt-map:
-    true # FIXME
+    $ref: "/schemas/types.yaml#/definitions/uint32-matrix"
 
   interrupt-map-mask:
     $ref: "types.yaml#/definitions/uint32-array"
