@@ -352,6 +352,9 @@ def walk_properties(propname, schema):
             for l in schema[cond]:
                 walk_properties(propname, l)
 
+    if 'then' in schema.keys():
+        walk_properties(propname, schema['then'])
+
     fixup_vals(propname, schema)
 
 def fixup_schema(schema):
