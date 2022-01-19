@@ -1,0 +1,55 @@
+// SPDX-License-Identifier: BSD-2-Clause
+// Copyright 2018 Linaro Ltd.
+// Copyright 2018-2022 Arm Ltd.
+/dts-v1/;
+/plugin/; // silence any missing phandle references
+/ {
+	model = "none";
+	compatible = "foo";
+
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	interrupt-controller;
+	#interrupt-cells = <1>;
+
+	interrupt-controller@0 {
+		compatible = "vendor,soc4-ip", "vendor,soc1-ip";
+		reg = <0x0 0x4>, <0x8 0x4>;
+		reg-names = "coreAAA", "aux";
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupts = <10>, <11>;
+		some-gpios = <&gpio0 0>, <&gpio0 1 0>;
+		clocks = <&clk0>;
+		clock-names = "clk1" , "clk2";
+		vendor,bool-prop;
+		vendor,int-prop = <3>;
+		vendor,int-array-prop = <5 6 7 8>;
+		vendor,int-array-prop-2 = <5 10>;
+		vendor,int-array-size-only-prop = <2 3>;
+		vendor,string-prop = "foo";
+		vendor,int8-prop = /bits/ 8 <1>;
+		vendor,int8-array-prop = /bits/ 8 <1 2>;
+		vendor,int16-prop = /bits/ 16 <1>;
+		vendor,int16-array-prop = /bits/ 16 <1 2>;
+		vendor,int64-prop = /bits/ 64 <0x100000000>;
+		vendor,phandle-prop = <&a_phandle>;
+		vendor,phandle-array-prop = <&a_phandle>, <&a_phandle>;
+		vendor,string-list-prop = "foobar", "foobaz";
+		vendor,phandle-with-fixed-cells = <&a_phandle 2 3>;
+		vendor,int64-array-prop = /bits/ 64 <0x10000000 0x1>;
+	};
+
+	interrupt-controller@10 {
+		compatible = "vendor,soc1-ip";
+		interrupt-controller;
+		reg = <0x10 0x4>, <0x8 0x4>;
+		#interrupt-cells = <2>;
+		interrupts = <10>;
+		interrupt-names = "tx irq";
+		vendor,int-array-prop = <5>, <6>, <7>, <8>;
+		vendor,int-array-size-only-prop = <2>, <3>, <4>;
+		vendor,int64-array-prop = /bits/ 64 <0x10000000 0x1>;
+	};
+};

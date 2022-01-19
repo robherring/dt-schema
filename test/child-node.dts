@@ -1,0 +1,27 @@
+// SPDX-License-Identifier: BSD-2-Clause
+// Copyright 2018 Linaro Ltd.
+// Copyright 2018-2022 Arm Ltd.
+/dts-v1/;
+/plugin/; // silence any missing phandle references
+/ {
+	model = "none";
+	compatible = "foo";
+
+	#address-cells = <1>;
+	#size-cells = <1>;
+	good-child-node-test {
+		compatible = "vendor,node-with-child-node";
+
+		child-node-fixed-name {
+			vendor,required-property = <1234>;
+		};
+
+		child-node@0 {
+			compatible = "a-child-compatible";
+			reg = <0>;
+			vendor,a-child-property = <2>;
+			vendor,a-child-property2 = <4>;
+			vendor,a-child-string-property = "a-string";
+		};
+	};
+};

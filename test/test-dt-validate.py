@@ -12,6 +12,9 @@ import unittest
 import os
 import glob
 import sys
+import subprocess
+import tempfile
+
 basedir = os.path.dirname(__file__)
 import jsonschema
 import dtschema
@@ -101,12 +104,13 @@ class TestDTValidate(unittest.TestCase):
         self.schemas = list()
 
         self.schemas = dtschema.process_schemas([ os.path.join(os.path.abspath(basedir), "schemas/")])
+        dtschema.set_schema(self.schemas)
 
         for schema in self.schemas:
             schema["$select_validator"] = dtschema.DTValidator(schema['select'])
 
     def check_node(self, nodename, node, fail):
-        if nodename == "/":
+        if nodename == "/" or nodename.startswith('__'):
             return
 
         node['$nodename'] = [ nodename ]
@@ -133,13 +137,17 @@ class TestDTValidate(unittest.TestCase):
             if isinstance(value, dict):
                 self.check_subtree(name, value, fail)
 
-
-    def test_dt_validation(self):
-        '''Test that all DT YAML files under ./test/ validate against the DT schema'''
-        for filename in glob.iglob('test/*.yaml'):
+    def test_dt_yaml_validation(self):
+        '''Test that all DT files under ./test/ validate against the DT schema'''
+        for filename in glob.iglob('test/*.dts'):
             with self.subTest(schema=filename):
                 expect_fail = "-fail" in filename
-                testtree = dtschema.load(filename)[0]
+                tmpfile = tempfile.NamedTemporaryFile()
+                # The test files have lots of expected warnings, so send stderr to /dev/null
+                res = subprocess.run(['dtc', '-Oyaml', filename], stdout=tmpfile, stderr=subprocess.PIPE)
+                self.assertEqual(res.returncode, 0, msg='dtc failed:\n' + res.stderr.decode())
+
+                testtree = dtschema.load(tmpfile.name)[0]
                 for name,value in testtree.items():
                     if isinstance(value, dict):
                         self.check_node(name, value, expect_fail)

@@ -1,0 +1,184 @@
+// SPDX-License-Identifier: BSD-2-Clause
+// Copyright 2018 Linaro Ltd.
+// Copyright 2018-2022 Arm Ltd.
+/dts-v1/;
+/plugin/; // silence any missing phandle references
+/ {
+	model = "none";
+	compatible = "none";
+
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	interrupt-controller;
+	#interrupt-cells = <1>;
+
+	interrupt-controller@0 {
+		// bad-num-interrupts-test:
+		compatible = "vendor,soc1-ip";
+		reg = <0 0>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupts = <10>, <11>, <12>;
+	};
+
+	interrupt-controller@1 {
+		// bad-interrupt-type-test:
+		compatible = "vendor,soc1-ip";
+		reg = <1 0>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupts = "string";
+	};
+
+	interrupt-controller@2 {
+		// bad-no-interrupt-cells-test:
+		compatible = "vendor,soc1-ip";
+		reg = <2 0>;
+		interrupt-controller;
+		interrupts = <10>;
+	};
+
+	interrupt-controller@3 {
+		// bad-compatible-test:
+		compatible = "vendor,soc4-ip", "vendor,soc3-ip";
+		reg = <3 0>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupts = <10>;
+	};
+
+	interrupt-controller@4 {
+		// bad-compatible-order-test:
+		compatible = "vendor,soc1-ip", "vendor,soc3-ip";
+		reg = <4 0>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupts = <10>;
+	};
+
+	interrupt-controller@5 {
+		// bad-compatible-missing-test:
+		compatible = "vendor,soc3-ip";
+		reg = <5 0>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupts = <10>;
+	};
+
+	interrupt-controller@6 {
+		// bad-compatible-value-test:
+		compatible = "vendor,undocumented-compatible string", "vendor,soc1-ip";
+		reg = <6 0>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupts = <10>;
+	};
+
+	interrupt-controller@7 {
+		// bad-clock-freqency-test:
+		compatible = "vendor,soc1-ip";
+		reg = <7 0>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupts = <10>;
+		clock-frequency = <1>;
+	};
+
+	interrupt-controller@8 {
+		// bad-interrupt-names-test1:
+		compatible = "vendor,soc1-ip";
+		reg = <8 0>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupt-names = "a irq";
+		interrupts = <10>;
+	};
+
+	interrupt-controller@9 {
+		// bad-interrupt-names-test2:
+		compatible = "vendor,soc1-ip";
+		reg = <9 0>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupt-names = "tx irq", "rx irq", "bad irq";
+		interrupts = <10>;
+	};
+
+	bad-vendor-bool-prop-test {
+		compatible = "vendor,soc1-ip";
+		vendor,bool-prop = "true";
+	};
+
+	bad-vendor-int-test {
+		compatible = "vendor,soc1-ip";
+		vendor,int-prop = <5>;
+	};
+
+	bad-vendor-int-array-test {
+		compatible = "vendor,soc1-ip";
+		vendor,int-array-prop = <5>, <4>;
+	};
+
+	bad-vendor-int-array-2-test {
+		compatible = "vendor,soc1-ip";
+		vendor,int-array-prop-2 = <5 4>;
+	};
+
+	bad-vendor-int-array-3-test {
+		compatible = "vendor,soc1-ip";
+		vendor,int-array-size-only-prop = <5 6 7 8 9 10>;
+	};
+
+	bad-vendor-string-test {
+		compatible = "vendor,soc1-ip";
+		vendor,string-prop = "foobaz";
+	};
+
+	bad-vendor-string-list-test {
+		compatible = "vendor,soc1-ip";
+		vendor,string-list-prop = "foobar";
+	};
+
+	bad-vendor-int8-prop-test {
+		compatible = "vendor,soc1-ip";
+		vendor,int8-prop = /bits/ 16 <1>;
+	};
+
+	bad-vendor-int8-array-prop-test {
+		compatible = "vendor,soc1-ip";
+		vendor,int8-array-prop = /bits/ 8 <1>;
+	};
+
+	bad-vendor-int16-prop-test {
+		compatible = "vendor,soc1-ip";
+		vendor,int16-prop = <1>;
+	};
+
+	bad-vendor-int16-array-prop-test {
+		compatible = "vendor,soc1-ip";
+		vendor,int16-array-prop = /bits/ 16 <1 2 3>;
+	};
+
+	bad-vendor-int64-prop-test {
+		compatible = "vendor,soc1-ip";
+		vendor,int64-prop = /bits/ 64 <0x123>;
+	};
+
+	bad-vendor-phandle-prop-test {
+		compatible = "vendor,soc1-ip";
+		vendor,phandle-prop = <&foo 0>, <1>;
+		vendor,phandle-array-prop = <&foo>;
+	};
+
+	bad-vendor-phandle-prop-tag-test {
+		compatible = "vendor,soc1-ip";
+		vendor,phandle-prop = <1>;
+		vendor,phandle-array-prop = <1>, <2>;
+	};
+
+	bad-vendor-phandle-args-len-test {
+		compatible = "vendor,soc1-ip";
+		vendor,phandle-with-fixed-cells = <&foo 2>;
+	};
+};

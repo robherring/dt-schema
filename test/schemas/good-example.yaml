@@ -131,9 +131,8 @@ properties:
 
   vendor,int8-array-prop:
     $ref: /schemas/types.yaml#/definitions/uint8-array
-    items:
-      - minItems: 2
-        maxItems: 3
+    minItems: 2
+    maxItems: 3
     description: A vendor specific uint8 array property with 2 or 3 entries
 
   vendor,int16-prop:

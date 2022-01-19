@@ -1,0 +1,25 @@
+// SPDX-License-Identifier { BSD-2-Clause
+// Copyright 2019 Maxime Ripard
+// Copyright 2022 Arm Ltd.
+/dts-v1/;
+/plugin/; // silence any missing phandle references
+/ {
+	model = "none";
+	compatible = "none";
+
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	test-controller {
+		compatible = "vendor,conditionals-allof-test-controller";
+
+		vendor,property = "test1234";
+	};
+
+	second-test-controller {
+		compatible = "vendor,second-conditionals-allof-test-controller";
+
+		vendor,property = "test5678";
+		vendor,other-property;
+	};
+};

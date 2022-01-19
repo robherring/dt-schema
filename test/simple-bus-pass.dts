@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: BSD-2-Clause
+// Copyright 2019-2022 Arm Ltd.
+/dts-v1/;
+/plugin/; // silence any missing phandle references
+/ {
+        model = "none";
+        compatible = "none";
+
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        bus@1000 {
+                compatible = "simple-bus";
+                #address-cells = <1>;
+                #size-cells = <1>;
+                ranges = <0 0x1000 0x4000>;
+
+                child@0 {
+                        #address-cells = <1>;
+                        #size-cells = <1>;
+                        ranges = <0 0 0x100>;
+
+                        grand-child@0 {
+                                reg = <0 0x100>;
+                        };
+                };
+
+                child@100 {
+                        reg = <0x100 0x100>;
+                };
+        };
+};
