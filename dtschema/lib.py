@@ -12,7 +12,6 @@ import copy
 import json
 
 from ruamel.yaml.comments import CommentedMap
-from urllib.request import urlopen
 
 import jsonschema
 import pkgutil
@@ -677,6 +676,8 @@ def http_handler(uri):
             if 'meta-schemas' in uri:
                 return load_schema(uri.replace(schema_base_url, ''))
             return process_schema(uri.replace(schema_base_url, ''))
+
+        from urllib.request import urlopen
 
         return yaml.load(urlopen(uri).read().decode('utf-8'))
     except FileNotFoundError as e:
