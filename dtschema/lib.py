@@ -538,7 +538,7 @@ def fixup_interrupts(schema):
         not 'interrupt-parent' in schema['properties']:
         schema['properties']['interrupt-parent'] = True
 
-    if not 'interrupts' in schema['properties']:
+    if not 'interrupts' in schema['properties'] or 'interrupts-extended' in schema['properties']:
         return
 
     schema['properties']['interrupts-extended'] = copy.deepcopy(schema['properties']['interrupts']);
