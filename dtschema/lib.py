@@ -183,6 +183,8 @@ def is_int_array_schema(propname, subschema):
                 continue
             if '$ref' in item:
                 return int_array_re.search(item['$ref'])
+    if '$ref' in subschema:
+        return int_array_re.search(subschema['$ref'])
     elif unit_types_re.search(propname):
         return True
 
