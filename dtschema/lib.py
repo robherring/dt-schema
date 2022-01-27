@@ -171,6 +171,9 @@ def _is_matrix_schema(subschema):
 
     return False
 
+int_array_re = re.compile('int(8|16|32|64)-array')
+unit_types_re = re.compile('-(bits|percent|mhz|hz|sec|ms|us|ns|ps|mm|microamp|microamp-hours|ohms|micro-ohms|microwatt-hours|microvolt|picofarads|celsius|millicelsius|kpascal)$')
+
 def is_int_array_schema(propname, subschema):
     if 'allOf' in subschema:
         # Find 'items'. It may be under the 'allOf' or at the same level
@@ -179,8 +182,8 @@ def is_int_array_schema(propname, subschema):
                 subschema = item
                 continue
             if '$ref' in item:
-                return re.match('.*int(8|16|32|64)-array', item['$ref'])
-    elif re.match('.*-(bits|percent|mhz|hz|sec|ms|us|ns|ps|mm|microamp|microamp-hours|ohms|micro-ohms|microwatt-hours|microvolt|picofarads|celsius|millicelsius|kpascal)$', propname):
+                return int_array_re.search(item['$ref'])
+    elif unit_types_re.search(propname):
         return True
 
     return 'items' in subschema and \
