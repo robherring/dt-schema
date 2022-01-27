@@ -11,10 +11,7 @@ import pprint
 import copy
 import json
 
-from ruamel.yaml.comments import CommentedMap
-
 import jsonschema
-import pkgutil
 
 schema_base_url = "http://devicetree.org/"
 schema_basedir = os.path.dirname(os.path.abspath(__file__))
@@ -22,6 +19,7 @@ schema_basedir = os.path.dirname(os.path.abspath(__file__))
 # We use a lot of regex's in schema and exceeding the cache size has noticeable
 # peformance impact.
 re._MAXCACHE = 2048
+
 
 class tagged_list(list):
 
@@ -35,6 +33,7 @@ class tagged_list(list):
     def constructor(loader, node):
         return tagged_list(loader.construct_sequence(node), node.tag)
 
+
 class phandle_int(int):
 
     def __new__(cls, value):
@@ -44,9 +43,10 @@ class phandle_int(int):
     def constructor(loader, node):
         return phandle_int(loader.construct_yaml_int(node))
 
+
 rtyaml = ruamel.yaml.YAML(typ='rt')
 rtyaml.allow_duplicate_keys = False
-rtyaml.preserve_quotes=True
+rtyaml.preserve_quotes = True
 rtyaml.Constructor.add_constructor(u'!u8', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!u16', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!u32', tagged_list.constructor)
@@ -61,10 +61,12 @@ yaml.Constructor.add_constructor(u'!u32', tagged_list.constructor)
 yaml.Constructor.add_constructor(u'!u64', tagged_list.constructor)
 yaml.Constructor.add_constructor(u'!phandle', phandle_int.constructor)
 
+
 def path_to_obj(tree, path):
     for pc in path:
         tree = tree[pc]
     return tree
+
 
 def get_line_col(tree, path, obj=None):
     if isinstance(obj, ruamel.yaml.comments.CommentedBase):
@@ -81,11 +83,14 @@ def get_line_col(tree, path, obj=None):
         return obj.lc.key(path[-1])
     return -1, -1
 
+
 schema_user_paths = []
+
 
 def add_schema_path(path):
     if os.path.isdir(path):
         schema_user_paths.append(os.path.abspath(path))
+
 
 def check_id_path(filename, id):
     id = id.replace('http://devicetree.org/schemas/', '')
@@ -100,7 +105,11 @@ def check_id_path(filename, id):
     base = base.replace(os.path.abspath('schemas/') + '/', '')
 
     if not id == base:
-        print(filename + ": $id: relative path/filename doesn't match actual path or filename\n\texpected: http://devicetree.org/schemas/" + base + '#' , file=sys.stderr)
+        print(filename +
+              ": $id: relative path/filename doesn't match actual path or filename\n\texpected: http://devicetree.org/schemas/" +
+              base + '#',
+              file=sys.stderr)
+
 
 def do_load(filename):
     with open(filename, 'r', encoding='utf-8') as f:
@@ -108,6 +117,7 @@ def do_load(filename):
             return json.load(f)
 
         return yaml.load(f.read())
+
 
 def load_schema(schema):
     for path in schema_user_paths:
@@ -123,8 +133,9 @@ def load_schema(schema):
 
     return do_load(os.path.join(schema_basedir, schema))
 
+
 def _value_is_type(subschema, key, type):
-    if not key in subschema:
+    if key not in subschema:
         return False
 
     if isinstance(subschema[key], list):
@@ -134,12 +145,14 @@ def _value_is_type(subschema, key, type):
 
     return isinstance(val, type)
 
+
 def _is_int_schema(subschema):
     for match in ['const', 'enum', 'minimum', 'maximum']:
         if _value_is_type(subschema, match, int):
             return True
 
     return False
+
 
 def _is_string_schema(subschema):
     for match in ['const', 'enum', 'pattern']:
@@ -148,18 +161,21 @@ def _is_string_schema(subschema):
 
     return False
 
+
 def _extract_single_schemas(subschema):
-    return { k: subschema.pop(k) for k in ('const', 'enum', 'pattern', 'minimum', 'maximum') if k in subschema }
+    return {k: subschema.pop(k) for k in ('const', 'enum', 'pattern', 'minimum', 'maximum') if k in subschema}
+
 
 def _fixup_string_to_array(propname, subschema):
     # nothing to do if we don't have a set of string schema
     if not _is_string_schema(subschema):
         return
 
-    subschema['items'] = [ _extract_single_schemas(subschema) ]
+    subschema['items'] = [_extract_single_schemas(subschema)]
+
 
 def _is_matrix_schema(subschema):
-    if not 'items' in subschema:
+    if 'items' not in subschema:
         return False
 
     if isinstance(subschema['items'], list):
@@ -171,8 +187,10 @@ def _is_matrix_schema(subschema):
 
     return False
 
+
 int_array_re = re.compile('int(8|16|32|64)-array')
 unit_types_re = re.compile('-(bits|percent|mhz|hz|sec|ms|us|ns|ps|mm|microamp|microamp-hours|ohms|micro-ohms|microwatt-hours|microvolt|picofarads|celsius|millicelsius|kpascal)$')
+
 
 def is_int_array_schema(propname, subschema):
     if 'allOf' in subschema:
@@ -189,8 +207,9 @@ def is_int_array_schema(propname, subschema):
         return True
 
     return 'items' in subschema and \
-        ((isinstance(subschema['items'],list) and _is_int_schema(subschema['items'][0])) or \
-        (isinstance(subschema['items'],dict) and _is_int_schema(subschema['items'])))
+        ((isinstance(subschema['items'], list) and _is_int_schema(subschema['items'][0])) or
+         (isinstance(subschema['items'], dict) and _is_int_schema(subschema['items'])))
+
 
 # Fixup an int array that only defines the number of items.
 # In this case, we allow either form [[ 0, 1, 2]] or [[0], [1], [2]]
@@ -205,7 +224,7 @@ def _fixup_int_array_min_max_to_matrix(propname, subschema):
                 subschema = item
                 break
 
-    if 'items' in subschema and isinstance(subschema['items'],list):
+    if 'items' in subschema and isinstance(subschema['items'], list):
         return
 
     if _is_matrix_schema(subschema):
@@ -221,8 +240,8 @@ def _fixup_int_array_min_max_to_matrix(propname, subschema):
         tmpsch['maxItems'] = subschema.pop('maxItems')
 
     if tmpsch:
-        subschema['oneOf'] = [ copy.deepcopy(tmpsch), {'items': [ copy.deepcopy(tmpsch) ]} ]
-        subschema['oneOf'][0].update({'items': { 'maxItems': 1 }})
+        subschema['oneOf'] = [copy.deepcopy(tmpsch), {'items': [copy.deepcopy(tmpsch)]}]
+        subschema['oneOf'][0].update({'items': {'maxItems': 1}})
 
         # if minItems can be 1, then both oneOf clauses can be true so increment
         # minItems in one clause to prevent that.
@@ -232,8 +251,9 @@ def _fixup_int_array_min_max_to_matrix(propname, subschema):
         # Since we added an 'oneOf' the tree walking code won't find it and we need to do fixups
         _fixup_items_size(subschema['oneOf'])
 
+
 def _fixup_int_array_items_to_matrix(propname, subschema):
-    itemkeys = ('items','minItems','maxItems', 'uniqueItems', 'default')
+    itemkeys = ('items', 'minItems', 'maxItems', 'uniqueItems', 'default')
     if not is_int_array_schema(propname, subschema):
         return
 
@@ -244,20 +264,22 @@ def _fixup_int_array_items_to_matrix(propname, subschema):
                 subschema = item
                 break
 
-    if not 'items' in subschema or _is_matrix_schema(subschema):
+    if 'items' not in subschema or _is_matrix_schema(subschema):
         return
 
-    if isinstance(subschema['items'],dict):
+    if isinstance(subschema['items'], dict):
         subschema['items'] = {k: subschema.pop(k) for k in itemkeys if k in subschema}
 
-    if isinstance(subschema['items'],list):
-        subschema['items'] = [ {k: subschema.pop(k) for k in itemkeys if k in subschema} ]
+    if isinstance(subschema['items'], list):
+        subschema['items'] = [{k: subschema.pop(k) for k in itemkeys if k in subschema}]
+
 
 def _fixup_scalar_to_array(propname, subschema):
     if not _is_int_schema(subschema):
         return
 
-    subschema['items'] = [ {'items': [ _extract_single_schemas(subschema) ] } ]
+    subschema['items'] = [{'items': [_extract_single_schemas(subschema)]}]
+
 
 def _fixup_items_size(schema):
     # Make items list fixed size-spec
@@ -271,20 +293,21 @@ def _fixup_items_size(schema):
 
             if isinstance(schema['items'], list):
                 c = len(schema['items'])
-                if not 'minItems' in schema:
+                if 'minItems' not in schema:
                     schema['minItems'] = c
-                if not 'maxItems' in schema:
+                if 'maxItems' not in schema:
                     schema['maxItems'] = c
 
-                if not 'additionalItems' in schema:
+                if 'additionalItems' not in schema:
                     schema['additionalItems'] = False
 
             _fixup_items_size(schema['items'])
 
-        elif 'maxItems' in schema and not 'minItems' in schema:
+        elif 'maxItems' in schema and 'minItems' not in schema:
             schema['minItems'] = schema['maxItems']
-        elif 'minItems' in schema and not 'maxItems' in schema:
+        elif 'minItems' in schema and 'maxItems' not in schema:
             schema['maxItems'] = schema['minItems']
+
 
 def fixup_schema_to_201909(schema):
     if not isinstance(schema, dict):
@@ -293,7 +316,7 @@ def fixup_schema_to_201909(schema):
     # dependencies is now split into dependentRequired and dependentSchema
     try:
         val = schema.pop('dependencies')
-        for k,v in val.items():
+        for k, v in val.items():
             if isinstance(v, list):
                 schema.setdefault('dependentRequired', {})
                 schema['dependentRequired'][k] = v
@@ -302,6 +325,7 @@ def fixup_schema_to_201909(schema):
                 schema['dependentSchemas'][k] = v
     except:
         pass
+
 
 def fixup_schema_to_202012(schema):
     if not isinstance(schema, dict):
@@ -325,9 +349,10 @@ def fixup_schema_to_202012(schema):
     except:
         pass
 
+
 def fixup_vals(propname, schema):
     # Now we should be a the schema level to do actual fixups
-#    print(schema)
+    #print(schema)
 
     schema.pop('description', None)
 
@@ -338,7 +363,7 @@ def fixup_vals(propname, schema):
     _fixup_items_size(schema)
 
     fixup_schema_to_201909(schema)
-#    print(schema)
+
 
 def walk_properties(propname, schema):
     if not isinstance(schema, dict):
@@ -356,6 +381,7 @@ def walk_properties(propname, schema):
 
     fixup_vals(propname, schema)
 
+
 def fixup_schema(schema):
     # Remove parts not necessary for validation
     schema.pop('examples', None)
@@ -364,6 +390,7 @@ def fixup_schema(schema):
 
     add_select_schema(schema)
     fixup_sub_schema(schema, True)
+
 
 def fixup_sub_schema(schema, is_prop):
     if not isinstance(schema, dict):
@@ -374,7 +401,7 @@ def fixup_sub_schema(schema, is_prop):
     if is_prop:
         fixup_node_props(schema)
 
-    for k,v in schema.items():
+    for k, v in schema.items():
         if k in ['select', 'if', 'then', 'else', 'additionalProperties', 'not']:
             fixup_sub_schema(v, False)
 
@@ -382,7 +409,7 @@ def fixup_sub_schema(schema, is_prop):
             for subschema in v:
                 fixup_sub_schema(subschema, True)
 
-        if not k in ['dependentRequired', 'dependentSchemas', 'dependencies', 'properties', 'patternProperties', '$defs']:
+        if k not in ['dependentRequired', 'dependentSchemas', 'dependencies', 'properties', 'patternProperties', '$defs']:
             continue
 
         for prop in v:
@@ -391,6 +418,7 @@ def fixup_sub_schema(schema, is_prop):
             fixup_sub_schema(v[prop], True)
 
     fixup_schema_to_201909(schema)
+
 
 def fixup_node_props(schema):
     if not {'properties', 'patternProperties'} & schema.keys():
@@ -419,10 +447,11 @@ def fixup_node_props(schema):
         schema.setdefault('patternProperties', dict())
         schema['patternProperties']['pinctrl-[0-9]+'] = True
 
-    if "clocks" in keys and not "assigned-clocks" in keys:
+    if "clocks" in keys and "assigned-clocks" not in keys:
         schema['properties']['assigned-clocks'] = True
         schema['properties']['assigned-clock-rates'] = True
         schema['properties']['assigned-clock-parents'] = True
+
 
 def extract_node_compatibles(schema):
     if not isinstance(schema, dict):
@@ -442,6 +471,7 @@ def extract_node_compatibles(schema):
 
     return compatible_list
 
+
 def extract_compatibles(schema):
     if not isinstance(schema, dict):
         return set()
@@ -451,6 +481,7 @@ def extract_compatibles(schema):
         compatible_list.update(extract_node_compatibles(sch))
 
     return compatible_list
+
 
 def item_generator(json_input, lookup_key):
     if isinstance(json_input, dict):
@@ -464,6 +495,7 @@ def item_generator(json_input, lookup_key):
         for item in json_input:
             for item_val in item_generator(item, lookup_key):
                 yield item_val
+
 
 # Convert to standard types from ruamel's CommentedMap/Seq
 def convert_to_dict(schema):
@@ -480,6 +512,7 @@ def convert_to_dict(schema):
 
     return result
 
+
 def add_select_schema(schema):
     '''Get a schema to be used in select tests.
 
@@ -491,7 +524,7 @@ def add_select_schema(schema):
     if "select" in schema:
         return
 
-    if not 'properties' in schema:
+    if 'properties' not in schema:
         schema['select'] = False
         return
 
@@ -515,29 +548,30 @@ def add_select_schema(schema):
 
                 return
 
-    if '$nodename' in schema['properties'] and schema['properties']['$nodename'] != True:
+    if '$nodename' in schema['properties'] and schema['properties']['$nodename'] is not True:
         schema['select'] = {
             'required': ['$nodename'],
-            'properties': {'$nodename': convert_to_dict(schema['properties']['$nodename']) }}
+            'properties': {'$nodename': convert_to_dict(schema['properties']['$nodename'])}}
 
         return
 
     schema['select'] = False
 
+
 def fixup_interrupts(schema):
     # Supporting 'interrupts' implies 'interrupts-extended' is also supported.
-    if not 'properties' in schema:
+    if 'properties' not in schema:
         return
 
     # Any node with 'interrupts' can have 'interrupt-parent'
     if schema['properties'].keys() & {'interrupts', 'interrupt-controller'} and \
-        not 'interrupt-parent' in schema['properties']:
+       'interrupt-parent' not in schema['properties']:
         schema['properties']['interrupt-parent'] = True
 
-    if not 'interrupts' in schema['properties'] or 'interrupts-extended' in schema['properties']:
+    if 'interrupts' not in schema['properties'] or 'interrupts-extended' in schema['properties']:
         return
 
-    schema['properties']['interrupts-extended'] = copy.deepcopy(schema['properties']['interrupts']);
+    schema['properties']['interrupts-extended'] = copy.deepcopy(schema['properties']['interrupts'])
 
     if not ('required' in schema and 'interrupts' in schema['required']):
         return
@@ -545,14 +579,15 @@ def fixup_interrupts(schema):
     # Currently no better way to express either 'interrupts' or 'interrupts-extended'
     # is required. If this fails validation, the error reporting is the whole
     # schema file fails validation
-    reqlist = [ {'required': ['interrupts']}, {'required': ['interrupts-extended']} ]
+    reqlist = [{'required': ['interrupts']}, {'required': ['interrupts-extended']}]
     if 'oneOf' in schema:
-        if not 'allOf' in schema:
+        if 'allOf' not in schema:
             schema['allOf'] = []
-        schema['allOf'].append({ 'oneOf': reqlist })
+        schema['allOf'].append({'oneOf': reqlist})
     else:
         schema['oneOf'] = reqlist
     schema['required'].remove('interrupts')
+
 
 def make_compatible_schema(schemas):
     compat_sch = [{'enum': []}]
@@ -568,7 +603,7 @@ def make_compatible_schema(schemas):
         if prog.match(c):
             # Exclude the generic pattern
             if c != '^[a-zA-Z][a-zA-Z0-9,+\-._]+$':
-                compat_sch += [{'pattern': c }]
+                compat_sch += [{'pattern': c}]
         else:
             compat_sch[0]['enum'].append(c)
 
@@ -586,6 +621,7 @@ def make_compatible_schema(schemas):
         }
     }]
 
+
 def process_schema(filename):
     try:
         schema = load_schema(filename)
@@ -597,17 +633,19 @@ def process_schema(filename):
     try:
         DTValidator.check_schema(schema)
     except jsonschema.SchemaError as exc:
-        print(filename + ": ignoring, error in schema: " + ': '.join(str(x) for x in exc.path), file=sys.stderr)
+        print(filename + ": ignoring, error in schema: " + ': '.join(str(x) for x in exc.path),
+              file=sys.stderr)
         #print(exc.message)
         return
 
-    if not 'select' in schema:
+    if 'select' not in schema:
         print(filename + ": warning: no 'select' found in schema found", file=sys.stderr)
         return
 
     schema["type"] = "object"
     schema["$filename"] = filename
     return schema
+
 
 def process_schemas(schema_paths, core_schema=True):
     ids = []
@@ -648,6 +686,7 @@ def process_schemas(schema_paths, core_schema=True):
 
     return schemas
 
+
 def load(filename, line_number=False):
     with open(filename, 'r', encoding='utf-8') as f:
         if line_number:
@@ -655,11 +694,14 @@ def load(filename, line_number=False):
         else:
             return yaml.load(f.read())
 
+
 schema_cache = []
+
 
 def set_schema(schemas):
     global schema_cache
     schema_cache = schemas
+
 
 def http_handler(uri):
     global schema_cache
@@ -680,24 +722,28 @@ def http_handler(uri):
         print('Unknown file referenced:', e, file=sys.stderr)
         exit(-1)
 
+
 handlers = {"http": http_handler}
+
 
 def typeSize(validator, typeSize, instance, schema):
     if (isinstance(instance[0], tagged_list)):
         if typeSize != instance[0].type_size:
             yield jsonschema.ValidationError("size is %r, expected %r" % (instance[0].type_size, typeSize))
-    elif isinstance(instance[0], list) and isinstance(instance[0][0], int) and \
-        typeSize == 32:
+    elif isinstance(instance[0], list) and isinstance(instance[0][0], int) and typeSize == 32:
         # 32-bit sizes aren't explicitly tagged
         return
     else:
         yield jsonschema.ValidationError("missing size tag in %r" % instance)
 
+
 def phandle(validator, phandle, instance, schema):
     if not isinstance(instance, phandle_int):
         yield jsonschema.ValidationError("missing phandle tag in %r" % instance)
 
+
 DTVal = jsonschema.validators.extend(jsonschema.Draft201909Validator, {'typeSize': typeSize, 'phandle': phandle})
+
 
 class DTValidator(DTVal):
     '''Custom Validator for Devicetree Schemas
@@ -802,12 +848,11 @@ class DTValidator(DTVal):
 
         check_id_path(filename, schema['$id'])
 
-
     @classmethod
     def _check_str(self, err_msg, schema, key, v):
         if not (isinstance(v, ruamel.yaml.scalarstring.SingleQuotedScalarString) or
-           isinstance(v, ruamel.yaml.scalarstring.DoubleQuotedScalarString)):
-           return
+                isinstance(v, ruamel.yaml.scalarstring.DoubleQuotedScalarString)):
+            return
 
         # Only checking const and list values
         if key and key != 'const':
@@ -834,7 +879,7 @@ class DTValidator(DTVal):
     @classmethod
     def check_quotes(self, err_msg, schema):
         if isinstance(schema, dict):
-            for k,v in schema.items():
+            for k, v in schema.items():
                 self._check_str(err_msg, schema, k, v)
                 self.check_quotes(err_msg, v)
 
@@ -843,11 +888,12 @@ class DTValidator(DTVal):
                 self._check_str(err_msg, schema, None, s)
                 self.check_quotes(err_msg, s)
 
+
 def format_error(filename, error, prefix="", nodename=None, verbose=False):
     src = prefix + os.path.abspath(filename) + ':'
 
-    if error.linecol[0] >= 0 :
-        src = src + '%i:%i: '%(error.linecol[0]+1, error.linecol[1]+1)
+    if error.linecol[0] >= 0:
+        src = src + '%i:%i: ' % (error.linecol[0]+1, error.linecol[1]+1)
     else:
         src += ' '
 
@@ -869,7 +915,7 @@ def format_error(filename, error, prefix="", nodename=None, verbose=False):
         for suberror in sorted(error.context, key=lambda e: e.path):
             if suberror.context:
                 msg += '\n' + format_error(filename, suberror, prefix=prefix+"\t", nodename=nodename, verbose=verbose)
-            elif not suberror.message in msg:
+            elif suberror.message not in msg:
                 msg += '\n' + prefix + '\t' + suberror.message
                 if suberror.note and suberror.note != error.note:
                     msg += '\n\t\t' + prefix + 'hint: ' + suberror.note
