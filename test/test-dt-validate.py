@@ -138,7 +138,7 @@ class TestDTValidate(unittest.TestCase):
                 self.check_subtree(name, value, fail)
 
     def test_dt_yaml_validation(self):
-        '''Test that all DT files under ./test/ validate against the DT schema'''
+        '''Test that all DT files under ./test/ validate against the DT schema (YAML)'''
         for filename in glob.iglob('test/*.dts'):
             with self.subTest(schema=filename):
                 expect_fail = "-fail" in filename
@@ -149,6 +149,18 @@ class TestDTValidate(unittest.TestCase):
 
                 testtree = dtschema.load(tmpfile.name)[0]
                 for name,value in testtree.items():
+                    if isinstance(value, dict):
+                        self.check_node(name, value, expect_fail)
+
+    def test_dtb_validation(self):
+        '''Test that all DT files under ./test/ validate against the DT schema (DTB)'''
+        for filename in glob.iglob('test/*.dts'):
+            with self.subTest(schema=filename):
+                expect_fail = "-fail" in filename
+                res = subprocess.run(['dtc', '-Odtb', filename], capture_output=True)
+                testtree = dtschema.dtb.fdt_unflatten(res.stdout)
+                self.assertEqual(res.returncode, 0, msg='dtc failed:\n' + res.stderr.decode())
+                for name, value in testtree.items():
                     if isinstance(value, dict):
                         self.check_node(name, value, expect_fail)
 
