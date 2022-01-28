@@ -44,7 +44,7 @@
 
 		child-node@0 {
 			compatible = "a-child-compatible";
-			reg = <0>, <1>;
+			reg = <0 1>, <1 1>;
 			vendor,a-child-property = <2>;
 		};
 	};
