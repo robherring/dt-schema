@@ -26,22 +26,25 @@ class tagged_list(list):
     tags = {u'!u8': 8, u'!u16': 16, u'!u32': 32, u'!u64': 64}
 
     def __init__(self, int_list, tag, tags=tags):
+        int_list = [sized_int(i, size=tags[tag]) for i in int_list]
         super().__init__(int_list)
-        self.type_size = tags[tag]
 
     @staticmethod
     def constructor(loader, node):
         return tagged_list(loader.construct_sequence(node), node.tag)
 
 
-class phandle_int(int):
-
-    def __new__(cls, value):
+class sized_int(int):
+    def __new__(cls, value, *args, **kwargs):
         return int.__new__(cls, value)
+
+    def __init__(self, value, size=32, phandle=False):
+        self.size = size
+        self.phandle = phandle
 
     @staticmethod
     def constructor(loader, node):
-        return phandle_int(loader.construct_yaml_int(node))
+        return sized_int(loader.construct_yaml_int(node), phandle=True)
 
 
 rtyaml = ruamel.yaml.YAML(typ='rt')
@@ -51,7 +54,7 @@ rtyaml.Constructor.add_constructor(u'!u8', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!u16', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!u32', tagged_list.constructor)
 rtyaml.Constructor.add_constructor(u'!u64', tagged_list.constructor)
-rtyaml.Constructor.add_constructor(u'!phandle', phandle_int.constructor)
+rtyaml.Constructor.add_constructor(u'!phandle', sized_int.constructor)
 
 yaml = ruamel.yaml.YAML(typ='safe')
 yaml.allow_duplicate_keys = False
@@ -59,7 +62,7 @@ yaml.Constructor.add_constructor(u'!u8', tagged_list.constructor)
 yaml.Constructor.add_constructor(u'!u16', tagged_list.constructor)
 yaml.Constructor.add_constructor(u'!u32', tagged_list.constructor)
 yaml.Constructor.add_constructor(u'!u64', tagged_list.constructor)
-yaml.Constructor.add_constructor(u'!phandle', phandle_int.constructor)
+yaml.Constructor.add_constructor(u'!phandle', sized_int.constructor)
 
 
 def path_to_obj(tree, path):
@@ -727,18 +730,19 @@ handlers = {"http": http_handler}
 
 
 def typeSize(validator, typeSize, instance, schema):
-    if (isinstance(instance[0], tagged_list)):
-        if typeSize != instance[0].type_size:
-            yield jsonschema.ValidationError("size is %r, expected %r" % (instance[0].type_size, typeSize))
-    elif isinstance(instance[0], list) and isinstance(instance[0][0], int) and typeSize == 32:
-        # 32-bit sizes aren't explicitly tagged
+    if not isinstance(instance[0], list):
         return
+    if isinstance(instance[0][0], sized_int):
+        size = instance[0][0].size
     else:
-        yield jsonschema.ValidationError("missing size tag in %r" % instance)
+        size = 32
+
+    if typeSize != size:
+        yield jsonschema.ValidationError("size is %r, expected %r" % (size, typeSize))
 
 
 def phandle(validator, phandle, instance, schema):
-    if not isinstance(instance, phandle_int):
+    if not isinstance(instance, sized_int) or not instance.phandle:
         yield jsonschema.ValidationError("missing phandle tag in %r" % instance)
 
 
