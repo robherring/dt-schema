@@ -21,6 +21,11 @@ properties:
   mbox-names:
     $ref: "/schemas/types.yaml#/definitions/string-array"
 
+  shmem:
+    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    items:
+      maxItems: 1
+
 dependencies:
   mbox-names: [ mboxes ]
 
