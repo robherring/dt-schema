@@ -21,6 +21,7 @@ import dtschema
 
 verbose = False
 show_unmatched = False
+match_schema_file = None
 
 class schema_group():
     def __init__(self, schema_file=""):
@@ -40,7 +41,7 @@ class schema_group():
         node_matched = False
         matched_schemas = []
         for schema in self.schemas:
-            if schema['$select_validator'].is_valid(node):
+            if '$select_validator' in schema and schema['$select_validator'].is_valid(node):
                 # We have a match if a conditional schema is selected
                 if schema['select'] != True:
                     matched_schemas.append(schema['$id'])
@@ -113,6 +114,8 @@ class schema_group():
         """Check the given DT against all schemas"""
 
         for schema in self.schemas:
+            if match_schema_file and match_schema_file not in schema['$filename']:
+                continue
             schema["$select_validator"] = dtschema.DTValidator(schema['select'])
 
         for subtree in dt:
@@ -125,6 +128,7 @@ if __name__ == "__main__":
                     help="Filename or directory of YAML encoded devicetree input file(s)")
     ap.add_argument('-s', '--schema', help="path to additional additional schema files")
     ap.add_argument('-p', '--preparse', help="preparsed schema file")
+    ap.add_argument('-l', '--limit', help="limit validation to schema files matching substring")
     ap.add_argument('-m', '--show-unmatched', default=0,
         help="Print out nodes which don't match any schema.\n" \
              "Once for only nodes with 'compatible'\n" \
@@ -141,6 +145,7 @@ if __name__ == "__main__":
     verbose = args.verbose
     show_unmatched = args.show_unmatched
     show_matched = args.show_matched
+    match_schema_file = args.limit
 
     if args.url_path:
         dtschema.add_schema_path(args.url_path)
