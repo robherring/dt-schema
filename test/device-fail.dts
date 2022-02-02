@@ -171,12 +171,6 @@
 		vendor,phandle-array-prop = <&foo>;
 	};
 
-	bad-vendor-phandle-prop-tag-test {
-		compatible = "vendor,soc1-ip";
-		vendor,phandle-prop = <1>;
-		vendor,phandle-array-prop = <1>, <2>;
-	};
-
 	bad-vendor-phandle-args-len-test {
 		compatible = "vendor,soc1-ip";
 		vendor,phandle-with-fixed-cells = <&foo 2>;

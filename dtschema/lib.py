@@ -758,12 +758,7 @@ def typeSize(validator, typeSize, instance, schema):
         yield jsonschema.ValidationError("size is %r, expected %r" % (size, typeSize))
 
 
-def phandle(validator, phandle, instance, schema):
-    if not isinstance(instance, sized_int) or not instance.phandle:
-        yield jsonschema.ValidationError("missing phandle tag in %r" % instance)
-
-
-DTVal = jsonschema.validators.extend(jsonschema.Draft201909Validator, {'typeSize': typeSize, 'phandle': phandle})
+DTVal = jsonschema.validators.extend(jsonschema.Draft201909Validator, {'typeSize': typeSize})
 
 
 class DTValidator(DTVal):
