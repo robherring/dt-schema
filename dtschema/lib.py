@@ -320,9 +320,6 @@ def _fixup_items_size(schema):
                 if 'maxItems' not in schema:
                     schema['maxItems'] = c
 
-                if 'additionalItems' not in schema:
-                    schema['additionalItems'] = False
-
             _fixup_items_size(schema['items'])
 
         elif 'maxItems' in schema and 'minItems' not in schema:
