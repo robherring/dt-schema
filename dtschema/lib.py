@@ -255,6 +255,25 @@ def _fixup_int_array_min_max_to_matrix(propname, subschema):
         _fixup_items_size(subschema['oneOf'])
 
 
+def _fixup_remove_empty_items(subschema):
+    if 'items' not in subschema:
+        return
+    elif isinstance(subschema['items'], dict):
+        _fixup_remove_empty_items(subschema['items'])
+        return
+
+    for item in subschema['items']:
+        item.pop('description', None)
+        _fixup_remove_empty_items(item)
+        if item != {}:
+            break
+    else:
+        subschema.setdefault('type', 'array')
+        subschema.setdefault('maxItems', len(subschema['items']))
+        subschema.setdefault('minItems', len(subschema['items']))
+        del subschema['items']
+
+
 def _fixup_int_array_items_to_matrix(propname, subschema):
     itemkeys = ('items', 'minItems', 'maxItems', 'uniqueItems', 'default')
     if not is_int_array_schema(propname, subschema):
@@ -359,6 +378,7 @@ def fixup_vals(propname, schema):
 
     schema.pop('description', None)
 
+    _fixup_remove_empty_items(schema)
     _fixup_int_array_min_max_to_matrix(propname, schema)
     _fixup_int_array_items_to_matrix(propname, schema)
     _fixup_string_to_array(propname, schema)
