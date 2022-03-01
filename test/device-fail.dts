@@ -181,4 +181,9 @@
 		compatible = "vendor,soc1-ip";
 		vendor,phandle-with-fixed-cells = <&foo 2>;
 	};
+
+	bad-vendor-phandle-args-len-test2 {
+		compatible = "vendor,soc1-ip";
+		vendor,phandle-with-fixed-cells = <&foo 2 3>, <&foo 1>;
+	};
 };
