@@ -164,6 +164,8 @@ properties:
   vendor,phandle-array-prop:
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
     minItems: 2
+    items:
+      maxItems: 1
     description: Vendor specific array of phandles property
 
   vendor,phandle-with-fixed-cells:
