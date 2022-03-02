@@ -22,9 +22,11 @@ representation.
 There is no special information in these files.
 They are used as test cases against the validation tooling.
 
+Validation of .dtb files is now supported and preferred over YAML DT encoding.
+
 ### *Devicetree Schemas*
 
-Found under `./schemas`
+Found under `./dtschema/schemas`
 
 *Devicetree Schemas* describe the format of devicetree data.
 The raw Devicetree file format is very open ended and doesn't restrict how
@@ -70,7 +72,7 @@ is present. Single entries in schemas are fixed up to match this encoding.
 
 ### *Devicetree Meta-Schemas*
 
-Found in `./meta-schemas`
+Found in `./dtschema/meta-schemas`
 
 *Devicetree Meta-Schemas* describe the data format of Devicetree Schema files.
 The Meta-schemas make sure all the binding schemas are in the correct format
@@ -100,10 +102,16 @@ schema.
 
 
 ## Installing
-The project and its dependencies can be installed with pip directly from git:
+The project and its dependencies can be installed with pip:
 
 ```
-pip3 install git+https://github.com/devicetree-org/dt-schema.git@master
+pip3 install dtschema
+```
+
+or directly from git:
+
+```
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@main
 ```
 
 All executables will be installed. Ensure ~/.local/bin is in the PATH.
@@ -121,22 +129,23 @@ pip3 install -e .
 Note: The above installation instructions handle all of the dependencies
 automatically.
 
-This code depends on Python 3 with the ruamel.yaml, rfc3987, and jsonschema
-libraries.
+This code depends on Python 3 with the pylibfdt, ruamel.yaml, rfc3987, and jsonschema
+libraries. Installing pylibfdt depends on the 'swig' program.
 
 On Debian/Ubuntu, the dependencies can be installed with apt and/or pip. The
 rfc3987 module is not packaged, so pip must be used:
 
 ```
-apt-get install python3 python3-ruamel.yaml
+sudo apt install swig
+sudo apt install python3 python3-ruamel.yaml
 pip3 install rfc3987
 ```
 
 
 ### jsonschema
-This code depends on at least version 3.0.0 of the
+This code depends on at least version 4.1.2 of the
 [Python jsonschema](https://github.com/Julian/jsonschema/tree/master)
-library for Draft 6 support.
+library for Draft 2019-09 support.
 
 The module can be installed directly from github with pip:
 
