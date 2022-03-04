@@ -15,16 +15,30 @@ maintainers:
 
 properties:
   $nodename:
-    pattern: "^memory(@[0-9a-f]+)?$"
-  device_type:
-    const: memory
-  reg:
-    minItems: 1
-    maxItems: 1024
+    const: '/'
 
-required:
-  - device_type
-  - reg
+patternProperties:
+  "^memory(@[0-9a-f]+)?$":
+    type: object
+    additionalProperties: false
+
+    properties:
+      device_type:
+        const: memory
+      reg:
+        minItems: 1
+        maxItems: 1024
+
+      numa-node-id:
+        $ref: types.yaml#/definitions/uint32
+        description:
+          For the purpose of identification, each NUMA node is associated with
+          a unique token known as a node id.
+
+
+    required:
+      - device_type
+      - reg
 
 additionalProperties: true
 
