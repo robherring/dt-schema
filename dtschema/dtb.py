@@ -233,6 +233,8 @@ def fdt_scan_node(fdt, nodename, offset):
     if nodename == '__local_fixups__':
         process_local_fixups(fdt, '', '', offset)
         return
+    if nodename.startswith('__'):
+        return
 
     node_dict = node_props(fdt, nodename, offset)
     if 'phandle' in node_dict:
