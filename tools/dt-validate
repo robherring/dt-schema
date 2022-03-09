@@ -31,9 +31,10 @@ class schema_group():
             self.schemas = dtschema.process_schemas([schema_file])
         elif os.path.isfile(schema_file):
             self.schemas = dtschema.load_schema(os.path.abspath(schema_file))
-            dtschema.set_schema(self.schemas)
         else:
             exit(-1)
+
+        dtschema.set_schema(self.schemas)
 
     def check_node(self, tree, node, disabled, nodename, fullname, filename):
         # Skip any generated nodes
