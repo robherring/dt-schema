@@ -806,6 +806,10 @@ def _extract_prop_type(props, schema, propname, subschema):
                (isinstance(items, dict) and _is_string_schema(items)):
                 # implicit string type
                 prop_type = 'string-array'
+            elif not (isinstance(items, list) and len(items) == 1 and \
+                 'items' in items and isinstance(items['items'], list) and len(items['items']) == 1) and \
+                 unit_types_re.search(propname):
+                prop_type = 'uint32-matrix'
             else:
                 prop_type = None
         else:
