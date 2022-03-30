@@ -83,6 +83,16 @@ dependentSchemas:
       - required: [ properties ]
       - required: [ patternProperties ]
 
+dependentRequired:
+  # Ensure only valid combinations of if/then/else are present
+  if:
+    - then
+  then:
+    - if
+  else:
+    - if
+    - then
+
 properties:
   $ref:
     pattern: '^(/schemas/|\.\./|#(/|$)|[a-zA-Z0-9]+)'
