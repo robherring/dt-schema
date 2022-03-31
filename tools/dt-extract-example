@@ -50,6 +50,8 @@ if __name__ == "__main__":
 
     try:
         binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
+        if not isinstance(binding, dict):
+            exit(0)
     except ruamel.yaml.constructor.DuplicateKeyError as exc:
         print(args.yamlfile + ":", exc.problem, file=sys.stderr)
         exit(1)

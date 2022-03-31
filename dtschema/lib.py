@@ -698,6 +698,10 @@ def process_schema(filename):
               file=sys.stderr)
         #print(exc.message)
         return
+    except:
+        print(filename + ": ignoring, unknown error in schema (not a schema?)",
+              file=sys.stderr)
+        return
 
     if 'select' not in schema:
         print(filename + ": warning: no 'select' found in schema found", file=sys.stderr)
