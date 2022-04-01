@@ -107,15 +107,22 @@ properties:
           - $ref: "#/definitions/sub-schemas"
       - type: boolean
   allOf:
+    uniqueItems: true
     items:
       $ref: "#/definitions/sub-schemas"
   anyOf:
+    uniqueItems: true
     items:
       $ref: "#/definitions/sub-schemas"
   contains:
     $ref: "#/definitions/sub-schemas"
+  dependentRequired:
+    uniqueItems: true
   else:
     $ref: "#/definitions/sub-schemas"
+  enum:
+    type: array
+    uniqueItems: true
   if:
     $ref: "#/definitions/sub-schemas"
   items:
@@ -166,6 +173,7 @@ properties:
       $ref: "#/definitions/sub-schemas"
   required:
     type: array
+    uniqueItems: true
     items:
       pattern: '^([a-zA-Z#][a-zA-Z0-9,+\-._@]{0,63}|\$nodename)$'
   select:
