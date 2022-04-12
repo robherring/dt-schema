@@ -34,7 +34,7 @@ if __name__ == "__main__":
     if args.duplicates:
         tmp_props = {}
         for k,v in props.items():
-            if 'type' in v and len(v['type']) > 1:
+            if len(v) > 1:
                 tmp_props[k] = v
 
         props = tmp_props
@@ -44,10 +44,10 @@ if __name__ == "__main__":
     else:
         prop_types = {}
         for k,v in props.items():
-            if 'type' in v:
-                prop_types[k] = v['type']
-            else:
-                prop_types[k] = None
+            prop_types[k] = []
+            for l in v:
+                if 'type' in l:
+                    prop_types[k] += [l['type']]
 
     try:
         pprint.pprint(prop_types, compact=True)

@@ -7,8 +7,9 @@ from dtschema.lib import (
     format_error,
     extract_compatibles,
     extract_types,
-    get_prop_types,
     get_undocumented_compatibles,
+    property_get_type,
+    property_get_type_dim,
     sized_int,
 )
 

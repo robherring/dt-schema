@@ -820,6 +820,9 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     if not isinstance(subschema, dict):
         return
 
+    if propname.startswith('$'):
+        return
+
     if subschema.keys() & {'properties', 'patternProperties', 'additionalProperties'}:
         _extract_subschema_types(props, schema, subschema)
 
@@ -832,65 +835,85 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
         #print(propname, sch_path, subschema, file=sys.stderr)
         _extract_prop_type(props, schema, propname, subschema, is_pattern)
 
-    try:
-        prop_type = type_re.search(subschema['$ref']).group(0)
-    except:
-        if 'type' in subschema and subschema['type'] == 'boolean':
-            prop_type = 'flag'
-        elif 'items' in subschema:
-            items = subschema['items']
-            if (isinstance(items, list) and _is_string_schema(items[0])) or \
-               (isinstance(items, dict) and _is_string_schema(items)):
-                # implicit string type
-                prop_type = 'string-array'
-            elif not (isinstance(items, list) and len(items) == 1 and \
-                 'items' in items and isinstance(items['items'], list) and len(items['items']) == 1) and \
-                 unit_types_re.search(propname):
-                prop_type = 'uint32-matrix'
-            else:
-                prop_type = None
-        else:
-            prop_type = None
-
-    if prop_type:
-        props.setdefault(propname, {})
-        if is_pattern:
-            props[propname].setdefault('regex', re.compile(propname))
-
-        if prop_type == 'phandle-array' or prop_type.endswith('-matrix'):
-            dim = (_get_array_range(subschema), _get_array_range(subschema.get('items', {})))
-            if dim != ((0, 0), (0, 0)):
-                if not 'dim' in props[propname]:
-                    props[propname]['dim'] = dim
-                elif props[propname]['dim'] != dim:
-                    # Conflicting dimensions
-                    props[propname]['dim'] = _merge_dim(props[propname]['dim'], dim)
-
-        if 'type' in props[propname]:
-            if prop_type in props[propname]['type']:
-                # Already have the same type
-                return
-            for t in props[propname]['type']:
-                if prop_type in t:
-                    # Already have the looser type
-                    return
-                if t in prop_type:
-                    # Replace scalar type with array type
-                    i = props[propname]['type'].index(t)
-                    props[propname]['type'][i] = prop_type
-                    props[propname]['$id'][i] = schema['$id']
-                    return
-        else:
-            props[propname]['type'] = []
-            props[propname]['$id'] = []
-
-        props[propname]['type'] += [ prop_type ]
-        props[propname]['$id'] += [ schema['$id'] ]
-        return
-
     for k in subschema.keys() & {'allOf', 'oneOf', 'anyOf'}:
         for v in subschema[k]:
             _extract_prop_type(props, schema, propname, v, is_pattern)
+
+    props.setdefault(propname, [])
+
+    new_prop = {}
+    prop_type = None
+
+    if 'type' in subschema and subschema['type'] == 'object':
+        prop_type = 'node'
+    else:
+        try:
+            prop_type = type_re.search(subschema['$ref']).group(0)
+        except:
+            if 'type' in subschema and subschema['type'] == 'boolean':
+                prop_type = 'flag'
+            elif 'items' in subschema:
+                items = subschema['items']
+                if (isinstance(items, list) and _is_string_schema(items[0])) or \
+                (isinstance(items, dict) and _is_string_schema(items)):
+                    # implicit string type
+                    prop_type = 'string-array'
+                elif not (isinstance(items, list) and len(items) == 1 and \
+                    'items' in items and isinstance(items['items'], list) and len(items['items']) == 1) and \
+                    unit_types_re.search(propname):
+                    prop_type = 'uint32-matrix'
+                else:
+                    prop_type = None
+            elif '$ref' in subschema and re.search(r'\.yaml#?$', subschema['$ref']):
+                prop_type = 'node'
+            else:
+                prop_type = None
+
+    new_prop['type'] = prop_type
+    new_prop['$id'] = [schema['$id']]
+    if is_pattern:
+        new_prop['regex'] = re.compile(propname)
+
+    if not prop_type:
+        if len(props[propname]) == 0:
+            props[propname] += [new_prop]
+        return
+
+    # handle matrix dimensions
+    if prop_type == 'phandle-array' or prop_type.endswith('-matrix'):
+        dim = (_get_array_range(subschema), _get_array_range(subschema.get('items', {})))
+        new_prop['dim'] = dim
+    else:
+        dim = ((0, 0), (0, 0))
+
+    if propname in props:
+        dup_prop = None
+        for p in props[propname]:
+            if p['type'] is None:
+                dup_prop = p
+                break
+            if dim != ((0, 0), (0, 0)) and (p['type'] == 'phandle-array' or p['type'].endswith('-matrix')):
+                if not 'dim' in p:
+                    p['dim'] = dim
+                elif p['dim'] != dim:
+                    # Conflicting dimensions
+                    p['dim'] = _merge_dim(p['dim'], dim)
+                return
+            if p['type'].startswith(prop_type):
+                # Already have the same or looser type
+                if schema['$id'] not in p['$id']:
+                    p['$id'] += [schema['$id']]
+                return
+            elif p['type'] in prop_type:
+                # Replace scalar type with array type
+                new_prop['$id'] += p['$id']
+                dup_prop = p
+                break
+
+        if dup_prop:
+            props[propname].remove(dup_prop)
+
+    props[propname] += [new_prop]
 
 
 def _extract_subschema_types(props, schema, subschema):
@@ -916,26 +939,76 @@ def extract_types():
     return props
 
 
-def get_prop_types():
+def get_prop_types(want_missing_types=False):
     pat_props = {}
 
     props = dtschema.extract_types()
 
-    # hack to remove aliases pattern
+    # hack to remove aliases and generic patterns
     del props['^[a-z][a-z0-9\-]*$']
+    props.pop('^[a-zA-Z][a-zA-Z0-9\\-_]{0,63}$', None)
+    props.pop('^.*$', None)
+    props.pop('.*', None)
 
     # Remove all properties without a type
-    for key in [key for key in props if 'type' not in props[key] ]: del props[key]
+    if not want_missing_types:
+        for key in [key for key in props if props[key][0]['type'] is None]: del props[key]
 
     # Split out pattern properties
-    for key in [key for key in props if 'regex' in props[key] ]:
+    for key in [key for key in props if len(props[key]) and 'regex' in props[key][0] ]:
         # Only want patternProperties with type and some amount of fixed string
-        if 'type' in props[key] and re.search(r'[0-9a-zA-F]{2}', key):
+        if re.search(r'[0-9a-zA-F-]{3}', key):
             #print(key, props[key], file=sys.stderr)
             pat_props[key] = props[key]
         del props[key]
 
     return [ props, pat_props ]
+
+
+props = None
+pat_props = None
+
+
+def property_get_type(propname):
+    global props
+    global pat_props
+
+    if not props:
+        props, pat_props = get_prop_types()
+
+    type = []
+    if propname in props:
+        for v in props[propname]:
+            if v['type']:
+                type += [v['type']]
+    if len(type) == 0:
+        for v in pat_props.values():
+            if v[0]['type'] and v[0]['type'] not in type and v[0]['regex'].search(propname):
+                type += [v[0]['type']]
+
+    # Don't return 'node' as a type if there's other types
+    if len(type) > 1 and 'node' in type:
+        type.remove('node')
+    return type
+
+
+def property_get_type_dim(propname):
+    global props
+    global pat_props
+
+    if not props:
+        props, pat_props = get_prop_types()
+
+    if propname in props:
+        for v in props[propname]:
+            if 'dim' in v:
+                return v['dim']
+
+    for v in pat_props.values():
+        if v[0]['type'] and 'dim' in v[0] and v[0]['regex'].search(propname):
+            return v[0]['dim']
+
+    return None
 
 
 def load(filename, line_number=False):

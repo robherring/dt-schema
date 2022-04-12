@@ -11,9 +11,6 @@ from libfdt import QUIET_NOTFOUND
 
 import dtschema
 
-props = {}
-pat_props = {}
-
 u8 = struct.Struct('B')
 s8 = struct.Struct('b')
 u16 = struct.Struct('>H')
@@ -79,58 +76,46 @@ def prop_value(nodename, p):
     if nodename in {'__fixups__', 'aliases'}:
         return data[:-1].decode(encoding='ascii').split('\0')
 
-    if p.name in props:
-        v = props[p.name]
-        if {'string', 'string-array'} & set(v['type']):
-            #print(p.name, v)
+    prop_types = dtschema.property_get_type(p.name)
+    if 'node' in prop_types:
+        prop_types.remove('node')
+
+    if len(prop_types) > 1:
+        if {'string', 'string-array'} & set(prop_types):
             str = bytes_to_string(data)
             if str:
                 return str
             # Assuming only one other type
             try:
-                fmt = set(v['type']).difference({'string', 'string-array'}).pop()
+                fmt = set(prop_types).difference({'string', 'string-array'}).pop()
             except:
                 return data
-        elif len(v['type']):
-            fmt = v['type'][0]
-            # properties like ranges can be boolean or have a value
-            if fmt == 'flag' and len(data) and len(v['type']) > 1:
-                fmt = v['type'][1]
-            if (fmt.endswith('matrix') or fmt == 'phandle-array') and 'dim' in v:
-                dim = v['dim']
-            #print(p.name, fmt)
-    else:
-        for pat, v in pat_props.items():
-            if v['regex'].search(p.name):
-                #print(p.name, v, file=sys.stderr)
-                if fmt and fmt != v['type'][0]:
-                    #print('Multiple regex match with differring types:', fmt, v['type'][0], pat, file=sys.stderr)
-                    if len(data) > 4 and '-' in fmt:
-                        continue
-                fmt = v['type'][0]
-                fmt_base = fmt.split('-', 1)[0]
-                if fmt_base in type_format:
-                    if (fmt.endswith('matrix') or fmt == 'phandle-array') and 'dim' in v:
-                        dim = v['dim']
-                    continue
-                elif 'string' in v['type'][0]:
-                    return data[:-1].decode(encoding='ascii').split('\0')
+        elif 'flag' in prop_types and len(data):
+            fmt = set(prop_types).difference({'flag'}).pop()
         else:
-            if not fmt:
-                # Primarily for aliases properties
-                try:
-                    s = data.decode(encoding='ascii')
-                    if s.endswith('\0'):
-                        s = s[:-1]
-                        if s.isprintable():
-                            return [s]
-                except:
-                    pass
-                if not len(data) % 4:
-                    fmt = 'uint32-array'
-                else:
-                    #print(p.name + ': no type found', file=sys.stderr)
-                    return data
+            #print(p.name + ': multiple types found', file=sys.stderr)
+            fmt = None
+    elif len(prop_types) == 1:
+        fmt = prop_types[0]
+
+    if not fmt:
+        # Primarily for aliases properties
+        try:
+            s = data.decode(encoding='ascii')
+            if s.endswith('\0'):
+                s = s[:-1]
+                if s.isprintable():
+                    return [s]
+        except:
+            pass
+        if not len(data) % 4:
+            fmt = 'uint32-array'
+        else:
+            #print(p.name + ': no type found', file=sys.stderr)
+            return data
+
+    if fmt.startswith('string'):
+        return data[:-1].decode(encoding='ascii').split('\0')
 
     if fmt == 'flag':
         if len(data):
@@ -158,6 +143,8 @@ def prop_value(nodename, p):
         for i in type_struct.iter_unpack(data):
             val_int += [dtschema.sized_int(i[0], size=(type_struct.size * 8))]
 
+    if 'matrix' in fmt or 'phandle-array' in fmt:
+        dim = dtschema.property_get_type_dim(p.name)
     if dim:
         if max(dim[1]) and dim[1][0] == dim[1][1]:
             stride = dim[1][1]
@@ -313,7 +300,7 @@ def fixup_phandles(dt, path=''):
         if isinstance(v, dict):
             fixup_phandles(v, path=path + '/' + k)
             continue
-        elif not k in props or not {'phandle-array'} & set(props[k]['type']):
+        elif not {'phandle-array'} & set(dtschema.property_get_type(k)):
             continue
         elif not isinstance(v, list) or (len(v) > 1 or not isinstance(v[0], list)):
             # Not a matrix or already split, nothing to do
@@ -460,13 +447,6 @@ def fixup_addresses(dt, ac, sc):
 
 
 def fdt_unflatten(dtb):
-    p = dtschema.get_prop_types()
-    global props
-    global pat_props
-
-    props = p[0]
-    pat_props = p[1]
-
     fdt = libfdt.Fdt(dtb)
 
     offset = fdt.first_subnode(-1, QUIET_NOTFOUND)
