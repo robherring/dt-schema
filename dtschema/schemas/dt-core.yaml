@@ -57,8 +57,7 @@ properties:
 patternProperties:
   "^#.*-cells$":
     $ref: "types.yaml#/definitions/uint32"
-    items:
-      maximum: 8
+    maximum: 8
 
   ".*-names$":
     $ref: "types.yaml#/definitions/non-unique-string-array"

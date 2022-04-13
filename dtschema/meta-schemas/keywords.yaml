@@ -188,3 +188,17 @@ properties:
       - type: boolean
   uniqueItems:
     type: boolean
+
+allOf:
+  - description: Scalar properties should not have array keywords
+    if:
+      properties:
+        $ref:
+          pattern: '(int[1-8]+|phandle|flag)$'
+      required:
+        - $ref
+    then:
+      properties:
+        maxItems: false
+        minItems: false
+        items: false
