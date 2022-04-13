@@ -100,14 +100,19 @@ properties:
       specifier list. This property should only be specified in the node that is
       providing the clocks being protected.
 
-dependencies:
+dependentRequired:
   clock-names: [clocks]
   clock-output-names: ["#clock-cells"]
   clock-indices: [clock-output-names]
   clock-ranges: [clocks]
-  assigned-clocks: [clocks]
   assigned-clock-parents: [assigned-clocks]
   assigned-clock-rates: [assigned-clocks]
   protected-clocks: ["#clock-cells"]
+
+dependentSchemas:
+  assigned-clocks:
+    anyOf:
+      - required: [clocks]
+      - required: ["#clock-cells"]
 
 additionalProperties: true
