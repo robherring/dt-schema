@@ -90,6 +90,16 @@ properties:
   assigned-clock-rates:
     $ref: "/schemas/types.yaml#/definitions/uint32-array"
 
+  protected-clocks:
+    $ref: "/schemas/types.yaml#/definitions/uint32-array"
+    description:
+      Some platforms or firmwares may not fully expose all the clocks to the OS,
+      such as in situations where those clks are used by drivers running in ARM
+      secure execution levels. Such a configuration can be specified in
+      devicetree with the protected-clocks property in the form of a clock
+      specifier list. This property should only be specified in the node that is
+      providing the clocks being protected.
+
 dependencies:
   clock-names: [clocks]
   clock-output-names: ["#clock-cells"]
@@ -98,5 +108,6 @@ dependencies:
   assigned-clocks: [clocks]
   assigned-clock-parents: [assigned-clocks]
   assigned-clock-rates: [assigned-clocks]
+  protected-clocks: ["#clock-cells"]
 
 additionalProperties: true
