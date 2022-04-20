@@ -76,6 +76,12 @@ dependentSchemas:
     $ref: "#/definitions/scalar-prop-list"
   minItems:
     $ref: "#/definitions/scalar-prop-list"
+  additionalProperties:
+    description: "'additionalProperties' depends on 'properties' or 'patternProperties'"
+    anyOf:
+      - required: [ type ]
+      - required: [ properties ]
+      - required: [ patternProperties ]
 
 properties:
   additionalItems:

@@ -9,6 +9,10 @@ description: "Metaschema for devicetree binding documentation"
 
 allOf:
   - $ref: "http://devicetree.org/meta-schemas/base.yaml#"
+  - description: Either unevaluatedProperties or additionalProperties must be present
+    oneOf:
+      - required: [ unevaluatedProperties ]
+      - required: [ additionalProperties ]
 
 definitions:
   all-properties:
