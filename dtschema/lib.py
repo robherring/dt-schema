@@ -928,6 +928,9 @@ def http_handler(uri):
             for sch in schema_cache:
                 if uri in sch['$id']:
                     return sch
+            # If we have a schema_cache, then the schema should have been there unless the schema had errors
+            if len(schema_cache):
+                return False
             if 'meta-schemas' in uri:
                 return load_schema(uri.replace(schema_base_url, ''))
             return process_schema(uri.replace(schema_base_url, ''))
