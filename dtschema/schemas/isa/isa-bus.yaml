@@ -1,0 +1,60 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2022 Arm Ltd.
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/isa/isa-bus.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
+
+title: ISA bus schema
+
+description: |
+  Common properties for ISA bus nodes
+
+  ISA Bus Binding to: IEEE Std 1275-1994
+  https://www.devicetree.org/open-firmware/bindings/isa/isa0_4d.ps
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+properties:
+  $nodename:
+    pattern: "^isa@"
+
+  device_type:
+    const: isa
+
+  ranges:
+    description: Required for memory accesses or memory mapped I/O space. Optional if only
+      indirect I/O is supported.
+
+  "#address-cells":
+    const: 2
+
+  "#size-cells":
+    const: 1
+
+patternProperties:
+  '@(m|i?)[0-9a-f]{1,8}$':
+    type: object
+    description: Child devices
+
+    properties:
+      reg:
+        items:
+          items:
+            - enum:
+                - 0x0   # memory address
+                - 0x1   # I/O address
+            - description: address
+            - description: size
+          minItems: 3
+          maxItems: 3
+
+    required:
+      - reg
+
+required:
+  - "#address-cells"
+  - "#size-cells"
+
+additionalProperties: true

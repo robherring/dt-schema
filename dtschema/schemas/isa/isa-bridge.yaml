@@ -1,0 +1,46 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2022 Arm Ltd.
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/isa/isa-bridge.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
+
+title: ISA bus bridge schema
+
+description: |
+  Schema for ISA bridge nodes. This is for bridges with I/O space mapped into
+  the parent bus.
+
+  ISA Bus Binding to: IEEE Std 1275-1994
+  https://www.devicetree.org/open-firmware/bindings/isa/isa0_4d.ps
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+select:
+  properties:
+    compatible:
+      contains:
+        enum:
+          - isa
+          - pciclass,0601
+    device_type:
+      const: isa
+
+  anyOf:
+    - required: [ device_type ]
+    - required: [ compatible ]
+
+allOf:
+  - $ref: isa-bus.yaml#
+
+properties:
+  compatible:
+    enum:
+      - isa
+      - pciclass,0601
+
+required:
+  - ranges
+
+unevaluatedProperties: false
