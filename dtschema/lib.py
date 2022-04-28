@@ -13,6 +13,8 @@ import json
 
 import jsonschema
 
+from jsonschema.exceptions import RefResolutionError
+
 import dtschema.dtb
 
 schema_base_url = "http://devicetree.org/"
@@ -933,7 +935,18 @@ def http_handler(uri):
                 return False
             if 'meta-schemas' in uri:
                 return load_schema(uri.replace(schema_base_url, ''))
-            return process_schema(uri.replace(schema_base_url, ''))
+
+            try:
+                schema = load_schema(uri.replace(schema_base_url, ''))
+            except Exception as exc:
+                raise RefResolutionError('Unable to find schema file matching $id: ' + uri)
+
+            try:
+                DTValidator.check_schema(schema)
+            except Exception as exc:
+                raise RefResolutionError('Error in referenced schema matching $id: ' + uri)
+
+            return schema
 
         from urllib.request import urlopen
 
