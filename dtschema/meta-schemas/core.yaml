@@ -79,7 +79,6 @@ definitions:
             pattern: '(#$|#\/)?'
 
         allOf:
-          - $ref: "items.yaml#"
           - if:
               type: object
               properties:

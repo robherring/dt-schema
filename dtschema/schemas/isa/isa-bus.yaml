@@ -47,8 +47,6 @@ patternProperties:
                 - 0x1   # I/O address
             - description: address
             - description: size
-          minItems: 3
-          maxItems: 3
 
     required:
       - reg

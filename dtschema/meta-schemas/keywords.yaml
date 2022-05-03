@@ -12,6 +12,7 @@ definitions:
   sub-schemas:
     allOf:
       - $ref: "#"
+      - $ref: items.yaml#
     propertyNames:
       # The subset of keywords allowed for sub-schema
       enum:
