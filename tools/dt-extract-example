@@ -56,7 +56,7 @@ if __name__ == "__main__":
         print(args.yamlfile + ":", exc.problem, file=sys.stderr)
         exit(1)
 
-    print(example_header)
+    example_dts = example_header
 
     if 'examples' in binding.keys():
         for idx,ex in enumerate(binding['examples']):
@@ -70,16 +70,17 @@ if __name__ == "__main__":
                     int_cells = len(int_val.strip().split())
                 except:
                     int_cells = 0
-                print(example_start)
+                example_dts += example_start
                 ex = '        '.join(ex.splitlines(True))
                 if int_cells > 0:
                     int_props = interrupt_template.format(int_cells=int_cells)
                 else:
                     int_props = ""
-                print(example_template.format(example=ex, example_num=idx,
-                    interrupt=int_props))
+                example_dts += example_template.format(example=ex, example_num=idx, interrupt=int_props)
             else:
-                print(ex)
+                example_dts += ex
     else:
-        print(example_start)
-        print("\n};")
+        example_dts += example_start
+        example_dts += "\n};"
+
+    print(example_dts)
