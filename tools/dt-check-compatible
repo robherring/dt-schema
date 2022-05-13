@@ -30,9 +30,7 @@ if __name__ == "__main__":
     if args.schema != "" and not os.path.exists(args.schema):
         exit(-1)
 
-    dtschema.set_schemas([args.schema])
-
-    undoc_compats = dtschema.get_undocumented_compatibles(args.compatible_str)
+    undoc_compats = dtschema.DTValidator([args.schema]).get_undocumented_compatibles(args.compatible_str)
 
     if args.invert_match:
         print(*undoc_compats, sep="\n")

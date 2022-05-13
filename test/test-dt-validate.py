@@ -10,6 +10,7 @@
 
 import unittest
 import os
+import copy
 import glob
 import sys
 import subprocess
@@ -17,37 +18,44 @@ import tempfile
 
 basedir = os.path.dirname(__file__)
 import jsonschema
+import ruamel.yaml
 import dtschema
 
 dtschema_dir = os.path.dirname(dtschema.__file__)
 
+yaml = ruamel.yaml.YAML(typ='safe')
+
+def load(filename):
+    with open(filename, 'r', encoding='utf-8') as f:
+        return yaml.load(f.read())
+
 class TestDTMetaSchema(unittest.TestCase):
     def setUp(self):
-        self.schema = dtschema.load(os.path.join(basedir, 'schemas/good-example.yaml'))
-        self.bad_schema = dtschema.load(os.path.join(basedir, 'schemas/bad-example.yaml'))
+        self.schema = dtschema.DTSchema(os.path.join(basedir, 'schemas/good-example.yaml'))
+        self.bad_schema = dtschema.DTSchema(os.path.join(basedir, 'schemas/bad-example.yaml'))
 
     def test_all_metaschema_valid(self):
         '''The metaschema must all be a valid Draft2019-09 schema'''
         for filename in glob.iglob(os.path.join(dtschema_dir, 'meta-schemas/**/*.yaml'), recursive=True):
             with self.subTest(schema=filename):
-                schema = dtschema.load_schema(filename)
+                schema = load(filename)
                 jsonschema.Draft201909Validator.check_schema(schema)
 
     def test_required_properties(self):
-        dtschema.DTValidator.check_schema(self.schema)
+        self.schema.is_valid(strict=True)
 
     def test_required_property_missing(self):
         for key in self.schema.keys():
             if key in ['$schema', 'properties', 'required', 'description', 'examples', 'additionalProperties']:
                 continue
             with self.subTest(k=key):
-                schema_tmp = self.schema.copy()
+                schema_tmp = copy.deepcopy(self.schema)
                 del schema_tmp[key]
-                self.assertRaises(jsonschema.SchemaError, dtschema.DTValidator.check_schema, schema_tmp)
+                self.assertRaises(jsonschema.SchemaError, schema_tmp.is_valid, strict=True)
 
     def test_bad_schema(self):
         '''bad-example.yaml is all bad. There is no condition where it should pass validation'''
-        self.assertRaises(jsonschema.SchemaError, dtschema.DTValidator.check_schema, self.bad_schema)
+        self.assertRaises(jsonschema.SchemaError, self.bad_schema.is_valid, strict=True)
 
     def test_bad_properties(self):
         for key in self.bad_schema.keys():
@@ -55,32 +63,31 @@ class TestDTMetaSchema(unittest.TestCase):
                 continue
 
             with self.subTest(k=key):
-                schema_tmp = self.schema.copy()
+                schema_tmp = copy.deepcopy(self.schema)
                 schema_tmp[key] = self.bad_schema[key]
-                self.assertRaises(jsonschema.SchemaError, dtschema.DTValidator.check_schema, schema_tmp)
+                self.assertRaises(jsonschema.SchemaError, schema_tmp.is_valid, strict=True)
 
         bad_props = self.bad_schema['properties']
-        schema_tmp = self.schema.copy()
+        schema_tmp = copy.deepcopy(self.schema)
         for key in bad_props.keys():
             with self.subTest(k="properties/"+key):
                 schema_tmp['properties'] = self.schema['properties'].copy()
                 schema_tmp['properties'][key] = bad_props[key]
-                self.assertRaises(jsonschema.SchemaError, dtschema.DTValidator.check_schema, schema_tmp)
+                self.assertRaises(jsonschema.SchemaError, schema_tmp.is_valid, strict=True)
 
 class TestDTSchema(unittest.TestCase):
     def test_binding_schemas_valid(self):
         '''Test that all schema files under ./dtschema/schemas/ validate against the DT metaschema'''
         for filename in glob.iglob(os.path.join(dtschema_dir, 'schemas/**/*.yaml'), recursive=True):
             with self.subTest(schema=filename):
-                schema = dtschema.load_schema(filename)
-                dtschema.DTValidator.check_schema(schema)
+                dtschema.DTSchema(filename).is_valid(strict=True)
 
     def test_binding_schemas_id_is_unique(self):
         '''Test that all schema files under ./dtschema/schemas/ validate against the DT metaschema'''
         ids = []
         for filename in glob.iglob(os.path.join(dtschema_dir, 'schemas/**/*.yaml'), recursive=True):
             with self.subTest(schema=filename):
-                schema = dtschema.load_schema(filename)
+                schema = load(filename)
                 self.assertEqual(ids.count(schema['$id']), 0)
                 ids.append(schema['$id'])
 
@@ -91,46 +98,26 @@ class TestDTSchema(unittest.TestCase):
         '''
         for filename in glob.iglob(os.path.join(dtschema_dir, 'schemas/**/*.yaml'), recursive=True):
             with self.subTest(schema=filename):
-                schema = dtschema.load_schema(filename)
+                schema = load(filename)
                 jsonschema.Draft7Validator.check_schema(schema)
 
 
 class TestDTValidate(unittest.TestCase):
     def setUp(self):
-        self.schemas = list()
+        self.validator = dtschema.DTValidator([ os.path.join(os.path.abspath(basedir), "schemas/")])
 
-        self.schemas = dtschema.set_schemas([ os.path.join(os.path.abspath(basedir), "schemas/")])
-
-        for schema in self.schemas.values():
-            schema["$select_validator"] = dtschema.DTValidator(schema['select'])
-
-    def check_node(self, nodename, node, fail):
+    def check_node(self, nodename, node):
         if nodename == "/" or nodename.startswith('__'):
             return
 
         node['$nodename'] = [ nodename ]
-        node_matched = True
-        if fail:
-            node_matched = False
-            with self.assertRaises(jsonschema.ValidationError, msg=nodename):
-                for schema in self.schemas.values():
-                    if schema['$select_validator'].is_valid(node):
-                        node_matched = True
-                        dtschema.DTValidator(schema).validate(node)
-        else:
-            node_matched = False
-            for schema in self.schemas.values():
-                if schema['$select_validator'].is_valid(node):
-                    node_matched = True
-                    self.assertIsNone(dtschema.DTValidator(schema).validate(node))
+        self.validator.validate(node)
 
-        self.assertTrue(node_matched, msg=nodename)
-
-    def check_subtree(self, nodename, subtree, fail):
-        self.check_node(nodename, subtree, fail)
+    def check_subtree(self, nodename, subtree):
+        self.check_node(nodename, subtree)
         for name,value in subtree.items():
             if isinstance(value, dict):
-                self.check_subtree(name, value, fail)
+                self.check_subtree(name, value)
 
     def test_dtb_validation(self):
         '''Test that all DT files under ./test/ validate against the DT schema (DTB)'''
@@ -138,11 +125,15 @@ class TestDTValidate(unittest.TestCase):
             with self.subTest(schema=filename):
                 expect_fail = "-fail" in filename
                 res = subprocess.run(['dtc', '-Odtb', filename], capture_output=True)
-                testtree = dtschema.dtb.fdt_unflatten(res.stdout)
+                testtree = self.validator.decode_dtb(res.stdout)
                 self.assertEqual(res.returncode, 0, msg='dtc failed:\n' + res.stderr.decode())
-                for name, value in testtree.items():
-                    if isinstance(value, dict):
-                        self.check_node(name, value, expect_fail)
+
+                if expect_fail:
+                    with self.assertRaises(jsonschema.ValidationError):
+                        self.check_subtree('/', testtree[0])
+                else:
+                    self.assertIsNone(self.check_subtree('/', testtree[0]))
+
 
 
 if __name__ == '__main__':

@@ -66,7 +66,7 @@ def get_stride(len, dim):
     return 0
 
 
-def prop_value(nodename, p):
+def prop_value(validator, nodename, p):
     # First, check for a boolean type
     if not len(p):
         return True
@@ -78,7 +78,7 @@ def prop_value(nodename, p):
     if nodename in {'__fixups__', 'aliases'}:
         return data[:-1].decode(encoding='ascii').split('\0')
 
-    prop_types = set(dtschema.property_get_type(p.name))
+    prop_types = set(validator.property_get_type(p.name))
     prop_types -= {'node'}
 
     # Filter out types impossible for the size of the property
@@ -162,7 +162,7 @@ def prop_value(nodename, p):
             val_int += [dtschema.sized_int(i[0], size=(type_struct.size * 8))]
 
     if 'matrix' in fmt or 'phandle-array' in fmt:
-        dim = dtschema.property_get_type_dim(p.name)
+        dim = validator.property_get_type_dim(p.name)
     if dim:
         if max(dim[1]) and dim[1][0] == dim[1][1]:
             stride = dim[1][1]
@@ -184,12 +184,12 @@ def prop_value(nodename, p):
     return [val_int]
 
 
-def node_props(fdt, nodename, offset):
+def node_props(validator, fdt, nodename, offset):
     props_dict = {}
     poffset = fdt.first_property_offset(offset, QUIET_NOTFOUND)
     while poffset >= 0:
         p = fdt.get_property_by_offset(poffset)
-        props_dict[p.name] = prop_value(nodename, p)
+        props_dict[p.name] = prop_value(validator, nodename, p)
 
         poffset = fdt.next_property_offset(poffset, QUIET_NOTFOUND)
 
@@ -200,10 +200,10 @@ phandles = {}
 phandle_loc = []
 
 
-def process_fixups(fdt, nodename, offset):
+def process_fixups(validator, fdt, nodename, offset):
     if nodename != '__fixups__':
         return
-    props = node_props(fdt, nodename, offset)
+    props = node_props(validator, fdt, nodename, offset)
     global phandle_loc
     phandle_loc += [s for l in props.values() for s in l]
 
@@ -231,9 +231,9 @@ def process_local_fixups(fdt, nodename, path, offset):
         offset = fdt.next_subnode(offset, QUIET_NOTFOUND)
 
 
-def fdt_scan_node(fdt, nodename, offset):
+def fdt_scan_node(validator, fdt, nodename, offset):
     if nodename == '__fixups__':
-        process_fixups(fdt, nodename, offset)
+        process_fixups(validator, fdt, nodename, offset)
         return
     if nodename == '__local_fixups__':
         process_local_fixups(fdt, '', '', offset)
@@ -241,7 +241,7 @@ def fdt_scan_node(fdt, nodename, offset):
     if nodename.startswith('__'):
         return
 
-    node_dict = node_props(fdt, nodename, offset)
+    node_dict = node_props(validator, fdt, nodename, offset)
     if 'phandle' in node_dict:
         #print('phandle', node_dict['phandle'])
         phandles[node_dict['phandle'][0][0]] = node_dict
@@ -249,7 +249,7 @@ def fdt_scan_node(fdt, nodename, offset):
     offset = fdt.first_subnode(offset, QUIET_NOTFOUND)
     while offset >= 0:
         nodename = fdt.get_name(offset)
-        node = fdt_scan_node(fdt, nodename, offset)
+        node = fdt_scan_node(validator, fdt, nodename, offset)
         if node is not None:
             node_dict[nodename] = node
 
@@ -317,14 +317,14 @@ def _get_phandle_arg_size(prop_path, idx, cells, cellname):
     return _get_cells_size(node, cellname) + 1
 
 
-def fixup_phandles(dt, path=''):
+def fixup_phandles(validator, dt, path=''):
     for k, v in dt.items():
         if isinstance(v, dict):
-            fixup_phandles(v, path=path + '/' + k)
+            fixup_phandles(validator, v, path=path + '/' + k)
             continue
-        elif not {'phandle-array'} & set(dtschema.property_get_type(k)):
+        elif not {'phandle-array'} & set(validator.property_get_type(k)):
             continue
-        elif dtschema.property_has_fixed_dimensions(k):
+        elif validator.property_has_fixed_dimensions(k):
             continue
         elif not isinstance(v, list) or (len(v) > 1 or not isinstance(v[0], list)):
             # Not a matrix or already split, nothing to do
@@ -473,17 +473,17 @@ def fixup_addresses(dt, ac, sc):
                 i += ac + child_cells
 
 
-def fdt_unflatten(dtb):
+def fdt_unflatten(validator, dtb):
     fdt = libfdt.Fdt(dtb)
 
     offset = fdt.first_subnode(-1, QUIET_NOTFOUND)
-    dt = fdt_scan_node(fdt, '/', offset)
+    dt = fdt_scan_node(validator, fdt, '/', offset)
 
     #print(phandle_loc)
     fixup_gpios(dt)
     fixup_interrupts(dt, 1)
     fixup_addresses(dt, 2, 1)
-    fixup_phandles(dt)
+    fixup_phandles(validator, dt)
 
 #    pprint.pprint(dt, compact=True)
     return dt

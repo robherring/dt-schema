@@ -1,17 +1,10 @@
 from dtschema.lib import (
-    add_schema_path,
-    load_schema,
-    load,
-    set_schemas,
-    DTValidator,
     format_error,
     extract_compatibles,
     extract_node_compatibles,
-    extract_types,
-    get_undocumented_compatibles,
-    property_get_type,
-    property_get_type_dim,
-    property_has_fixed_dimensions,
+    _is_int_schema,
+    _is_string_schema,
+    _get_array_range,
     sized_int,
 )
 
@@ -19,6 +12,16 @@ from dtschema.fixups import (
     fixup_schema,
 )
 
+from dtschema.schema import (
+    DTSchema,
+)
+
+from dtschema.validator import (
+    DTValidator,
+)
+
 from dtschema.version import (
     __version__
 )
+
+import dtschema.dtb

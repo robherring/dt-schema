@@ -26,9 +26,9 @@ if __name__ == "__main__":
         schemas = [args.schema]
     else:
         schemas = []
-    dtschema.set_schemas(schemas)
 
-    dt = dtschema.load(args.dtbfile)
+    with open(args.dtbfile, 'rb') as f:
+        dt = dtschema.DTValidator(schemas).decode_dtb(f.read())
 
     try:
         pprint.pprint(dt, compact=True)

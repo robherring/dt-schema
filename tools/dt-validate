@@ -27,7 +27,7 @@ class schema_group():
         if schema_file != "" and not os.path.exists(schema_file):
             exit(-1)
 
-        self.schemas = dtschema.set_schemas([schema_file])
+        self.validator = dtschema.DTValidator([schema_file])
 
     def check_node(self, tree, node, disabled, nodename, fullname, filename):
         # Hack to save some time validating examples
@@ -35,56 +35,42 @@ class schema_group():
             return
 
         node['$nodename'] = [ nodename ]
-        node_matched = False
-        matched_schemas = []
-        for schema in self.schemas.values():
-            if '$select_validator' in schema and schema['$select_validator'].is_valid(node):
-                # We have a match if a conditional schema is selected
-                if schema['select'] != True:
-                    matched_schemas.append(schema['$id'])
-                    node_matched = True
-                try:
-                    for error in dtschema.DTValidator(schema).iter_errors(node):
 
-                        # Disabled nodes might not have all the required
-                        # properties filled in, such as a regulator or a
-                        # GPIO meant to be filled at the DTS level on
-                        # boards using that particular node. Thus, if the
-                        # node is marked as disabled, let's just ignore
-                        # any error message reporting a missing property.
-                        if disabled or (isinstance(error.instance, dict) and \
-                           'status' in error.instance and \
-                           'disabled' in error.instance['status']):
-                            if {'required', 'unevaluatedProperties'} & set(error.schema_path):
-                                continue
-                            elif error.context:
-                                found = False
-                                for e in error.context:
-                                    if {'required', 'unevaluatedProperties'} & set(e.schema_path):
-                                        found = True
-                                        break
-                                if found:
-                                    continue
+        try:
+            for error in self.validator.iter_errors(node, filter=match_schema_file):
 
-                        if schema['$id'] == 'generated-compatibles':
-                            if show_unmatched < 1:
-                                continue
-                            print("%s: %s: failed to match any schema with compatible: %s" %
-                                  (filename, fullname, node['compatible']), file=sys.stderr)
+                # Disabled nodes might not have all the required
+                # properties filled in, such as a regulator or a
+                # GPIO meant to be filled at the DTS level on
+                # boards using that particular node. Thus, if the
+                # node is marked as disabled, let's just ignore
+                # any error message reporting a missing property.
+                if disabled or (isinstance(error.instance, dict) and \
+                    'status' in error.instance and \
+                    'disabled' in error.instance['status']):
+
+                    if {'required', 'unevaluatedProperties'} & set(error.schema_path):
+                        continue
+                    elif error.context:
+                        found = False
+                        for e in error.context:
+                            if {'required', 'unevaluatedProperties'} & set(e.schema_path):
+                                found = True
+                                break
+                        if found:
                             continue
 
-                        print(dtschema.format_error(filename, error, nodename=nodename, verbose=verbose) +
-                            '\n\tFrom schema: ' + schema['$filename'],
-                            file=sys.stderr)
-                except RecursionError as e:
-                    print(ap.prog + ": recursion error: Check for prior errors in a referenced schema", file=sys.stderr)
+                if error.schema_file == 'generated-compatibles':
+                    if not show_unmatched:
+                        continue
+                    print(f"{filename}: {fullname}: failed to match any schema with compatible: {node['compatible']}",
+                          file=sys.stderr)
+                    continue
 
-        if show_matched and matched_schemas:
-            print("%s: %s: matched on schema(s)\n\t" % (filename, fullname) +
-                '\n\t'.join(matched_schemas), file=sys.stderr)
-
-        if show_unmatched >= 2 and not node_matched:
-            print("%s: %s: failed to match any schema" % (filename, fullname), file=sys.stderr)
+                print(dtschema.format_error(filename, error, nodename=nodename, verbose=verbose),
+                    file=sys.stderr)
+        except RecursionError as e:
+            print(ap.prog + ": recursion error: Check for prior errors in a referenced schema", file=sys.stderr)
 
     def check_subtree(self, tree, subtree, disabled, nodename, fullname, filename):
         if nodename.startswith('__'):
@@ -102,14 +88,10 @@ class schema_group():
             if isinstance(value, dict):
                 self.check_subtree(tree, value, disabled, name, fullname + name, filename)
 
-    def check_trees(self, filename, dt):
+    def check_dtb(self, filename):
         """Check the given DT against all schemas"""
-
-        for schema in self.schemas.values():
-            if match_schema_file and match_schema_file not in schema['$filename']:
-                continue
-            schema["$select_validator"] = dtschema.DTValidator(schema['select'])
-
+        with open(filename, 'rb') as f:
+            dt = sg.validator.decode_dtb(f.read())
         for subtree in dt:
             self.check_subtree(dt, subtree, False, "/", "/", filename)
 
@@ -121,12 +103,9 @@ if __name__ == "__main__":
     ap.add_argument('-s', '--schema', help="preparsed schema file or path to schema files")
     ap.add_argument('-p', '--preparse', help="preparsed schema file (deprecated, use '-s')")
     ap.add_argument('-l', '--limit', help="limit validation to schema files matching substring")
-    ap.add_argument('-m', '--show-unmatched', default=0,
-        help="Print out nodes which don't match any schema.\n" \
-             "Once for only nodes with 'compatible'\n" \
-             "Twice for all nodes", action="count")
-    ap.add_argument('-M', '--show-matched',
-        help="Print out matching schema for each node", action="store_true")
+    ap.add_argument('-m', '--show-unmatched',
+        help="Print out node 'compatible' strings which don't match any schema.",
+        action="store_true")
     ap.add_argument('-n', '--line-number', help="Obsolete", action="store_true")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     ap.add_argument('-u', '--url-path', help="Additional search path for references")
@@ -136,11 +115,7 @@ if __name__ == "__main__":
 
     verbose = args.verbose
     show_unmatched = args.show_unmatched
-    show_matched = args.show_matched
     match_schema_file = args.limit
-
-    if args.url_path:
-        dtschema.add_schema_path(args.url_path)
 
     if args.preparse:
         sg = schema_group(args.preparse)
@@ -153,15 +128,13 @@ if __name__ == "__main__":
         if not os.path.isdir(d):
             continue
         for filename in glob.iglob(d + "/**/*.dtb", recursive=True):
-            testtree = dtschema.load(filename)
             if verbose:
                 print("Check:  " + filename)
-            sg.check_trees(filename, testtree)
+            sg.check_dtb(filename)
 
     for filename in args.dtbs:
         if not os.path.isfile(filename):
             continue
-        testtree = dtschema.load(filename)
         if verbose:
             print("Check:  " + filename)
-        sg.check_trees(filename, testtree)
+        sg.check_dtb(filename)

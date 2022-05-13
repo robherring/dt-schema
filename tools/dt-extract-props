@@ -28,8 +28,8 @@ if __name__ == "__main__":
                     action="version", version=dtschema.__version__)
     args = ap.parse_args()
 
-    dtschema.set_schemas(args.schema_files)
-    props = dtschema.extract_types()
+    dtval = dtschema.DTValidator(args.schema_files)
+    props = dtval.property_get_all()
 
     if args.duplicates:
         tmp_props = {}

@@ -22,17 +22,22 @@ line_number = False
 def check_doc(filename):
     ret = 0
     try:
-        testtree = dtschema.load(filename, line_number=line_number)
+        dtsch = dtschema.DTSchema(filename, line_numbers=line_number)
     except ruamel.yaml.YAMLError as exc:
         print(filename + ":" + str(exc.problem_mark.line + 1) + ":" +
               str(exc.problem_mark.column + 1) + ":", exc.problem, file=sys.stderr)
         return 1
 
-    for error in sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.linecol):
-        print(dtschema.format_error(filename, error, verbose=args.verbose), file=sys.stderr)
-        ret = 1
+    try:
+        for error in sorted(dtsch.iter_errors(), key=lambda e: e.linecol):
+            print(dtschema.format_error(filename, error, verbose=args.verbose), file=sys.stderr)
+            ret = 1
+    except:
+        raise
+        print(filename + ': error checking schema file', file=sys.stderr)
+        return 1
 
-    dtschema.DTValidator.check_schema_refs(filename, testtree)
+    dtsch.check_schema_refs()
 
     return ret
 
@@ -49,9 +54,6 @@ if __name__ == "__main__":
     args = ap.parse_args()
 
     line_number=args.line_number
-
-    if args.url_path:
-        dtschema.add_schema_path(args.url_path)
 
     ret = 0
     for f in args.yamldt:
