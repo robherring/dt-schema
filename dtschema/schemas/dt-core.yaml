@@ -35,6 +35,9 @@ properties:
       - $ref: "types.yaml#/definitions/uint32-matrix"
   reg:
     $ref: "types.yaml#/definitions/uint32-matrix"
+  secure-status:
+    $ref: "types.yaml#/definitions/string"
+    enum: [ okay, disabled, reserved ]
   status:
     $ref: "types.yaml#/definitions/string"
     enum: [ okay, disabled, reserved ]

@@ -493,6 +493,7 @@ def fixup_node_props(schema):
     schema.setdefault('properties', dict())
     schema['properties'].setdefault('phandle', True)
     schema['properties'].setdefault('status', True)
+    schema['properties'].setdefault('secure-status', True)
     schema['properties'].setdefault('$nodename', True)
 
     keys = list()
