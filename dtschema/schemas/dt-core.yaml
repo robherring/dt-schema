@@ -35,6 +35,16 @@ properties:
       - $ref: "types.yaml#/definitions/uint32-matrix"
   reg:
     $ref: "types.yaml#/definitions/uint32-matrix"
+  reg-io-width:
+    $ref: "types.yaml#/definitions/uint32"
+    minimum: 1
+    maximum: 0xf
+    description:
+      Typically, a single set bit indicating the access size, but some uses treat
+      this as a bit mask of allowed sizes.
+  reg-shift:
+    $ref: "types.yaml#/definitions/uint32"
+    enum: [ 0, 1, 2 ]
   secure-status:
     $ref: "types.yaml#/definitions/string"
     enum: [ okay, disabled, reserved ]
