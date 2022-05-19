@@ -864,7 +864,10 @@ def _extract_subschema_types(props, schema, subschema):
     if not isinstance(subschema, dict):
         return
 
-    for k in subschema.keys() & {'properties', 'patternProperties', 'additionalProperties'}:
+    if 'additionalProperties' in subschema:
+        _extract_subschema_types(props, schema, subschema['additionalProperties'])
+
+    for k in subschema.keys() & {'properties', 'patternProperties'}:
         if isinstance(subschema[k], dict):
             for p,v in subschema[k].items():
                 _extract_prop_type(props, schema, p, v)
