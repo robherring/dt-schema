@@ -23,14 +23,9 @@ def check_doc(filename):
     ret = 0
     try:
         testtree = dtschema.load(filename, line_number=line_number)
-    except (ruamel.yaml.scanner.ScannerError, ruamel.yaml.parser.ParserError) as exc:
-        print(filename + ": ", exc, file=sys.stderr)
-        return 1
     except ruamel.yaml.YAMLError as exc:
-        print(filename + ":", exc.path[-1], exc.message, file=sys.stderr)
-        return 1
-    except ruamel.yaml.constructor.DuplicateKeyError as exc:
-        print(filename + ":", exc.problem, file=sys.stderr)
+        print(filename + ":" + str(exc.problem_mark.line + 1) + ":" +
+              str(exc.problem_mark.column + 1) + ":", exc.problem, file=sys.stderr)
         return 1
 
     try:
