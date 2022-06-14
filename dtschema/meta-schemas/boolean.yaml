@@ -11,5 +11,6 @@ properties:
     const: boolean
   description: {}
   default: {}
+  deprecated: {}
 
 additionalProperties: false
