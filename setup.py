@@ -37,6 +37,7 @@ setuptools.setup(
     package_data={'dtschema': data_files},
 
     scripts=[
+        'tools/dt-check-compatible',
         'tools/dt-validate',
         'tools/dt-doc-validate',
         'tools/dt-mk-schema',

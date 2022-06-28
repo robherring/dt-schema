@@ -705,6 +705,18 @@ def make_compatible_schema(schemas):
     }
 
 
+def get_undocumented_compatibles(compatible_list):
+    global schema_cache
+    undoc_compats = []
+
+    validator = dtschema.DTValidator(schema_cache['generated-compatibles'])
+    for compat in compatible_list:
+        if not validator.is_valid({"compatible": [ compat ]}):
+            undoc_compats += [ compat ]
+
+    return undoc_compats
+
+
 def process_schema(filename):
     try:
         schema = load_schema(filename)

@@ -8,6 +8,7 @@ from dtschema.lib import (
     extract_compatibles,
     extract_types,
     get_prop_types,
+    get_undocumented_compatibles,
     sized_int,
 )
 
