@@ -234,7 +234,14 @@ int_array_re = re.compile('int(8|16|32|64)-array')
 unit_types_re = re.compile('-(bits|percent|bp|m?hz|sec|ms|us|ns|ps|mm|(micro|nano)amp|(micro-)?ohms|micro(amp|watt)-hours|microvolt|picofarads|(milli)?celsius|kpascal)$')
 
 # Remove this once we remove array to matrix fixups
-known_array_props = {'assigned-clock-rates', 'linux,keycodes'}
+known_array_props = {
+    'assigned-clock-rates',
+    'linux,keycodes',
+    'max8997,pmic-buck1-dvs-voltage',
+    'max8997,pmic-buck2-dvs-voltage',
+    'max8997,pmic-buck5-dvs-voltage',
+}
+
 
 def is_int_array_schema(propname, subschema):
     if 'allOf' in subschema:
