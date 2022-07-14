@@ -52,6 +52,7 @@ all-properties:
       pattern: '^[a-zA-Z0-9,.\-_ #+/]+$'
     contains:
       $ref: '#/all-properties'
+    default: {}
     deprecated: {}
     pattern:
       type: string
