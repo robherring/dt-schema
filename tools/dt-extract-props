@@ -21,20 +21,15 @@ strict = False
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("schema_files", type=str, nargs='*',
-                    help="Schema directories and/or files")
+                    help="preparsed schema file or list of additional schema files/directories")
     ap.add_argument('-d', '--duplicates', help="Only output properties with more than one type", action="store_true")
     ap.add_argument('-v', '--verbose', help="Additional search path for references", action="store_true")
     ap.add_argument('-V', '--version', help="Print version number",
                     action="version", version=dtschema.__version__)
     args = ap.parse_args()
 
-    if os.path.isfile(args.schema_files[0]):
-        schemas = dtschema.load_schema(os.path.abspath(args.schema_files[0]))
-    else:
-        schemas = dtschema.process_schemas(args.schema_files)
-    dtschema.set_schema(schemas)
-
-    props = dtschema.extract_types(schemas)
+    dtschema.set_schemas(args.schema_files)
+    props = dtschema.extract_types()
 
     if args.duplicates:
         tmp_props = {}

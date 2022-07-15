@@ -22,11 +22,11 @@ if __name__ == "__main__":
     if not os.path.isfile(args.dtbfile):
         exit(1)
 
-    if os.path.isfile(args.schema):
-        schemas = dtschema.load_schema(os.path.abspath(args.schema))
+    if args.schema:
+        schemas = [args.schemas]
     else:
-        schemas = dtschema.process_schemas([args.schema])
-    dtschema.set_schema(schemas)
+        schemas = []
+    dtschema.set_schemas(schemas)
 
     dt = dtschema.load(args.dtbfile)
 

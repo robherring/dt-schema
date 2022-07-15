@@ -893,22 +893,20 @@ def _extract_subschema_types(props, schema, subschema):
                 _extract_prop_type(props, schema, p, v)
 
 
-def extract_types(schemas):
-    if not isinstance(schemas, list):
-        return
+def extract_types():
+    global schema_cache
 
     props = {}
-    for sch in schemas:
+    for sch in schema_cache:
         _extract_subschema_types(props, sch, sch)
 
     return props
 
 
 def get_prop_types():
-    global schema_cache
     pat_props = {}
 
-    props = dtschema.extract_types(schema_cache)
+    props = dtschema.extract_types()
 
     # hack to remove aliases pattern
     del props['^[a-z][a-z0-9\-]*$']
@@ -940,10 +938,16 @@ def load(filename, line_number=False):
 schema_cache = []
 
 
-def set_schema(schemas):
+def set_schemas(schema_files, core_schema=True):
     global schema_cache
-    schema_cache = schemas
 
+    if len(schema_files) == 1 and os.path.isfile(schema_files[0]):
+        # a processed schema file
+        schema_cache = dtschema.load_schema(os.path.abspath(schema_files[0]))
+    else:
+        schema_cache = process_schemas(schema_files, core_schema)
+
+    return schema_cache
 
 def http_handler(uri):
     global schema_cache

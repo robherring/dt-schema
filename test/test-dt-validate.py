@@ -103,8 +103,7 @@ class TestDTValidate(unittest.TestCase):
     def setUp(self):
         self.schemas = list()
 
-        self.schemas = dtschema.process_schemas([ os.path.join(os.path.abspath(basedir), "schemas/")])
-        dtschema.set_schema(self.schemas)
+        self.schemas = dtschema.set_schemas([ os.path.join(os.path.abspath(basedir), "schemas/")])
 
         for schema in self.schemas:
             schema["$select_validator"] = dtschema.DTValidator(schema['select'])

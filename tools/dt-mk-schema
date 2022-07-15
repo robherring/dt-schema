@@ -35,7 +35,7 @@ if __name__ == "__main__":
                     action="version", version=dtschema.__version__)
     args = ap.parse_args()
 
-    schemas = dtschema.process_schemas(args.schemas, core_schema=(not args.useronly))
+    schemas = dtschema.set_schemas(args.schemas, core_schema=(not args.useronly))
     if not schemas:
         exit(-1)
 

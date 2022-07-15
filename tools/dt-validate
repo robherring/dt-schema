@@ -27,14 +27,10 @@ class schema_group():
     def __init__(self, schema_file=""):
         self.schemas = list()
 
-        if schema_file == "" or os.path.isdir(schema_file):
-            self.schemas = dtschema.process_schemas([schema_file])
-        elif os.path.isfile(schema_file):
-            self.schemas = dtschema.load_schema(os.path.abspath(schema_file))
-        else:
+        if schema_file != "" and not os.path.exists(schema_file):
             exit(-1)
 
-        dtschema.set_schema(self.schemas)
+        self.schemas = dtschema.set_schemas([schema_file])
 
     def check_node(self, tree, node, disabled, nodename, fullname, filename):
         # Skip any generated nodes
@@ -127,8 +123,8 @@ if __name__ == "__main__":
         epilog='Arguments can also be passed in a file prefixed with a "@" character.')
     ap.add_argument("yamldt", nargs='*',
                     help="Filename or directory of YAML encoded devicetree input file(s)")
-    ap.add_argument('-s', '--schema', help="path to additional additional schema files")
-    ap.add_argument('-p', '--preparse', help="preparsed schema file")
+    ap.add_argument('-s', '--schema', help="preparsed schema file or path to schema files")
+    ap.add_argument('-p', '--preparse', help="preparsed schema file (deprecated, use '-s')")
     ap.add_argument('-l', '--limit', help="limit validation to schema files matching substring")
     ap.add_argument('-m', '--show-unmatched', default=0,
         help="Print out nodes which don't match any schema.\n" \
