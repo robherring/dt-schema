@@ -147,6 +147,7 @@ patternProperties:
           listen to be devices ourselves.
 
       host-notify:
+        type: boolean
         description:
           Device uses SMBus host notify protocol instead of interrupt line.
           Requires being connected to an adapter that supports this feature.
