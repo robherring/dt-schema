@@ -238,7 +238,7 @@ def _fixup_int_matrix(propname, subschema):
 
 
 int_array_re = re.compile('int(8|16|32|64)-array')
-unit_types_re = re.compile('-(bits|percent|bp|m?hz|sec|ms|us|ns|ps|mm|(micro|nano)amp|(micro-)?ohms|micro(amp|watt)-hours|microvolt|picofarads|(milli)?celsius|kpascal)$')
+unit_types_re = re.compile('-(kBps|bits|percent|bp|m?hz|sec|ms|us|ns|ps|mm|nanoamp|(micro-)?ohms|micro(amp|watt)(-hours)?|milliwatt|microvolt|picofarads|(milli)?celsius|kpascal)$')
 
 # Remove this once we remove array to matrix fixups
 known_array_props = {
