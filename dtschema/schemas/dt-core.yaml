@@ -20,6 +20,7 @@ properties:
   compatible:
     $ref: "types.yaml#/definitions/string-array"
     items:
+      # Keep in sync with make_compatible_schema()
       pattern: "^[a-zA-Z0-9][a-zA-Z0-9,+\\-._]+$"
   label:
     $ref: "types.yaml#/definitions/string"
