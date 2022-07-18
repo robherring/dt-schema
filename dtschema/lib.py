@@ -805,7 +805,7 @@ def _merge_dim(dim1, dim2):
 type_re = re.compile('(flag|u?int(8|16|32|64)(-(array|matrix))?|string(-array)?|phandle(-array)?)')
 
 
-def _extract_prop_type(props, schema, propname, subschema):
+def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     if not isinstance(subschema, dict):
         return
 
@@ -819,7 +819,7 @@ def _extract_prop_type(props, schema, propname, subschema):
         for p in sch_path:
             subschema = subschema[p]
         #print(propname, sch_path, subschema, file=sys.stderr)
-        _extract_prop_type(props, schema, propname, subschema)
+        _extract_prop_type(props, schema, propname, subschema, is_pattern)
 
     try:
         prop_type = type_re.search(subschema['$ref']).group(0)
@@ -843,6 +843,8 @@ def _extract_prop_type(props, schema, propname, subschema):
 
     if prop_type:
         props.setdefault(propname, {})
+        if is_pattern:
+            props[propname].setdefault('regex', re.compile(propname))
 
         if prop_type == 'phandle-array' or prop_type.endswith('-matrix'):
             dim = (_get_array_range(subschema), _get_array_range(subschema.get('items', {})))
@@ -877,7 +879,7 @@ def _extract_prop_type(props, schema, propname, subschema):
 
     for k in subschema.keys() & {'allOf', 'oneOf', 'anyOf'}:
         for v in subschema[k]:
-            _extract_prop_type(props, schema, propname, v)
+            _extract_prop_type(props, schema, propname, v, is_pattern)
 
 
 def _extract_subschema_types(props, schema, subschema):
@@ -890,7 +892,7 @@ def _extract_subschema_types(props, schema, subschema):
     for k in subschema.keys() & {'properties', 'patternProperties'}:
         if isinstance(subschema[k], dict):
             for p,v in subschema[k].items():
-                _extract_prop_type(props, schema, p, v)
+                _extract_prop_type(props, schema, p, v, k == 'patternProperties')
 
 
 def extract_types():
@@ -915,10 +917,11 @@ def get_prop_types():
     for key in [key for key in props if 'type' not in props[key] ]: del props[key]
 
     # Split out pattern properties
-    for key in [key for key in props if re.fullmatch('(^\^.*|.*\$$|.*[*[].*)', key) ]:
-        #print(key, props[key])
-        pat_props[key] = props[key]
-        pat_props[key]['regex'] = re.compile(key)
+    for key in [key for key in props if 'regex' in props[key] ]:
+        # Only want patternProperties with type and some amount of fixed string
+        if 'type' in props[key] and re.search(r'[0-9a-zA-F]{2}', key):
+            #print(key, props[key], file=sys.stderr)
+            pat_props[key] = props[key]
         del props[key]
 
     return [ props, pat_props ]
