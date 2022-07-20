@@ -16,8 +16,20 @@ properties:
 
   phy-supply: true
 
+  phy-type:
+    description: Some PHYs can operate in multiple modes. This sets the operating
+      mode of the PHY. This only works for PHY providers with a single PHY as
+      this only allows 1 mode. For instances with multiple PHYs, the mode can be
+      set in the PHY cells.
+    $ref: /schemas/types.yaml#/definitions/uint32
+    minimum: 1
+    maximum: 11
+
 required:
   - "#phy-cells"
+
+dependentRequired:
+  phy-type: [ '#phy-cells' ]
 
 additionalProperties: true
 
