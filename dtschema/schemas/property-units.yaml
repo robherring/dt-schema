@@ -109,6 +109,9 @@ patternProperties:
   "-millicelsius$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: millidegree Celsius
+  "-kelvin$":
+    $ref: "types.yaml#/definitions/uint32-array"
+    description: SI unit of thermodynamic temperature
 
   # Pressure
   "-kpascal$":
