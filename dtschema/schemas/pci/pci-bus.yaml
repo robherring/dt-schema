@@ -113,6 +113,22 @@ properties:
     $ref: /schemas/types.yaml#/definitions/uint32
     enum: [ 1, 2, 3, 4 ]
 
+  msi-map:
+    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+    items:
+      minItems: 3
+      items:
+        - description: The RID base matched by the entry
+        - description: phandle to msi-controller node
+        - description: (optional) The msi-specifier produced for the first RID matched
+            by the entry. Currently, msi-specifier is 0 or 1 cells.
+        - description: The length of consecutive RIDs following the RID base
+
+  msi-map-mask:
+    description: A mask to be applied to each Requester ID prior to being
+      mapped to an msi-specifier per the msi-map property.
+    $ref: /schemas/types.yaml#/definitions/uint32
+
   num-lanes:
     description: The number of PCIe lanes
     $ref: /schemas/types.yaml#/definitions/uint32
@@ -165,5 +181,8 @@ required:
   - reg
   - "#address-cells"
   - "#size-cells"
+
+dependentRequired:
+  msi-map-mask: [ msi-map ]
 
 additionalProperties: true
