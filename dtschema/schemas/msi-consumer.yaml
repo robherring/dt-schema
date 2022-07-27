@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2022 Arm Ltd.
+$id: http://devicetree.org/schemas/msi-consumer.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: MSI consumer properties
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+# always select the core schema
+select: true
+
+properties:
+  msi-parent:
+    description: |
+      A list of phandle + msi-specifier pairs, one for each MSI controller which the
+      device is capable of using.
+
+      This property is unordered, and MSIs may be allocated from any combination of
+      MSI controllers listed in the msi-parent property.
+
+      If a device has restrictions on the allocation of MSIs, these restrictions
+      must be described with additional properties.
+
+      When #msi-cells is non-zero, busses with an msi-parent will require
+      additional properties to describe the relationship between devices on the bus
+      and the set of MSIs they can potentially generate.
+    $ref: types.yaml#/definitions/phandle-array
+    items:
+      minItems: 1
+      maxItems: 2
+
+additionalProperties: true

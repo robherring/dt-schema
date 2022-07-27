@@ -250,6 +250,7 @@ phandle_args = {
     'interconnects': '#interconnect-cells',
     'mboxes': '#mbox-cells',
     'sound-dai': '#sound-dai-cells',
+    'msi-parent': '#msi-cells',
     'gpio-ranges': 3,
 
     'nvmem-cells': None,
