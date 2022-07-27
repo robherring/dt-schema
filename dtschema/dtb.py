@@ -289,8 +289,6 @@ def _get_phandle_arg_size(prop_path, idx, cells, cellname):
         return 0
 
     node = phandles[phandle]
-    if cellname not in node:
-        return 0
 
     return _get_cells_size(node, cellname) + 1
 
@@ -307,7 +305,7 @@ def fixup_phandles(dt, path=''):
             continue
         elif k in phandle_args:
             cellname = phandle_args[k]
-        elif k.endswith('s'):
+        elif k.endswith('s') and 'gpio' not in k:
             cellname = '#' + k[:-1] + '-cells'
             #print(k, v)
             i = _get_phandle_arg_size(path + ':' + k, 0, v[0], cellname)
