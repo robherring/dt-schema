@@ -23,7 +23,7 @@ if __name__ == "__main__":
         exit(1)
 
     if args.schema:
-        schemas = [args.schemas]
+        schemas = [args.schema]
     else:
         schemas = []
     dtschema.set_schemas(schemas)
