@@ -241,7 +241,8 @@ def fdt_scan_node(fdt, nodename, offset):
 
 
 phandle_args = {
-    # phandle+args properties which don't match standard 'foos' and '#foo-cells' pattern
+    # phandle+args properties with fixed arg size or which don't match standard
+    # 'foos' and '#foo-cells' pattern
     'assigned-clocks': '#clock-cells',
     'assigned-clock-parents': '#clock-cells',
     'cooling-device': '#cooling-cells',
@@ -249,6 +250,7 @@ phandle_args = {
     'interconnects': '#interconnect-cells',
     'mboxes': '#mbox-cells',
     'sound-dai': '#sound-dai-cells',
+    'gpio-ranges': 3,
 
     'nvmem-cells': None,
     'memory-region': None,
@@ -256,7 +258,9 @@ phandle_args = {
 
 
 def _get_cells_size(node, cellname):
-    if cellname in node:
+    if isinstance(cellname, int):
+        return cellname
+    elif cellname in node:
         return node[cellname][0][0]
     else:
         return 0
