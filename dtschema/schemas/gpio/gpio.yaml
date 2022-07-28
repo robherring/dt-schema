@@ -25,6 +25,12 @@ properties:
       maxItems: 2
   gpio-ranges:
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    items:
+      items:
+        - description: pin controller phandle
+        - description: GPIO controller offset
+        - description: pin controller offset
+        - description: number of pins
 
   gpio:
     # 'gpio' can appear as a property or node name
