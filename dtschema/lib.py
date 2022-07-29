@@ -939,7 +939,7 @@ def extract_types():
     return props
 
 
-def get_prop_types(want_missing_types=False):
+def get_prop_types(want_missing_types=False, want_node_types=False):
     pat_props = {}
 
     props = dtschema.extract_types()
@@ -950,9 +950,18 @@ def get_prop_types(want_missing_types=False):
     props.pop('^.*$', None)
     props.pop('.*', None)
 
+    # Remove node types
+    if not want_node_types:
+        for val in props.values():
+            val[:] = [t for t in val if t['type'] != 'node']
+
     # Remove all properties without a type
     if not want_missing_types:
-        for key in [key for key in props if props[key][0]['type'] is None]: del props[key]
+        for val in props.values():
+            val[:] = [t for t in val if t['type'] is not None]
+
+    # Delete any entries now empty due to above operations
+    for key in [key for key in props if len(props[key]) == 0]: del props[key]
 
     # Split out pattern properties
     for key in [key for key in props if len(props[key]) and 'regex' in props[key][0] ]:
@@ -1022,11 +1031,39 @@ def load(filename, line_number=False):
             return yaml.load(f.read())
 
 
+def make_property_type_cache():
+    global schema_cache
+
+    props, pat_props = get_prop_types()
+
+    for val in props.values():
+        val[:] = [t for t in val if 'regex' not in t]
+        for t in val: del t['$id']
+
+    schema_cache['generated-types'] = {
+        '$id': 'generated-types',
+        '$filename': 'Generated property types',
+        'select': False,
+        'properties': props
+    }
+
+    for val in pat_props.values():
+        for t in val:
+            t.pop('regex', None)
+            del t['$id']
+
+    schema_cache['generated-pattern-types'] = {
+        '$id': 'generated-pattern-types',
+        '$filename': 'Generated property types',
+        'select': False,
+        'properties': pat_props
+    }
+
+
 schema_cache = {}
 
-
 def set_schemas(schema_files, core_schema=True):
-    global schema_cache
+    global schema_cache, pat_props, props
 
     if len(schema_files) == 1 and os.path.isfile(schema_files[0]):
         # a processed schema file
@@ -1037,8 +1074,16 @@ def set_schemas(schema_files, core_schema=True):
             for sch in schema_cache:
                 d[sch['$id']] = sch
             schema_cache = d
+
+        if 'generated-types' in schema_cache:
+            props = schema_cache['generated-types']['properties']
+        if 'generated-pattern-types' in schema_cache:
+            pat_props = schema_cache['generated-pattern-types']['properties']
+            for k in pat_props:
+                pat_props[k][0]['regex'] = re.compile(k)
     else:
         schema_cache = process_schemas(schema_files, core_schema)
+        make_property_type_cache()
 
     return schema_cache
 
