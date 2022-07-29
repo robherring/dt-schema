@@ -31,7 +31,10 @@ class schema_group():
         self.schemas = dtschema.set_schemas([schema_file])
 
     def check_node(self, tree, node, disabled, nodename, fullname, filename):
-        # Skip any generated nodes
+        # Hack to save some time validating examples
+        if 'example-0' in node or 'example-' in nodename:
+            return
+
         node['$nodename'] = [ nodename ]
         node_matched = False
         matched_schemas = []
