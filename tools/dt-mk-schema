@@ -45,7 +45,7 @@ if __name__ == "__main__":
         f = sys.stdout
 
     if (args.json):
-        json.dump(schemas, f)
+        json.dump(schemas, f, indent=4)
     else:
         yaml = ruamel.yaml.YAML(typ='safe')
         yaml.dump(schemas, f)
