@@ -523,10 +523,10 @@ def fixup_node_props(schema):
         keys.extend(schema['patternProperties'])
 
     for key in keys:
-        if "pinctrl" in key:
+        if re.match(r'^pinctrl-[0-9]', key):
             break
     else:
-        schema['properties']['pinctrl-names'] = True
+        schema['properties'].setdefault('pinctrl-names', True)
         schema.setdefault('patternProperties', dict())
         schema['patternProperties']['pinctrl-[0-9]+'] = True
 
