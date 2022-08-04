@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2022 Arm Ltd.
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/bus/qemu,platform.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: QEMU Platform bus
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+select:
+  properties:
+    compatible:
+      contains:
+        const: qemu,platform
+  required:
+    - compatible
+
+properties:
+  compatible:
+    items:
+      - const: qemu,platform
+      - const: simple-bus
+
+  ranges: true
+  dma-ranges: true
+
+  "#address-cells":
+    enum: [ 1, 2 ]
+  "#size-cells":
+    enum: [ 1, 2 ]
+
+  nonposted-mmio:
+    $ref: /schemas/types.yaml#/definitions/flag
+    description:
+      If present, specifies that direct children of this bus should use
+      non-posted memory accesses (i.e. a non-posted mapping mode) for MMIO
+      ranges.
+
+patternProperties:
+  # All other properties should be child nodes with unit-address and 'reg'
+  "@(0|[1-9a-f][0-9a-f]*)$":
+    type: object
+
+additionalProperties: false
+
+required:
+  - compatible
+  - "#address-cells"
+  - "#size-cells"
+  - ranges
+...
