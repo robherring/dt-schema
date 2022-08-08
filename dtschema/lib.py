@@ -1044,7 +1044,7 @@ def make_property_type_cache():
         '$id': 'generated-types',
         '$filename': 'Generated property types',
         'select': False,
-        'properties': props
+        'properties': {k: props[k] for k in sorted(props)}
     }
 
     for val in pat_props.values():
@@ -1056,7 +1056,7 @@ def make_property_type_cache():
         '$id': 'generated-pattern-types',
         '$filename': 'Generated property types',
         'select': False,
-        'properties': pat_props
+        'properties': {k: pat_props[k] for k in sorted(pat_props)}
     }
 
 
