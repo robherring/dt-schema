@@ -9,48 +9,56 @@ description:
   Keywords must be a subset of known json-schema keywords
 
 definitions:
+  json-schema-prop-names:
+    enum:
+      - $ref
+      - additionalItems
+      - additionalProperties
+      - allOf
+      - anyOf
+      - const
+      - contains
+      - default
+      - dependencies
+      - dependentRequired
+      - dependentSchemas
+      - deprecated
+      - description
+      - else
+      - enum
+      - exclusiveMaximum
+      - exclusiveMinimum
+      - items
+      - if
+      - minItems
+      - minimum
+      - maxItems
+      - maximum
+      - multipleOf
+      - not
+      - oneOf
+      - pattern
+      - patternProperties
+      - properties
+      - required
+      - then
+      - typeSize
+      - unevaluatedProperties
+      - uniqueItems
+
+  overlapping-json-schema-prop-names:
+    # 'type' is also a DT property name
+    const: type
+
   sub-schemas:
     allOf:
       - $ref: "#"
       - $ref: items.yaml#
     propertyNames:
       # The subset of keywords allowed for sub-schema
-      enum:
-        - $ref
-        - additionalItems
-        - additionalProperties
-        - allOf
-        - anyOf
-        - const
-        - contains
-        - default
-        - dependencies
-        - dependentRequired
-        - dependentSchemas
-        - deprecated
-        - description
-        - else
-        - enum
-        - exclusiveMaximum
-        - exclusiveMinimum
-        - items
-        - if
-        - minItems
-        - minimum
-        - maxItems
-        - maximum
-        - multipleOf
-        - not
-        - oneOf
-        - pattern
-        - patternProperties
-        - properties
-        - required
-        - then
-        - type
-        - typeSize
-        - unevaluatedProperties
-        - uniqueItems
+      anyOf:
+        - $ref: "#/definitions/json-schema-prop-names"
+        - $ref: "#/definitions/overlapping-json-schema-prop-names"
 
   scalar-prop-list:
     propertyNames:
@@ -158,18 +166,13 @@ properties:
     additionalProperties:
       $ref: "#/definitions/sub-schemas"
   properties:
-    if:
-      # Filter out overlapping json-schema and DT property names
-      not:
-        propertyNames:
-          const: type
-    then:
-      not:
-        $ref: "#/definitions/sub-schemas"
-      description: A json-schema keyword was found instead of a DT property name.
     propertyNames:
-      description: Expected a valid DT property name
-      pattern:  "^[#$a-zA-Z][a-zA-Z0-9,+\\-._@]{0,63}$"
+      allOf:
+        - description: Expected a valid DT property name
+          pattern:  "^[#$a-zA-Z][a-zA-Z0-9,+\\-._@]{0,63}$"
+        - description: A json-schema keyword was found instead of a DT property name.
+          not:
+            $ref: "#/definitions/json-schema-prop-names"
     additionalProperties:
       $ref: "#/definitions/sub-schemas"
   required:
