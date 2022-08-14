@@ -823,11 +823,13 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     if propname.startswith('$'):
         return
 
+    props.setdefault(propname, [])
+
     if subschema.keys() & {'properties', 'patternProperties', 'additionalProperties'}:
         _extract_subschema_types(props, schema, subschema)
 
     # We only support local refs
-    if '$ref' in subschema and subschema['$ref'].startswith('#/'):
+    if propname not in props and '$ref' in subschema and subschema['$ref'].startswith('#/'):
         sch_path = subschema['$ref'].split('/')[1:]
         subschema = schema
         for p in sch_path:
@@ -838,8 +840,6 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     for k in subschema.keys() & {'allOf', 'oneOf', 'anyOf'}:
         for v in subschema[k]:
             _extract_prop_type(props, schema, propname, v, is_pattern)
-
-    props.setdefault(propname, [])
 
     new_prop = {}
     prop_type = None
