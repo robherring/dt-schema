@@ -50,7 +50,7 @@ setuptools.setup(
 
     install_requires=[
         'ruamel.yaml>0.15.69',
-        'jsonschema>=4.1.2,<4.10.0',
+        'jsonschema>=4.1.2',
         'rfc3987',
         'pylibfdt',
     ],
