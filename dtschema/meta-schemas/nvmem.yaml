@@ -3,7 +3,7 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/nvmem.yaml#"
-$schema: "http://json-schema.org/draft/2019-09/schema#"
+$schema: https://json-schema.org/draft/2019-09/schema
 
 properties:
   nvmem:

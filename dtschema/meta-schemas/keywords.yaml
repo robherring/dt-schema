@@ -3,7 +3,7 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/keywords.yaml#"
-$schema: "http://json-schema.org/draft/2019-09/schema#"
+$schema: https://json-schema.org/draft/2019-09/schema
 
 description:
   Keywords must be a subset of known json-schema keywords

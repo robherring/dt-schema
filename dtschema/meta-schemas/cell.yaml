@@ -4,7 +4,7 @@
 %YAML 1.2
 ---
 $id: "http://devicetree.org/meta-schemas/cell.yaml#"
-$schema: "http://json-schema.org/draft/2019-09/schema#"
+$schema: https://json-schema.org/draft/2019-09/schema
 
 array:
   description: cell array properties must define how many entries and what the
