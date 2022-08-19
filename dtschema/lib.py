@@ -886,32 +886,31 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     else:
         dim = ((0, 0), (0, 0))
 
-    if propname in props:
-        dup_prop = None
-        for p in props[propname]:
-            if p['type'] is None:
-                dup_prop = p
-                break
-            if dim != ((0, 0), (0, 0)) and (p['type'] == 'phandle-array' or p['type'].endswith('-matrix')):
-                if not 'dim' in p:
-                    p['dim'] = dim
-                elif p['dim'] != dim:
-                    # Conflicting dimensions
-                    p['dim'] = _merge_dim(p['dim'], dim)
-                return
-            if p['type'].startswith(prop_type):
-                # Already have the same or looser type
-                if schema['$id'] not in p['$id']:
-                    p['$id'] += [schema['$id']]
-                return
-            elif p['type'] in prop_type:
-                # Replace scalar type with array type
-                new_prop['$id'] += p['$id']
-                dup_prop = p
-                break
+    dup_prop = None
+    for p in props[propname]:
+        if p['type'] is None:
+            dup_prop = p
+            break
+        if dim != ((0, 0), (0, 0)) and (p['type'] == 'phandle-array' or p['type'].endswith('-matrix')):
+            if not 'dim' in p:
+                p['dim'] = dim
+            elif p['dim'] != dim:
+                # Conflicting dimensions
+                p['dim'] = _merge_dim(p['dim'], dim)
+            return
+        if p['type'].startswith(prop_type):
+            # Already have the same or looser type
+            if schema['$id'] not in p['$id']:
+                p['$id'] += [schema['$id']]
+            return
+        elif p['type'] in prop_type:
+            # Replace scalar type with array type
+            new_prop['$id'] += p['$id']
+            dup_prop = p
+            break
 
-        if dup_prop:
-            props[propname].remove(dup_prop)
+    if dup_prop:
+        props[propname].remove(dup_prop)
 
     props[propname] += [new_prop]
 
