@@ -823,13 +823,8 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     if propname.startswith('$'):
         return
 
-    props.setdefault(propname, [])
-
-    if subschema.keys() & {'properties', 'patternProperties', 'additionalProperties'}:
-        _extract_subschema_types(props, schema, subschema)
-
     # We only support local refs
-    if propname not in props and '$ref' in subschema and subschema['$ref'].startswith('#/'):
+    if '$ref' in subschema and subschema['$ref'].startswith('#/'):
         sch_path = subschema['$ref'].split('/')[1:]
         subschema = schema
         for p in sch_path:
@@ -840,6 +835,8 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     for k in subschema.keys() & {'allOf', 'oneOf', 'anyOf'}:
         for v in subschema[k]:
             _extract_prop_type(props, schema, propname, v, is_pattern)
+
+    props.setdefault(propname, [])
 
     new_prop = {}
     prop_type = None
@@ -902,6 +899,9 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
             # Already have the same or looser type
             if schema['$id'] not in p['$id']:
                 p['$id'] += [schema['$id']]
+                # Descend into child schemas if we haven't seen this node already
+                if prop_type == 'node':
+                    break
             return
         elif p['type'] in prop_type:
             # Replace scalar type with array type
@@ -913,6 +913,9 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
         props[propname].remove(dup_prop)
 
     props[propname] += [new_prop]
+
+    if subschema.keys() & {'properties', 'patternProperties', 'additionalProperties'}:
+        _extract_subschema_types(props, schema, subschema)
 
 
 def _extract_subschema_types(props, schema, subschema):
