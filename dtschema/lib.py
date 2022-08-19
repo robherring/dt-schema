@@ -1138,10 +1138,7 @@ def typeSize(validator, typeSize, instance, schema):
         yield jsonschema.ValidationError("size is %r, expected %r" % (size, typeSize))
 
 
-DTVal = jsonschema.validators.extend(jsonschema.Draft201909Validator, {'typeSize': typeSize})
-
-
-class DTValidator(DTVal):
+class DTValidator():
     '''Custom Validator for Devicetree Schemas
 
     Overrides the Draft7 metaschema with the devicetree metaschema. This
@@ -1151,11 +1148,12 @@ class DTValidator(DTVal):
     '''
     resolver = jsonschema.RefResolver('', None, handlers=handlers)
     format_checker = jsonschema.FormatChecker()
+    DTVal = jsonschema.validators.extend(jsonschema.Draft201909Validator, {'typeSize': typeSize}, version='DT')
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('resolver', self.resolver)
         kwargs.setdefault('format_checker', self.format_checker)
-        super().__init__(*args, **kwargs)
+        self.validator = self.DTVal(*args, **kwargs)
 
     @classmethod
     def annotate_error(self, error, schema, path):
@@ -1165,7 +1163,7 @@ class DTValidator(DTVal):
         for e in error.context:
             self.annotate_error(e, schema, path + e.schema_path)
 
-        scope = self.ID_OF(schema)
+        scope = schema['$id']
         self.resolver.push_scope(scope)
         ref_depth = 1
 
@@ -1201,22 +1199,32 @@ class DTValidator(DTVal):
     @classmethod
     def iter_schema_errors(cls, schema):
         meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
-        for error in cls(meta_schema).iter_errors(schema):
-            cls(meta_schema).annotate_error(error, meta_schema, error.schema_path)
+        val = cls.DTVal(meta_schema, resolver=cls.resolver)
+        for error in val.iter_errors(schema):
+            cls.annotate_error(error, meta_schema, error.schema_path)
             error.linecol = get_line_col(schema, error.path)
             yield error
 
     def iter_errors(self, instance, _schema=None):
-        for error in super().iter_errors(instance, _schema):
+        for error in self.validator.iter_errors(instance, _schema):
             error.linecol = get_line_col(instance, error.path)
             error.note = None
             error.schema_file = None
             yield error
 
+    def validate(self, *args, **kwargs):
+        for error in self.iter_errors(*args, **kwargs):
+            raise error
+
+    def is_valid(self, instance):
+        error = next(self.iter_errors(instance), None)
+        return error is None
+
     @classmethod
     def check_schema(cls, schema):
         meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
-        for error in cls(meta_schema).iter_errors(schema):
+        val = cls.DTVal(meta_schema, resolver=cls.resolver)
+        for error in val.iter_errors(schema):
             raise jsonschema.SchemaError.create_from(error)
         fixup_schema(schema)
 
@@ -1233,7 +1241,7 @@ class DTValidator(DTVal):
 
     @classmethod
     def check_schema_refs(self, filename, schema):
-        scope = self.ID_OF(schema)
+        scope = schema['$id']
         if scope:
             self.resolver.push_scope(scope)
 

@@ -26,10 +26,6 @@ class TestDTMetaSchema(unittest.TestCase):
         self.schema = dtschema.load(os.path.join(basedir, 'schemas/good-example.yaml'))
         self.bad_schema = dtschema.load(os.path.join(basedir, 'schemas/bad-example.yaml'))
 
-    def test_metaschema_valid(self):
-        '''The DTValidator metaschema must be a valid Draft7 schema'''
-        jsonschema.Draft7Validator.check_schema(dtschema.DTValidator.META_SCHEMA)
-
     def test_all_metaschema_valid(self):
         '''The metaschema must all be a valid Draft2019-09 schema'''
         for filename in glob.iglob(os.path.join(dtschema_dir, 'meta-schemas/**/*.yaml'), recursive=True):
