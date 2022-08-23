@@ -1140,11 +1140,9 @@ handlers = {"http": http_handler}
 
 
 def typeSize(validator, typeSize, instance, schema):
-    if not isinstance(instance[0], list):
-        return
-    if isinstance(instance[0][0], sized_int):
+    try:
         size = instance[0][0].size
-    else:
+    except:
         size = 32
 
     if typeSize != size:

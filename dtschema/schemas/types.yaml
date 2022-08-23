@@ -168,6 +168,7 @@ definitions:
 
   uint32-matrix:
     type: array
+    typeSize: 32
     minItems: 1
     items:
       type: array
@@ -178,6 +179,7 @@ definitions:
     # prop = <0x1234 0x5678>;
     # or
     # prop = <0x1234>, <0x5678>;
+    typeSize: 32
     anyOf:
       - type: array
         minItems: 1
@@ -195,6 +197,7 @@ definitions:
             $ref: "#/definitions/cell"
   uint32:
     type: array
+    typeSize: 32
     minItems: 1
     maxItems: 1
     items:
@@ -212,6 +215,7 @@ definitions:
 
   int32-matrix:
     type: array
+    typeSize: 32
     minItems: 1
     items:
       type: array
@@ -222,6 +226,7 @@ definitions:
     # prop = <0x1234 0x5678>;
     # or
     # prop = <0x1234>, <0x5678>;
+    typeSize: 32
     anyOf:
       - type: array
         minItems: 1
@@ -239,6 +244,7 @@ definitions:
             $ref: "#/definitions/int32-item"
   int32:
     type: array
+    typeSize: 32
     minItems: 1
     maxItems: 1
     items:
