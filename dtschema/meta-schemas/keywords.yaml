@@ -169,7 +169,7 @@ properties:
     propertyNames:
       allOf:
         - description: Expected a valid DT property name
-          pattern:  "^[#$a-zA-Z][a-zA-Z0-9,+\\-._@]{0,63}$"
+          pattern:  "^[#$a-zA-Z][a-zA-Z0-9#,+\\-._@]{0,63}$"
         - description: A json-schema keyword was found instead of a DT property name.
           not:
             $ref: "#/definitions/json-schema-prop-names"
