@@ -31,11 +31,11 @@ class TestDTMetaSchema(unittest.TestCase):
         jsonschema.Draft7Validator.check_schema(dtschema.DTValidator.META_SCHEMA)
 
     def test_all_metaschema_valid(self):
-        '''The metaschema must all be a valid Draft7 schema'''
+        '''The metaschema must all be a valid Draft2019-09 schema'''
         for filename in glob.iglob(os.path.join(dtschema_dir, 'meta-schemas/**/*.yaml'), recursive=True):
             with self.subTest(schema=filename):
                 schema = dtschema.load_schema(filename)
-                jsonschema.Draft7Validator.check_schema(schema)
+                jsonschema.Draft201909Validator.check_schema(schema)
 
     def test_required_properties(self):
         dtschema.DTValidator.check_schema(self.schema)
