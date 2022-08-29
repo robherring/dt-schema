@@ -1023,9 +1023,14 @@ def property_get_type_dim(propname):
 
 
 def load(filename, line_number=False):
-    if filename.endswith('.dtb'):
-        with open(filename, 'rb') as f:
-            return [ dtschema.dtb.fdt_unflatten(f.read()) ]
+    try:
+        if not filename.endswith('.yaml'):
+            with open(filename, 'rb') as f:
+                return [ dtschema.dtb.fdt_unflatten(f.read()) ]
+    except:
+        if filename.endswith('.dtb'):
+            raise
+
     with open(filename, 'r', encoding='utf-8') as f:
         if line_number:
             return rtyaml.load(f.read())
