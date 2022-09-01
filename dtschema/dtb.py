@@ -251,6 +251,7 @@ phandle_args = {
     'mboxes': '#mbox-cells',
     'sound-dai': '#sound-dai-cells',
     'msi-parent': '#msi-cells',
+    'msi-ranges': '#interrupt-cells',
     'gpio-ranges': 3,
 
     'nvmem-cells': None,
@@ -329,6 +330,10 @@ def fixup_phandles(dt, path=''):
             if cells == 0:
                 #print(k, v)
                 break
+
+            # Special case for msi-ranges which has an additional span cell
+            if k == 'msi-ranges':
+                cells += 1
 
             # Special case for interconnects which is pairs of phandles+args
             if k == 'interconnects':
