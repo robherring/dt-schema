@@ -1326,7 +1326,7 @@ def format_error(filename, error, prefix="", nodename=None, verbose=False):
                 msg += '\n' + format_error(filename, suberror, prefix=prefix+"\t", nodename=nodename, verbose=verbose)
             elif suberror.message not in msg:
                 msg += '\n' + prefix + '\t' + suberror.message
-                if hasattr(suberror, 'note') and suberror.note != error.note:
+                if hasattr(suberror, 'note') and suberror.note and suberror.note != error.note:
                     msg += '\n\t\t' + prefix + 'hint: ' + suberror.note
 
     elif error.schema_path[-1] == 'oneOf':
