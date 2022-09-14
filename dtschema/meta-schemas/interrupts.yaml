@@ -21,13 +21,16 @@ properties:
     oneOf:
       - $ref: "boolean.yaml"
       - $ref: "nodes.yaml"
-  interrupt-parent: false # interrupt-parent is implicit
 
 dependentRequired:
   interrupt-map: ['#interrupt-cells']
   'interrupt-map-mask': [ interrupt-map ]
 
 dependentSchemas:
+  'interrupts':
+    properties:
+      interrupt-parent: false # interrupt-parent is implicitly allowed (added by tooling)
+
   '#interrupt-cells':
     anyOf:
       - required:
