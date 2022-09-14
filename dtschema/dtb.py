@@ -306,6 +306,8 @@ def fixup_phandles(dt, path=''):
             continue
         elif not {'phandle-array'} & set(dtschema.property_get_type(k)):
             continue
+        elif dtschema.property_has_fixed_dimensions(k):
+            continue
         elif not isinstance(v, list) or (len(v) > 1 or not isinstance(v[0], list)):
             # Not a matrix or already split, nothing to do
             continue

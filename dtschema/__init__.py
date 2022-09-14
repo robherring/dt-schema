@@ -10,6 +10,7 @@ from dtschema.lib import (
     get_undocumented_compatibles,
     property_get_type,
     property_get_type_dim,
+    property_has_fixed_dimensions,
     sized_int,
 )
 

@@ -1022,6 +1022,14 @@ def property_get_type_dim(propname):
     return None
 
 
+def property_has_fixed_dimensions(propname):
+    dim = property_get_type_dim(propname)
+    if dim and dim[0][0] == dim[0][1] or dim[1][0] == dim[1][1]:
+        return True
+
+    return False
+
+
 def load(filename, line_number=False):
     try:
         if not filename.endswith('.yaml'):
