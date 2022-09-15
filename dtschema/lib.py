@@ -987,19 +987,19 @@ def property_get_type(propname):
     if not props:
         props, pat_props = get_prop_types()
 
-    type = []
+    type = set()
     if propname in props:
         for v in props[propname]:
             if v['type']:
-                type += [v['type']]
+                type.add(v['type'])
     if len(type) == 0:
         for v in pat_props.values():
             if v[0]['type'] and v[0]['type'] not in type and v[0]['regex'].search(propname):
-                type += [v[0]['type']]
+                type.add(v[0]['type'])
 
     # Don't return 'node' as a type if there's other types
     if len(type) > 1 and 'node' in type:
-        type.remove('node')
+        type -= {'node'}
     return type
 
 

@@ -76,27 +76,26 @@ def prop_value(nodename, p):
     if nodename in {'__fixups__', 'aliases'}:
         return data[:-1].decode(encoding='ascii').split('\0')
 
-    prop_types = dtschema.property_get_type(p.name)
-    if 'node' in prop_types:
-        prop_types.remove('node')
+    prop_types = set(dtschema.property_get_type(p.name))
+    prop_types -= {'node'}
 
     if len(prop_types) > 1:
-        if {'string', 'string-array'} & set(prop_types):
+        if {'string', 'string-array'} & prop_types:
             str = bytes_to_string(data)
             if str:
                 return str
             # Assuming only one other type
             try:
-                fmt = set(prop_types).difference({'string', 'string-array'}).pop()
+                fmt = prop_types.difference({'string', 'string-array'}).pop()
             except:
                 return data
         elif 'flag' in prop_types and len(data):
-            fmt = set(prop_types).difference({'flag'}).pop()
+            fmt = prop_types.difference({'flag'}).pop()
         else:
             #print(p.name + ': multiple types found', file=sys.stderr)
             fmt = None
     elif len(prop_types) == 1:
-        fmt = prop_types[0]
+        fmt = prop_types.pop()
 
     if not fmt:
         # Primarily for aliases properties
