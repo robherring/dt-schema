@@ -79,6 +79,17 @@ def prop_value(nodename, p):
     prop_types = set(dtschema.property_get_type(p.name))
     prop_types -= {'node'}
 
+    # Filter out types impossible for the size of the property
+    if len(prop_types) > 1:
+        if len(p) > 4:
+            prop_types -= {'int32', 'uint32'}
+        if len(p) > 2:
+            prop_types -= {'int16', 'uint16'}
+        if len(p) > 1:
+            prop_types -= {'int8', 'uint8'}
+        else:
+            prop_types -= {'flag'}
+
     if len(prop_types) > 1:
         if {'string', 'string-array'} & prop_types:
             str = bytes_to_string(data)
@@ -89,8 +100,6 @@ def prop_value(nodename, p):
                 fmt = prop_types.difference({'string', 'string-array'}).pop()
             except:
                 return data
-        elif 'flag' in prop_types and len(data):
-            fmt = prop_types.difference({'flag'}).pop()
         else:
             #print(p.name + ': multiple types found', file=sys.stderr)
             fmt = None
