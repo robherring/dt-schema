@@ -129,6 +129,8 @@ properties:
     uniqueItems: true
   else:
     $ref: "#/definitions/sub-schemas"
+  const:
+    type: [ integer, string ]
   enum:
     type: array
     uniqueItems: true
