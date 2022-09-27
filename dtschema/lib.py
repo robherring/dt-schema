@@ -726,7 +726,7 @@ def process_schema(filename):
 
     # Check that the validation schema is valid
     try:
-        DTValidator.check_schema(schema)
+        DTValidator.check_schema(schema, strict=False)
     except jsonschema.SchemaError as exc:
         print(filename + ": ignoring, error in schema: " + ': '.join(str(x) for x in exc.path),
               file=sys.stderr)
@@ -1232,8 +1232,16 @@ class DTValidator():
         return error is None
 
     @classmethod
-    def check_schema(cls, schema):
-        meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
+    def check_schema(cls, schema, strict=True):
+        """
+        Test if schema is valid and apply fixups
+        'strict' determines whether the full DT meta-schema is used or just the draft7 meta-schema
+        """
+        if strict:
+            meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
+        else:
+            # Using the draft7 metaschema because 2019-09 with $recursiveRef seems broken
+            meta_schema = jsonschema.Draft7Validator.META_SCHEMA
         val = cls.DTVal(meta_schema, resolver=cls.resolver)
         for error in val.iter_errors(schema):
             raise jsonschema.SchemaError.create_from(error)
