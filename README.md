@@ -6,8 +6,9 @@ files are written in a JSON compatible subset of YAML.
 
 ## Data Model
 
-To understand how validation works, it is important to understand how schema data is organized and used.
-If you're reading this, I assume you're already familiar with Devicetree and the .dts file format.
+To understand how validation works, it is important to understand how
+schema data is organized and used. If you're reading this, I assume
+you're already familiar with Devicetree and the .dts file format.
 
 In this repository you will find 2 kinds of files; *Schemas* and
 *Meta-Schemas*.
