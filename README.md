@@ -1,28 +1,16 @@
-# Tooling for devicetree validation using YAML and jsonschema
+# Devicetree Schema Tools
 
 This repository contains test code for devicetree schema validation using the
 [json-schema](http://json-schema.org/documentation.html) vocabulary. Schema
-files are written in YAML (a superset of JSON), and operate on the YAML
-encoding of Devicetree data. Devicetree data must be transcoded from DTS to
-YAML before being used by this tool.
+files are written in a JSON compatible subset of YAML.
 
 ## Data Model
 
 To understand how validation works, it is important to understand how schema data is organized and used.
 If you're reading this, I assume you're already familiar with Devicetree and the .dts file format.
 
-In this repository you will find three kinds of files; *YAML Devicetrees*, *Schemas* and *Meta-Schemas*.
-
-### *YAML Devicetrees*
-
-Found under `./test`
-
-*YAML Devicetrees* files are regular .dts files transcoded into a YAML
-representation.
-There is no special information in these files.
-They are used as test cases against the validation tooling.
-
-Validation of .dtb files is now supported and preferred over YAML DT encoding.
+In this repository you will find 2 kinds of files; *Schemas* and
+*Meta-Schemas*.
 
 ### *Devicetree Schemas*
 
@@ -82,6 +70,18 @@ As a developer you normally will not need to write metaschema files.
 
 Devicetree Meta-Schema files are normal YAML files using the jsonschema vocabulary.
 
+### *YAML Devicetrees*
+
+*YAML Devicetrees* files are regular .dts files transcoded into a YAML
+representation.
+There is no special information in these files. They are an intermediate
+format suitable for the schema validation tools.
+
+Direct validation of .dtb files is also supported and preferred over
+YAML DT encoding. As the DTB format has no type information within it,
+the Devicetree Schemas are used for their type information to decode
+the DT property values. 
+
 ## Usage
 There are several tools available in the *tools/* directory.
 
@@ -97,8 +97,9 @@ dt-doc-validate -u test/schema test/schemas/good-example.yaml
 `tools/dt-mk-schema`
 This tool takes user-provided schema file(s) plus the core schema files in this
 repo, removes everything not needed for validation, applies fix-ups to the
-schemas, and outputs a single file with the processed schema. This step is
-done separately to speed up subsequent validation of YAML Devicetrees.
+schemas, and outputs a single file with the processed schema. This step
+is optional and can be done separately to speed up subsequent validation
+of Devicetrees.
 
 Example:
 ```
@@ -106,9 +107,9 @@ dt-mk-schema -j test/schemas/ > processed-schema.json
 ```
 
 `tools/dt-validate`
-This tool takes user-provided YAML Devicetree(s) and either a schema directory
-or pre-processed schema file and validates the YAML Devicetree against the
-schema.
+This tool takes user-provided Devicetree(s) and either a schema directory
+or a pre-processed schema file from `dt-mk-schema`, and then validates the
+Devicetree against the schema.
 
 Example:
 ```
