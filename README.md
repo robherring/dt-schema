@@ -89,17 +89,32 @@ There are several tools available in the *tools/* directory.
 This tool takes a schema file(s) or directory of schema files and validates
 them against the DT meta-schema.
 
+Example:
+```
+dt-doc-validate -u test/schema test/schemas/good-example.yaml
+```
+
 `tools/dt-mk-schema`
 This tool takes user-provided schema file(s) plus the core schema files in this
 repo, removes everything not needed for validation, applies fix-ups to the
 schemas, and outputs a single file with the processed schema. This step is
 done separately to speed up subsequent validation of YAML Devicetrees.
 
+Example:
+```
+dt-mk-schema -j test/schemas/ > processed-schema.json
+```
+
 `tools/dt-validate`
 This tool takes user-provided YAML Devicetree(s) and either a schema directory
 or pre-processed schema file and validates the YAML Devicetree against the
 schema.
 
+Example:
+```
+dtc -O dtb -o device.dtb test/device.dts
+dt-validate -s processed-schema.json device.dtb
+```
 
 ## Installing
 The project and its dependencies can be installed with pip:
