@@ -2,20 +2,17 @@
 
 This repository contains test code for devicetree schema validation using the
 [json-schema](http://json-schema.org/documentation.html) vocabulary. Schema
-files are written in YAML (a superset of JSON), and operate on the YAML
-encoding of Devicetree data. Devicetree data must be transcoded from DTS to
-YAML before being used by this tool.
+files are written in a JSON compatible subset of YAML.
 
 ## Data Model
 
 To understand how validation works, it is important to understand how schema data is organized and used.
 If you're reading this, I assume you're already familiar with Devicetree and the .dts file format.
 
-In this repository you will find three kinds of files; *YAML Devicetrees*, *Schemas* and *Meta-Schemas*.
+In this repository you will find 2 kinds of files; *Schemas* and
+*Meta-Schemas*.
 
 ### *YAML Devicetrees*
-
-Found under `./test`
 
 *YAML Devicetrees* files are regular .dts files transcoded into a YAML
 representation.
