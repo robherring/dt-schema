@@ -116,6 +116,16 @@ dtc -O dtb -o device.dtb test/device.dts
 dt-validate -s processed-schema.json device.dtb
 ```
 
+`tools/dt-check-compatible`
+This tool tests whether a list of compatible strings are found or not in
+the schemas. By default, a compatible string is printed when it matches
+one (or a pattern) in the schemas.
+
+Example:
+```
+dt-check-compatible -s processed-schema.json vendor,a-compatible
+```
+
 ## Installing
 The project and its dependencies can be installed with pip:
 
