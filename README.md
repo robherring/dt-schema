@@ -1,8 +1,12 @@
 # Devicetree Schema Tools
 
-This repository contains test code for devicetree schema validation using the
-[json-schema](http://json-schema.org/documentation.html) vocabulary. Schema
-files are written in a JSON compatible subset of YAML.
+The dtschema module contains tools and schema data for Devicetree
+schema validation using the
+[json-schema](http://json-schema.org/documentation.html) vocabulary.
+The tools validate Devicetree files using DT binding schema files. The
+tools also validate the DT binding schema files. Schema files are
+written in a JSON compatible subset of YAML to be both human and machine
+readable.
 
 ## Data Model
 
@@ -10,7 +14,7 @@ To understand how validation works, it is important to understand how
 schema data is organized and used. If you're reading this, I assume
 you're already familiar with Devicetree and the .dts file format.
 
-In this repository you will find 2 kinds of files; *Schemas* and
+In this repository you will find 2 kinds of data files; *Schemas* and
 *Meta-Schemas*.
 
 ### *Devicetree Schemas*
@@ -19,32 +23,31 @@ Found under `./dtschema/schemas`
 
 *Devicetree Schemas* describe the format of devicetree data.
 The raw Devicetree file format is very open ended and doesn't restrict how
-data is encoded.
-Hence, it is easy to make mistakes when writing a Devicetree.
-Schema files impose constraints on what data can be put into a devicetree.
-As the foundation, a single core schema describes all the common property types
-that every devicetree node must match.
-e.g. In every node the 'compatible' property must be an array of strings.
-However, most devicetree data is heterogeneous as each device binding requires
-a different set of data, therefore multiple schema files are used to capture the
-data format of an entire devicetree.
+data is encoded.Hence, it is easy to make mistakes when writing a
+Devicetree. Schema files impose the constraints on what data can be put
+into a Devicetree.
+
+This repository contains the 'core' schemas which consists of DT
+properties defined within the DT Specification and common bindings such
+as the GPIO, clock, and PHY bindings.
+
+This repository does not contain device specific bindings. Those are
+currently maintained within the Linux kernel tree alongside Devicetree
+files (.dts).
 
 When validating, the tool will load all the schema files it can find and then
-iterate over all the nodes of the devicetree.
+iterate over all the nodes of the Devicetree.
 For each node, the tool will determine which schema(s) are applicable and make sure
 the node data matches the schema constraints.
 Nodes failing a schema test will emit an error.
-Nodes that don't match any schema will emit a warning.
+Nodes that don't match any schema can emit a warning.
 
-As a developer, you would write a devicetree schema file for each new
+As a developer, you would write a Devicetree schema file for each new
 device binding that you create and add it to the `./schemas` directory.
 
 Schema files also have the dual purpose of documenting a binding.
 When you define a new binding, you only have to create one file that contains
 both the machine-verifiable data format and the documentation.
-Documentation generation tools are being written to extract documentation
-from a schema file and emit a format that can be included in the devicetree
-specification documents.
 
 Devicetree Schema files are normal YAML files using the jsonschema vocabulary.
 
@@ -65,7 +68,10 @@ Found in `./dtschema/meta-schemas`
 
 *Devicetree Meta-Schemas* describe the data format of Devicetree Schema files.
 The Meta-schemas make sure all the binding schemas are in the correct format
-and the tool will emit an error if the format is incorrect.
+and the tool will emit an error if the format is incorrect. json-schema
+by default is very relaxed in terms of what is allowed in schemas. Unknown
+keywords are silently ignored as an example. The DT Meta-schemas are designed
+to limit what is allowed and catch common errors in writing schemas.
 
 As a developer you normally will not need to write metaschema files.
 
