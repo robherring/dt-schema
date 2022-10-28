@@ -753,7 +753,7 @@ def process_schemas(schema_paths, core_schema=True):
         if not os.path.isfile(filename):
             continue
         sch = process_schema(os.path.abspath(filename))
-        if not sch:
+        if not sch or '$id' not in sch:
             continue
         if sch['$id'] in schemas:
             print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
@@ -1087,6 +1087,8 @@ def set_schemas(schema_files, core_schema=True):
         if isinstance(schema_cache, list):
             d = {}
             for sch in schema_cache:
+                if not isinstance(sch, dict):
+                    return None
                 d[sch['$id']] = sch
             schema_cache = d
 
@@ -1268,6 +1270,8 @@ class DTValidator():
 
     @classmethod
     def check_schema_refs(self, filename, schema):
+        if '$id' not in schema:
+            return
         scope = schema['$id']
         if scope:
             self.resolver.push_scope(scope)
