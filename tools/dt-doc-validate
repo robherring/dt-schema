@@ -28,13 +28,9 @@ def check_doc(filename):
               str(exc.problem_mark.column + 1) + ":", exc.problem, file=sys.stderr)
         return 1
 
-    try:
-        for error in sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.linecol):
-            print(dtschema.format_error(filename, error, verbose=args.verbose), file=sys.stderr)
-            ret = 1
-    except:
-        print(filename + ': error checking schema file', file=sys.stderr)
-        return 1
+    for error in sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda e: e.linecol):
+        print(dtschema.format_error(filename, error, verbose=args.verbose), file=sys.stderr)
+        ret = 1
 
     dtschema.DTValidator.check_schema_refs(filename, testtree)
     dtschema.DTValidator.check_quotes(filename + ":", testtree)
@@ -62,10 +58,8 @@ if __name__ == "__main__":
     for f in args.yamldt:
         if os.path.isdir(f):
             for filename in glob.iglob(f + "/**/*.yaml", recursive=True):
-                ret = check_doc(filename)
-                if ret != 0:
-                    break
+                ret |= check_doc(filename)
         else:
-            ret = check_doc(f)
+            ret |= check_doc(f)
 
     exit(ret)
