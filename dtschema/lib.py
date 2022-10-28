@@ -1209,7 +1209,15 @@ class DTValidator():
 
     @classmethod
     def iter_schema_errors(cls, schema):
-        meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
+        try:
+            meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
+        except (KeyError, TypeError, jsonschema.RefResolutionError, jsonschema.SchemaError):
+            error = jsonschema.SchemaError("Missing or invalid $schema keyword")
+            error.linecol = (-1,-1)
+            error.note = None
+            error.schema_file = None
+            yield error
+            return
         val = cls.DTVal(meta_schema, resolver=cls.resolver)
         for error in val.iter_errors(schema):
             cls.annotate_error(error, meta_schema, error.schema_path)
@@ -1331,6 +1339,8 @@ def format_error(filename, error, prefix="", nodename=None, verbose=False):
     #print(error.__dict__)
     if verbose:
         msg = str(error)
+    elif not error.schema_path:
+        msg = error.message
     elif error.context:
         # An error on a conditional will have context with sub-errors
         msg = "'" + error.schema_path[-1] + "' conditional failed, one must be fixed:"
