@@ -720,7 +720,7 @@ def get_undocumented_compatibles(compatible_list):
 def process_schema(filename):
     try:
         schema = load_schema(filename)
-    except:
+    except ruamel.yaml.YAMLError:
         print(filename + ": ignoring, error parsing file", file=sys.stderr)
         return
 
@@ -731,10 +731,6 @@ def process_schema(filename):
         print(filename + ": ignoring, error in schema: " + ': '.join(str(x) for x in exc.path),
               file=sys.stderr)
         #print(exc.message)
-        return
-    except:
-        print(filename + ": ignoring, unknown error in schema (not a schema?)",
-              file=sys.stderr)
         return
 
     if 'select' not in schema:
