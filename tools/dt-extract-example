@@ -3,6 +3,13 @@
 # Copyright 2018 Linaro Ltd.
 # Copyright 2019-2022 Arm Ltd.
 
+import signal
+
+def sigint_handler(signum, frame):
+    exit(130)
+
+signal.signal(signal.SIGINT, sigint_handler)
+
 import os
 import re
 import sys
