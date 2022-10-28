@@ -104,6 +104,9 @@ dependentRequired:
 
 properties:
   $ref:
+    description:
+      References must start with '/schemas' or be relative to current
+      schema's path.
     pattern: '^(/schemas/|\.\./|#(/|$)|[a-zA-Z0-9]+)'
     not:
       pattern: '^https?://'
