@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2022 Arm Ltd.
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/cache.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
+
+title: Generic 'cache' Nodes
+
+description: Generic cache binding for caches nodes which only have common cache
+  properties. A cache with a register interface or other resources should have
+  its own compatible and schema. As L1 caches are described within CPU nodes,
+  this binding only applies to L2 and higher level caches.
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+select:
+  properties:
+    compatible:
+      const: cache
+
+  required:
+    - compatible
+
+allOf:
+  - $ref: cache-controller.yaml#
+
+properties:
+  $nodename:
+    pattern: 'cache'
+
+  compatible:
+    const: cache
+
+  power-domains:
+    maxItems: 1
+
+patternProperties:
+  '^l[3-9]-cache$':
+    type: object
+    description: Caches can have the next level cache as a child node
+
+required:
+  - cache-level
+    # In practice, all level 2 and higher caches are unified.
+  - cache-unified
+
+unevaluatedProperties: false
+
+...
