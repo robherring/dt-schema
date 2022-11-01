@@ -38,6 +38,13 @@ patternProperties:
   "^(i-|d-|)cache-line-size$":
     $ref: "/schemas/types.yaml#/definitions/uint32"
 
+dependentRequired:
+  cache-size: [ cache-unified ]
+  cache-sets: [ cache-unified ]
+  cache-block-size: [ cache-unified ]
+  cache-line-size: [ cache-unified ]
+  cache-level: [ compatible ]
+
 if:
   properties:
     $nodename:
