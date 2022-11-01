@@ -1,19 +1,17 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2019 Linaro Ltd.
+# Copyright 2022 Arm Ltd.
 %YAML 1.2
 ---
 $id: http://devicetree.org/schemas/cache-controller.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: Common Cache Binding
+title: Common Cache Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>
 
 properties:
-  $nodename:
-    pattern: "^(cache-controller|cpu)(@[0-9a-f,]+)*$"
-
   cache-level:
     $ref: "/schemas/types.yaml#/definitions/uint32"
     minimum: 2
@@ -51,9 +49,12 @@ dependentSchemas:
       '^[id]-cache-': false
 
 if:
-  properties:
-    $nodename:
-      pattern: "^cache-controller.*"
+  not:
+    properties:
+      device_type:
+        const: cpu
+    required:
+      - device_type
 then:
   required:
     - cache-level
