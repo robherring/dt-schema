@@ -49,6 +49,8 @@ properties:
 patternProperties:
   '^cpu@[0-9a-f]+$':
     type: object
+    $ref: cache-controller.yaml#
+
     properties:
       device_type:
         const: cpu
