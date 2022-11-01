@@ -139,10 +139,6 @@ patternProperties:
         properties:
           enable-method:
             const: spin-table
-      cache-size: [ cache-unified ]
-      cache-sets: [ cache-unified ]
-      cache-block-size: [ cache-unified ]
-      cache-line-size: [ cache-unified ]
       d-tlb-size: [ tlb-split ]
       d-tlb-sets: [ tlb-split ]
       i-tlb-size: [ tlb-split ]
