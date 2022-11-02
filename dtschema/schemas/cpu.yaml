@@ -1,0 +1,134 @@
+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-clause
+# Copyright (C) 2018-2019 SiFive, Inc.
+#
+# Description text is from the Devicetree Specification at
+#   https://www.devicetree.org/specifications/
+# which is
+# Copyright 2008,2011 Power.org, Inc.
+# Copyright 2008,2011 Freescale Semiconductor, Inc.
+# Copyright 2008,2011 International Business Machines Corporation
+# Copyright 2016,2017 Linaro,Ltd.
+# Copyright 2016,2017 Arm,Ltd.
+#
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/cpu.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
+
+title: Common cpu node binding
+
+maintainers:
+  - Devicetree Specification Mailing List <devicetree-spec@vger.kernel.org>
+
+description: |+
+  In Devicetree data files, the layout of CPUs is described in the
+  "cpus" node.  This node in turn contains a number of subnodes
+  representing CPUs, which define properties for every cpu.
+
+  Bindings for CPU nodes follow the Devicetree Specification, available from:
+
+  https://www.devicetree.org/specifications/
+
+select: false
+
+allOf:
+  - $ref: cache-controller.yaml#
+
+properties:
+  device_type:
+    const: cpu
+
+  reg:
+    description:
+      Defines a unique CPU/thread ID for the CPU/threads represented
+      by the CPU node.
+
+  compatible: true
+
+  clock-frequency:
+    description:
+      Specifies the current clock speed of the CPU in Hertz.
+
+  timebase-frequency:
+    oneOf:
+      - $ref: /schemas/types.yaml#/definitions/uint32
+      - $ref: /schemas/types.yaml#/definitions/uint64
+    minimum: 1
+    description:
+      Specifies the current frequency at which the timebase and the
+      decrementer registers are updated (in Hertz).
+
+  status:
+    $ref: types.yaml#/definitions/string
+    enum: [ okay, disabled, fail ]
+    description:
+      A standard property describing the state of a CPU. A CPU may be
+      running ("okay"), in a quiescent state ("disabled") or be not
+      operational or not exist ("fail").
+
+  enable-method:
+    $ref: /schemas/types.yaml#/definitions/string-array
+    description:
+      Describes the method by which a CPU in a disabled state is enabled.
+      This property is required for CPUs with a status property with a
+      value of "disabled".  The value consists of one or more strings
+      that define the method to release this CPU.  If a client program
+      recognizes any of the methods, it may use it.
+
+  cpu-release-addr:
+    $ref: /schemas/types.yaml#/definitions/uint64
+    description:
+      This value specifies the physical address of a spin table entry that
+      releases a secondary CPU from its spin loop.
+
+  cache-op-block-size:
+    $ref: /schemas/types.yaml#/definitions/uint32
+    description:
+      Specifies the block size in bytes upon which cache block instructions
+      operate.  Required if different than the L1 cache block size.
+
+  reservation-granule-size:
+    $ref: /schemas/types.yaml#/definitions/uint32
+    description:
+      Specifies the reservation granule size supported by this processor
+      in bytes.
+
+  mmu-type:
+    $ref: /schemas/types.yaml#/definitions/string
+    description:
+      Specifies the CPU's MMU type.
+
+  tlb-split:
+    $ref: /schemas/types.yaml#/definitions/flag
+    description:
+      If present, specifies that the TLB has a split configuration, with
+      separate TLBs for instructions and data.  If absent, specifies that
+      the TLB has a unified configuration.  Required for a CPU with a
+      TLB in a split configuration.
+
+patternProperties:
+  "^(i-|d-|)tlb-(size|sets)$":
+    $ref: /schemas/types.yaml#/definitions/uint32
+    minimum: 1
+
+anyOf:
+  - required:
+      - device_type
+  - required:
+      - reg
+  - required:
+      - compatible
+
+dependencies:
+  cpu-release-addr:
+    properties:
+      enable-method:
+        const: spin-table
+  d-tlb-size: [ tlb-split ]
+  d-tlb-sets: [ tlb-split ]
+  i-tlb-size: [ tlb-split ]
+  i-tlb-sets: [ tlb-split ]
+
+additionalProperties: true
+
+...
