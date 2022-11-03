@@ -45,6 +45,9 @@ properties:
 
   compatible: true
 
+  '#cooling-cells':
+    const: 2
+
   clock-frequency:
     description:
       Specifies the current clock speed of the CPU in Hertz.
@@ -93,6 +96,8 @@ properties:
       Specifies the reservation granule size supported by this processor
       in bytes.
 
+  numa-node-id: true
+
   mmu-type:
     $ref: /schemas/types.yaml#/definitions/string
     description:
@@ -105,6 +110,9 @@ properties:
       separate TLBs for instructions and data.  If absent, specifies that
       the TLB has a unified configuration.  Required for a CPU with a
       TLB in a split configuration.
+
+  l2-cache:
+    type: object
 
 patternProperties:
   "^(i-|d-|)tlb-(size|sets)$":
