@@ -83,12 +83,16 @@ def prop_value(nodename, p):
     if len(prop_types) > 1:
         if len(p) > 4:
             prop_types -= {'int32', 'uint32'}
+        else:
+            prop_types -= {'int64', 'uint64', 'int64-array', 'uint64-array'}
         if len(p) > 2:
             prop_types -= {'int16', 'uint16'}
+        else:
+            prop_types -= {'int32', 'uint32', 'int32-array', 'uint32-array'}
         if len(p) > 1:
             prop_types -= {'int8', 'uint8'}
         else:
-            prop_types -= {'flag'}
+            prop_types -= {'int16', 'uint16', 'int16-array', 'uint16-array', 'flag'}
 
     if len(prop_types) > 1:
         if {'string', 'string-array'} & prop_types:
