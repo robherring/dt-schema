@@ -45,6 +45,11 @@ dependentRequired:
   cache-line-size: [ cache-unified ]
   cache-level: [ compatible ]
 
+dependentSchemas:
+  cache-unified:
+    patternProperties:
+      '^[id]-cache-': false
+
 if:
   properties:
     $nodename:
