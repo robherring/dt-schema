@@ -1212,8 +1212,6 @@ class DTValidator():
         except (KeyError, TypeError, jsonschema.RefResolutionError, jsonschema.SchemaError):
             error = jsonschema.SchemaError("Missing or invalid $schema keyword")
             error.linecol = (-1,-1)
-            error.note = None
-            error.schema_file = None
             yield error
             return
         val = cls.DTVal(meta_schema, resolver=cls.resolver)
@@ -1225,8 +1223,6 @@ class DTValidator():
     def iter_errors(self, instance, _schema=None):
         for error in self.validator.iter_errors(instance, _schema):
             error.linecol = get_line_col(instance, error.path)
-            error.note = None
-            error.schema_file = None
             yield error
 
     def validate(self, *args, **kwargs):
@@ -1323,7 +1319,7 @@ class DTValidator():
 def format_error(filename, error, prefix="", nodename=None, verbose=False):
     src = prefix + os.path.abspath(filename) + ':'
 
-    if error.linecol[0] >= 0:
+    if hasattr(error, 'linecol') and error.linecol[0] >= 0:
         src = src + '%i:%i: ' % (error.linecol[0]+1, error.linecol[1]+1)
     else:
         src += ' '
@@ -1360,10 +1356,10 @@ def format_error(filename, error, prefix="", nodename=None, verbose=False):
     else:
         msg = error.message
 
-    if error.note:
+    if hasattr(error, 'note') and error.note:
         msg += '\n\t' + prefix + 'hint: ' + error.note
 
-    if error.schema_file:
+    if hasattr(error, 'schema_file') and error.schema_file:
         msg += '\n\t' + prefix + 'from schema $id: ' + error.schema_file
 
     return src + msg
