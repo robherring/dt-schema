@@ -58,10 +58,6 @@ restricted by defining 'minItems', 'maxItems', and 'additionalItems'. For
 DeviceTree Schemas, a fixed size is desired in most cases, so these properties
 are added based on the size of 'items' list.
 
-The YAML DeviceTree format also makes all string values an array and scalar
-values a matrix (in order to define groupings) even when only a single value
-is present. Single entries in schemas are fixed up to match this encoding.
-
 ### *Devicetree Meta-Schemas*
 
 Found in `./dtschema/meta-schemas`
@@ -76,18 +72,6 @@ to limit what is allowed and catch common errors in writing schemas.
 As a developer you normally will not need to write metaschema files.
 
 Devicetree Meta-Schema files are normal YAML files using the jsonschema vocabulary.
-
-### *YAML Devicetrees*
-
-*YAML Devicetrees* files are regular .dts files transcoded into a YAML
-representation.
-There is no special information in these files. They are an intermediate
-format suitable for the schema validation tools.
-
-Direct validation of .dtb files is also supported and preferred over
-YAML DT encoding. As the DTB format has no type information within it,
-the Devicetree Schemas are used for their type information to decode
-the DT property values. 
 
 ## Usage
 There are several tools available in the *tools/* directory.

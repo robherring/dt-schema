@@ -25,48 +25,20 @@ schema_basedir = os.path.dirname(os.path.abspath(__file__))
 re._MAXCACHE = 2048
 
 
-class tagged_list(list):
-
-    tags = {u'!u8': 8, u'!u16': 16, u'!u32': 32, u'!u64': 64}
-
-    def __init__(self, int_list, tag, tags=tags):
-        int_list = [sized_int(i, size=tags[tag]) for i in int_list]
-        super().__init__(int_list)
-
-    @staticmethod
-    def constructor(loader, node):
-        return tagged_list(loader.construct_sequence(node), node.tag)
-
-
 class sized_int(int):
     def __new__(cls, value, *args, **kwargs):
         return int.__new__(cls, value)
 
-    def __init__(self, value, size=32, phandle=False):
+    def __init__(self, value, size=32):
         self.size = size
-        self.phandle = phandle
-
-    @staticmethod
-    def constructor(loader, node):
-        return sized_int(loader.construct_yaml_int(node), phandle=True)
 
 
 rtyaml = ruamel.yaml.YAML(typ='rt')
 rtyaml.allow_duplicate_keys = False
 rtyaml.preserve_quotes = True
-rtyaml.Constructor.add_constructor(u'!u8', tagged_list.constructor)
-rtyaml.Constructor.add_constructor(u'!u16', tagged_list.constructor)
-rtyaml.Constructor.add_constructor(u'!u32', tagged_list.constructor)
-rtyaml.Constructor.add_constructor(u'!u64', tagged_list.constructor)
-rtyaml.Constructor.add_constructor(u'!phandle', sized_int.constructor)
 
 yaml = ruamel.yaml.YAML(typ='safe')
 yaml.allow_duplicate_keys = False
-yaml.Constructor.add_constructor(u'!u8', tagged_list.constructor)
-yaml.Constructor.add_constructor(u'!u16', tagged_list.constructor)
-yaml.Constructor.add_constructor(u'!u32', tagged_list.constructor)
-yaml.Constructor.add_constructor(u'!u64', tagged_list.constructor)
-yaml.Constructor.add_constructor(u'!phandle', sized_int.constructor)
 
 
 def path_to_obj(tree, path):

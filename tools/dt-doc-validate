@@ -41,7 +41,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
         epilog='Arguments can also be passed in a file prefixed with a "@" character.')
     ap.add_argument("yamldt", nargs='*', type=str,
-                    help="Filename of YAML encoded devicetree input file")
+                    help="Directory or filename of YAML encoded devicetree schema file")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     ap.add_argument('-n', '--line-number', help="Print line and column numbers (slower)", action="store_true")
     ap.add_argument('-u', '--url-path', help="Additional search path for references")

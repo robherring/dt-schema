@@ -12,7 +12,6 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 import sys
 import os
-import ruamel.yaml
 import jsonschema
 import argparse
 import glob
@@ -70,14 +69,8 @@ class schema_group():
                         if schema['$id'] == 'generated-compatibles':
                             if show_unmatched < 1:
                                 continue
-                            if isinstance(node, ruamel.yaml.comments.CommentedBase):
-                                line = node.lc.line
-                                col = node.lc.col
-                            else:
-                                line = 0
-                                col = 0
-                            print("%s:%i:%i: %s: failed to match any schema with compatible: %s" %
-                                  (filename, line, col, fullname, node['compatible']), file=sys.stderr)
+                            print("%s: %s: failed to match any schema with compatible: %s" %
+                                  (filename, fullname, node['compatible']), file=sys.stderr)
                             continue
 
                         print(dtschema.format_error(filename, error, nodename=nodename, verbose=verbose) +
@@ -123,8 +116,8 @@ class schema_group():
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
         epilog='Arguments can also be passed in a file prefixed with a "@" character.')
-    ap.add_argument("yamldt", nargs='*',
-                    help="Filename or directory of YAML encoded devicetree input file(s)")
+    ap.add_argument("dtbs", nargs='*',
+                    help="Filename or directory of devicetree DTB input file(s)")
     ap.add_argument('-s', '--schema', help="preparsed schema file or path to schema files")
     ap.add_argument('-p', '--preparse', help="preparsed schema file (deprecated, use '-s')")
     ap.add_argument('-l', '--limit', help="limit validation to schema files matching substring")
@@ -134,7 +127,7 @@ if __name__ == "__main__":
              "Twice for all nodes", action="count")
     ap.add_argument('-M', '--show-matched',
         help="Print out matching schema for each node", action="store_true")
-    ap.add_argument('-n', '--line-number', help="Print line and column numbers (slower)", action="store_true")
+    ap.add_argument('-n', '--line-number', help="Obsolete", action="store_true")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
     ap.add_argument('-u', '--url-path', help="Additional search path for references")
     ap.add_argument('-V', '--version', help="Print version number",
@@ -156,19 +149,19 @@ if __name__ == "__main__":
     else:
         sg = schema_group()
 
-    for d in args.yamldt:
+    for d in args.dtbs:
         if not os.path.isdir(d):
             continue
-        for filename in glob.iglob(d + "/**/*.yaml", recursive=True):
-            testtree = dtschema.load(filename, line_number=args.line_number)
+        for filename in glob.iglob(d + "/**/*.dtb", recursive=True):
+            testtree = dtschema.load(filename)
             if verbose:
                 print("Check:  " + filename)
             sg.check_trees(filename, testtree)
 
-    for filename in args.yamldt:
+    for filename in args.dtbs:
         if not os.path.isfile(filename):
             continue
-        testtree = dtschema.load(filename, line_number=args.line_number)
+        testtree = dtschema.load(filename)
         if verbose:
             print("Check:  " + filename)
         sg.check_trees(filename, testtree)

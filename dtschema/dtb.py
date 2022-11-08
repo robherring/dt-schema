@@ -357,7 +357,6 @@ def fixup_phandles(dt, path=''):
             if k == 'interconnects':
                 cells += _get_phandle_arg_size(path + ':' + k, i + cells, val[i + cells:], cellname)
 
-            val[i] = dtschema.sized_int(val[i], phandle=True)
             dt[k] += [val[i:i + cells]]
             #print(k, dt[k], file=sys.stderr)
 
