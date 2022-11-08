@@ -45,8 +45,7 @@ class schema_group():
                     matched_schemas.append(schema['$id'])
                     node_matched = True
                 try:
-                    errors = sorted(dtschema.DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
-                    for error in errors:
+                    for error in dtschema.DTValidator(schema).iter_errors(node):
 
                         # Disabled nodes might not have all the required
                         # properties filled in, such as a regulator or a

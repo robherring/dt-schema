@@ -1222,7 +1222,6 @@ class DTValidator():
 
     def iter_errors(self, instance, _schema=None):
         for error in self.validator.iter_errors(instance, _schema):
-            error.linecol = get_line_col(instance, error.path)
             yield error
 
     def validate(self, *args, **kwargs):
