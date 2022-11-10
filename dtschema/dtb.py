@@ -92,7 +92,9 @@ def prop_value(nodename, p):
         if len(p) > 1:
             prop_types -= {'int8', 'uint8'}
         else:
-            prop_types -= {'int16', 'uint16', 'int16-array', 'uint16-array', 'flag'}
+            prop_types -= {'int16', 'uint16', 'int16-array', 'uint16-array'}
+        if len(p) > 0:
+            prop_types -= {'flag'}
 
     if len(prop_types) > 1:
         if {'string', 'string-array'} & prop_types:
@@ -129,12 +131,14 @@ def prop_value(nodename, p):
     if fmt.startswith('string'):
         return data[:-1].decode(encoding='ascii').split('\0')
 
-    if fmt == 'flag':
+    if {'flag'} & prop_types:
         if len(data):
-            print('{prop}: boolean property with value {val}'.format(prop=p.name, val=data),
-                  file=sys.stderr)
-            return data
-        return True
+            if fmt == 'flag':
+                print('{prop}: boolean property with value {val}'.format(prop=p.name, val=data),
+                      file=sys.stderr)
+                return data
+        else:
+            return True
 
     val_int = list()
     #print(p.name, fmt,  bytes(p))
