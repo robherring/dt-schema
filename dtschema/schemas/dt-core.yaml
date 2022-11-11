@@ -22,6 +22,14 @@ properties:
     items:
       # Keep in sync with make_compatible_schema()
       pattern: "^[a-zA-Z0-9][a-zA-Z0-9,+\\-._]+$"
+  cpus:
+    description:
+      Phandles to CPU nodes associated with the referring node.
+    oneOf:
+      - type: object
+      - $ref: "types.yaml#/definitions/phandle-array"
+        items:
+          maxItems: 1
   label:
     $ref: "types.yaml#/definitions/string"
   dma-coherent:
