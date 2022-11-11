@@ -6,7 +6,6 @@ $schema: "http://devicetree.org/meta-schemas/base.yaml#"
 title: Interrupt Controller devicetree node schema
 
 maintainers:
-  - Grant Likely <grant.likely@arm.com>
   - Rob Herring <robh@kernel.org>
 
 properties:

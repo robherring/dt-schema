@@ -8,7 +8,6 @@ $schema: "http://devicetree.org/meta-schemas/base.yaml#"
 title: Core devicetree node schema which applies to all nodes
 description: "Schema for core devicetree bindings"
 maintainers:
-  - Grant Likely <grant.likely@arm.com>
   - Rob Herring <robh@kernel.org>
 
 # always select the core schema
