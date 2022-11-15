@@ -852,9 +852,14 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
                     # implicit string type
                     prop_type = 'string-array'
                 elif not (isinstance(items, list) and len(items) == 1 and \
-                    'items' in items and isinstance(items['items'], list) and len(items['items']) == 1) and \
-                    unit_types_re.search(propname):
-                    prop_type = 'uint32-matrix'
+                     'items' in items and isinstance(items['items'], list) and len(items['items']) == 1):
+                    # Keep in sync with property-units.yaml
+                    if re.search('-microvolt$', propname):
+                        prop_type = 'uint32-matrix'
+                    elif re.search('(^(?!opp)).*-hz$', propname):
+                        prop_type = 'uint32-matrix'
+                    else:
+                        prop_type = None
                 else:
                     prop_type = None
             elif '$ref' in subschema and re.search(r'\.yaml#?$', subschema['$ref']):

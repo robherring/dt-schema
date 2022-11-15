@@ -22,6 +22,12 @@ description:
 
 select: true
 
+# Special case(s) which don't follow the standard type.
+# Please don't add to this.
+properties:
+  opp-hz:
+    $ref: "types.yaml#/definitions/uint64-matrix"
+
 patternProperties:
   "-bits$":
     $ref: "types.yaml#/definitions/uint32-array"
@@ -43,7 +49,7 @@ patternProperties:
   "-mhz$":
     $ref: "types.yaml#/definitions/uint32-array"
     description: megahertz
-  "-hz$":
+  "(^(?!opp)).*-hz$":
     $ref: "types.yaml#/definitions/uint32-matrix"
     description: hertz (preferred)
   "-sec$":
