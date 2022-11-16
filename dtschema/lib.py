@@ -855,7 +855,7 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
                      'items' in items and isinstance(items['items'], list) and len(items['items']) == 1):
                     # Keep in sync with property-units.yaml
                     if re.search('-microvolt$', propname):
-                        prop_type = 'uint32-matrix'
+                        prop_type = 'int32-matrix'
                     elif re.search('(^(?!opp)).*-hz$', propname):
                         prop_type = 'uint32-matrix'
                     else:

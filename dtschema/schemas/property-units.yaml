@@ -99,7 +99,7 @@ patternProperties:
     $ref: "types.yaml#/definitions/uint32-array"
     description: microwatt hour
   "-microvolt$":
-    $ref: "types.yaml#/definitions/uint32-matrix"
+    $ref: "types.yaml#/definitions/int32-matrix"
     description: microvolt
   "-picofarads$":
     $ref: "types.yaml#/definitions/uint32-array"
@@ -110,10 +110,10 @@ patternProperties:
 
   # Temperature
   "-celsius$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: "types.yaml#/definitions/int32-array"
     description: degree Celsius
   "-millicelsius$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: "types.yaml#/definitions/int32-array"
     description: millidegree Celsius
   "-kelvin$":
     $ref: "types.yaml#/definitions/uint32-array"

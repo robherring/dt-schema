@@ -210,8 +210,7 @@ definitions:
   int32-item:
     type: integer
     minimum: -2147483648
-    # maximum: 2147483647
-    maximum: 0xffffffff
+    maximum: 2147483647
 
   int32-matrix:
     type: array
@@ -257,8 +256,7 @@ definitions:
   int64-item:
     type: integer
     minimum: -9223372036854775808
-    # maximum: 9223372036854775807
-    maximum: 0xffffffffffffffff
+    maximum: 9223372036854775807
 
   int64:
     type: array
