@@ -25,6 +25,12 @@ properties:
       - "http://devicetree.org/meta-schemas/base.yaml#"
   title:
     maxLength: 100
+    description:
+      Everything is a binding/schema, no need to say it. Describe what
+      hardware the binding is for.
+    not:
+      pattern: '([Bb]inding| [Ss]chema)'
+
   examples:
     type: array
     items:

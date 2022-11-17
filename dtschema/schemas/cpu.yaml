@@ -15,7 +15,7 @@
 $id: http://devicetree.org/schemas/cpu.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: Common cpu node binding
+title: CPU node common properties
 
 maintainers:
   - Devicetree Specification Mailing List <devicetree-spec@vger.kernel.org>
