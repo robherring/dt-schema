@@ -16,6 +16,13 @@ properties:
   gpios:
     $ref: "/schemas/types.yaml#/definitions/phandle-array"
 
+  gpio:
+    # 'gpio' can appear as a property or node name
+    oneOf:
+      - type: object
+      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
+
+
 patternProperties:
   "(?<!,nr)-gpios?$":
     $ref: "/schemas/types.yaml#/definitions/phandle-array"

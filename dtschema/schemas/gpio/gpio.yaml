@@ -32,12 +32,6 @@ properties:
         - description: pin controller offset
         - description: number of pins
 
-  gpio:
-    # 'gpio' can appear as a property or node name
-    oneOf:
-      - type: object
-      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
-
 dependencies:
   gpio-controller: ['#gpio-cells']
   '#gpio-cells': [ gpio-controller ]
