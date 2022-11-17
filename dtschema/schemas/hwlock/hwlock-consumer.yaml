@@ -6,7 +6,7 @@
 $id: http://devicetree.org/schemas/hwlock/hwlock-consumer.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: Common H/W Locks Consumer Binding
+title: H/W Locks Consumer Common Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>

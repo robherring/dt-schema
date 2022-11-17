@@ -3,7 +3,7 @@
 $id: "http://devicetree.org/schemas/phy/phy-provider.yaml#"
 $schema: "http://devicetree.org/meta-schemas/base.yaml#"
 
-title: Common PHY provider schema
+title: PHY Provider Common Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>

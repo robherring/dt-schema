@@ -5,7 +5,7 @@
 $id: http://devicetree.org/schemas/pci/pci-bus.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: PCI bus schema
+title: PCI Bus Nodes
 
 description: |
   Common properties for PCI host bridge nodes and PCI bus structure.

@@ -5,7 +5,9 @@
 ---
 $id: "http://devicetree.org/schemas/clock/clock.yaml#"
 $schema: "http://devicetree.org/meta-schemas/base.yaml#"
-title: Clock binding devicetree schema
+
+title: Clock Common Properties
+
 maintainers:
   - Michael Turquette <mturquette@baylibre.com>
   - Stephen Boyd <sboyd@kernel.org>

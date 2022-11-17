@@ -5,7 +5,7 @@
 $id: http://devicetree.org/schemas/reset/reset.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: Common Reset Binding
+title: Reset Consumer Common Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>

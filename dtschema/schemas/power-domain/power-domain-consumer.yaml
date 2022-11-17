@@ -6,7 +6,7 @@
 $id: http://devicetree.org/schemas/power-domain/power-domain-consumer.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: Common Power Domain Consumer Binding
+title: Power Domain Consumer Common Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>

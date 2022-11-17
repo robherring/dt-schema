@@ -6,7 +6,7 @@
 $id: "http://devicetree.org/schemas/child-node-example.yaml#"
 $schema: "http://devicetree.org/meta-schemas/core.yaml#"
 
-title: A one line title for a good binding
+title: A Device with Child Nodes
 
 maintainers:
   - Rob Herring <robh@kernel.org>

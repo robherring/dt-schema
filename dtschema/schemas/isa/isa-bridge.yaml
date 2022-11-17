@@ -5,7 +5,7 @@
 $id: http://devicetree.org/schemas/isa/isa-bridge.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: ISA bus bridge schema
+title: ISA Bus Bridges
 
 description: |
   Schema for ISA bridge nodes. This is for bridges with I/O space mapped into

@@ -6,7 +6,7 @@
 $id: http://devicetree.org/schemas/pwm/pwm-consumer.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: Common PWM Consumer Binding
+title: PWM Consumer Common Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>

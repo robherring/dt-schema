@@ -5,7 +5,7 @@
 $id: http://devicetree.org/schemas/serial.yaml#
 $schema: http://devicetree.org/meta-schemas/core.yaml#
 
-title: Common Serial binding
+title: Serial Device Common Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>

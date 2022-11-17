@@ -2,8 +2,11 @@
 # Copyright 2018 Linaro Ltd.
 $id: "http://devicetree.org/schemas/gpio/gpio-hog.yaml#"
 $schema: "http://devicetree.org/meta-schemas/base.yaml#"
-title: GPIO hog devicetree schema
+
+title: GPIO Hog Nodes
+
 description: "Schema for GPIO hog devicetree bindings"
+
 maintainers:
   - Rob Herring <robh@kernel.org>
 

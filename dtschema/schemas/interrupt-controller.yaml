@@ -3,7 +3,8 @@
 # Copyright 2018 Arm Ltd.
 $id: "http://devicetree.org/schemas/interrupt-controller.yaml#"
 $schema: "http://devicetree.org/meta-schemas/base.yaml#"
-title: Interrupt Controller devicetree node schema
+
+title: Interrupt Controller Common Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>

@@ -5,7 +5,7 @@
 $id: http://devicetree.org/schemas/dma/dma.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: Common DMA binding
+title: DMA Consumer Common Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>

@@ -5,7 +5,7 @@
 $id: http://devicetree.org/schemas/cache-controller.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: Common Cache Binding
+title: Common Cache Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>

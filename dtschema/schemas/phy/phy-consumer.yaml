@@ -6,7 +6,7 @@
 $id: http://devicetree.org/schemas/phy/phy-consumer.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: Common PHY Consumer Binding
+title: PHY Consumer Common Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>

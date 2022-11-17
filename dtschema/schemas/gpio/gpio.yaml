@@ -2,7 +2,8 @@
 # Copyright 2018 Linaro Ltd.
 $id: "http://devicetree.org/schemas/gpio/gpio.yaml#"
 $schema: "http://devicetree.org/meta-schemas/base.yaml#"
-title: GPIO devicetree schema
+
+title: GPIO Controller Common Properties
 description: "Schema for GPIO devicetree bindings"
 maintainers:
   - Rob Herring <robh@kernel.org>

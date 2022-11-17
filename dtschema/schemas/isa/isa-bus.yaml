@@ -5,7 +5,7 @@
 $id: http://devicetree.org/schemas/isa/isa-bus.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: ISA bus schema
+title: ISA Bus Nodes
 
 description: |
   Common properties for ISA bus nodes

@@ -5,7 +5,9 @@
 ---
 $id: "http://devicetree.org/schemas/dt-core.yaml#"
 $schema: "http://devicetree.org/meta-schemas/base.yaml#"
-title: Core devicetree node schema which applies to all nodes
+
+title: Core Devicetree Properties
+
 description: "Schema for core devicetree bindings"
 maintainers:
   - Rob Herring <robh@kernel.org>

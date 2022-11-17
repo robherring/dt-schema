@@ -4,7 +4,9 @@
 
 $id: "http://devicetree.org/schemas/interrupts.yaml#"
 $schema: "http://devicetree.org/meta-schemas/base.yaml#"
-title: Interrupt consumer devicetree node schema
+
+title: Interrupt Consumer Common Properties
+
 maintainers:
   - Rob Herring <robh@kernel.org>
 

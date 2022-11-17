@@ -4,7 +4,7 @@
 $id: http://devicetree.org/schemas/graph.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
-title: Common bindings for device graphs
+title: Device Graphs
 
 description: |
   The hierarchical organisation of the device tree is well suited to describe
