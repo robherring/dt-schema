@@ -3,8 +3,8 @@
 # Copyright 2012 Secret Lab Technologies Ltd.
 %YAML 1.2
 ---
-$id: "http://devicetree.org/schemas/clock/clock.yaml#"
-$schema: "http://devicetree.org/meta-schemas/base.yaml#"
+$id: http://devicetree.org/schemas/clock/clock.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
 
 title: Clock Common Properties
 
@@ -67,11 +67,11 @@ properties:
   clock-frequency:
     description: Legacy property for single, fixed frequency clocks
     anyOf:
-      - $ref: "/schemas/types.yaml#/definitions/uint32"
-      - $ref: "/schemas/types.yaml#/definitions/uint64"
+      - $ref: /schemas/types.yaml#/definitions/uint32
+      - $ref: /schemas/types.yaml#/definitions/uint64
   bus-frequency:
     description: Legacy property for fixed bus frequencies
-    $ref: "/schemas/types.yaml#/definitions/uint32"
+    $ref: /schemas/types.yaml#/definitions/uint32
 
   # Provider properties
   "#clock-cells":
@@ -95,7 +95,7 @@ properties:
       the provider\'s clock-output-names property.
 
   clock-indices:
-    $ref: "/schemas/types.yaml#/definitions/uint32-array"
+    $ref: /schemas/types.yaml#/definitions/uint32-array
     description: If the identifying number for the clocks in the node
       is not linear from zero, then this allows the mapping of identifiers
       into the clock-output-names array.
@@ -104,7 +104,7 @@ properties:
   clocks:
     anyOf:
       - type: object # for nodes named 'clocks'
-      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
+      - $ref: /schemas/types.yaml#/definitions/phandle-array
     description: |
       List of phandle and clock specifier pairs, one pair
       for each clock input to the device.  Note: if the
@@ -112,7 +112,7 @@ properties:
       only the phandle portion of the pair will appear.
 
   clock-names:
-    $ref: "/schemas/types.yaml#/definitions/string-array"
+    $ref: /schemas/types.yaml#/definitions/string-array
     description: List of clock input name strings sorted in the same order
       as the clocks property.  Consumers drivers will use clock-names
       to match clock input names with clocks specifiers.
@@ -124,14 +124,14 @@ properties:
       to their children.
 
   assigned-clocks:
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    $ref: /schemas/types.yaml#/definitions/phandle-array
   assigned-clock-parents:
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    $ref: /schemas/types.yaml#/definitions/phandle-array
   assigned-clock-rates:
-    $ref: "/schemas/types.yaml#/definitions/uint32-array"
+    $ref: /schemas/types.yaml#/definitions/uint32-array
 
   protected-clocks:
-    $ref: "/schemas/types.yaml#/definitions/uint32-array"
+    $ref: /schemas/types.yaml#/definitions/uint32-array
     description:
       Some platforms or firmwares may not fully expose all the clocks to the OS,
       such as in situations where those clks are used by drivers running in ARM

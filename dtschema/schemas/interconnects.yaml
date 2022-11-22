@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2021 Arm Ltd.
-$id: "http://devicetree.org/schemas/interconnects.yaml#"
-$schema: "http://devicetree.org/meta-schemas/base.yaml#"
+$id: http://devicetree.org/schemas/interconnects.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
 
 title: Interconnects Consumer Common Properties
 
@@ -13,7 +13,7 @@ select: true
 
 properties:
   interconnects:
-    $ref: "types.yaml#/definitions/phandle-array"
+    $ref: types.yaml#/definitions/phandle-array
 
 dependencies:
   interconnect-names: [interconnects]

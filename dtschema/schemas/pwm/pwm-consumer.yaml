@@ -16,10 +16,10 @@ select: true
 
 properties:
   pwms:
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    $ref: /schemas/types.yaml#/definitions/phandle-array
 
   pwm-names:
-    $ref: "/schemas/types.yaml#/definitions/string-array"
+    $ref: /schemas/types.yaml#/definitions/string-array
 
 dependencies:
   pwm-names: [ pwms ]

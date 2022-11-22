@@ -3,24 +3,24 @@
 # Copyright 2018 Arm Ltd.
 %YAML 1.2
 ---
-$id: "http://devicetree.org/meta-schemas/interrupts.yaml#"
+$id: http://devicetree.org/meta-schemas/interrupts.yaml#
 $schema: https://json-schema.org/draft/2019-09/schema
 
 properties:
   interrupts:
-    $ref: "cell.yaml#/array"
+    $ref: cell.yaml#/array
   interrupts-extended:
     properties:
       # interrupts-extended should just refer back to interrupts
       $ref: true
   interrupt-map:
-    $ref: "cell.yaml#/array"
+    $ref: cell.yaml#/array
   interrupt-map-mask:
-    $ref: "cell.yaml#/array"
+    $ref: cell.yaml#/array
   interrupt-controller:
     oneOf:
-      - $ref: "boolean.yaml"
-      - $ref: "nodes.yaml"
+      - $ref: boolean.yaml
+      - $ref: nodes.yaml
 
 dependentRequired:
   interrupt-map: ['#interrupt-cells']

@@ -6,8 +6,8 @@
 # 'maintainers' and 'select'
 
 # $id is a unique idenifier based on the filename
-$id: "http://devicetree.org/schemas/example-schema.yaml#"
-$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+$id: http://devicetree.org/schemas/example-schema.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
 
 title: An example schema annotated with jsonschema details
 

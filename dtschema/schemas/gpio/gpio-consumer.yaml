@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
-$id: "http://devicetree.org/schemas/gpio/gpio-consumer.yaml#"
-$schema: "http://devicetree.org/meta-schemas/base.yaml#"
+$id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
 
 title: GPIO Consumer Common Properties
 
-description: "Schema for GPIO consumer devicetree bindings"
+description: Schema for GPIO consumer devicetree bindings
 
 maintainers:
   - Rob Herring <robh@kernel.org>
@@ -17,17 +17,17 @@ select:
 
 properties:
   gpios:
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    $ref: /schemas/types.yaml#/definitions/phandle-array
 
   gpio:
     # 'gpio' can appear as a property or node name
     oneOf:
       - type: object
-      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
+      - $ref: /schemas/types.yaml#/definitions/phandle-array
 
 
 patternProperties:
   "(?<!,nr)-gpios?$":
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    $ref: /schemas/types.yaml#/definitions/phandle-array
 
 additionalProperties: true

@@ -3,12 +3,12 @@
 # Copyright 2018-2019 Arm Ltd.
 %YAML 1.2
 ---
-$id: "http://devicetree.org/meta-schemas/core.yaml#"
+$id: http://devicetree.org/meta-schemas/core.yaml#
 $schema: https://json-schema.org/draft/2019-09/schema
-description: "Metaschema for devicetree binding documentation"
+description: Metaschema for devicetree binding documentation
 
 allOf:
-  - $ref: "http://devicetree.org/meta-schemas/base.yaml#"
+  - $ref: http://devicetree.org/meta-schemas/base.yaml#
   - description: Either unevaluatedProperties or additionalProperties must be present
     oneOf:
       - required: [ unevaluatedProperties ]
@@ -18,41 +18,41 @@ definitions:
   all-properties:
     allOf:
       - $ref: "#/definitions/core-properties"
-      - $ref: "clocks.yaml#"
-      - $ref: "dma.yaml#"
-      - $ref: "gpios.yaml#"
-      - $ref: "hwlock.yaml#"
-      - $ref: "iio.yaml#"
-      - $ref: "interrupts.yaml#"
-      - $ref: "iommu.yaml#"
-      - $ref: "mailbox.yaml#"
-      - $ref: "nvmem.yaml#"
-      - $ref: "phy.yaml#"
-      - $ref: "power-domain.yaml#"
-      - $ref: "pwm.yaml#"
-      - $ref: "reset.yaml#"
-      - $ref: "mailbox.yaml#"
-      - $ref: "vendor-props.yaml#"
+      - $ref: clocks.yaml#
+      - $ref: dma.yaml#
+      - $ref: gpios.yaml#
+      - $ref: hwlock.yaml#
+      - $ref: iio.yaml#
+      - $ref: interrupts.yaml#
+      - $ref: iommu.yaml#
+      - $ref: mailbox.yaml#
+      - $ref: nvmem.yaml#
+      - $ref: phy.yaml#
+      - $ref: power-domain.yaml#
+      - $ref: pwm.yaml#
+      - $ref: reset.yaml#
+      - $ref: mailbox.yaml#
+      - $ref: vendor-props.yaml#
   core-properties:
     properties:
       ranges:
-        $ref: "cell.yaml#/array"
+        $ref: cell.yaml#/array
       reg:
-        $ref: "cell.yaml#/array"
+        $ref: cell.yaml#/array
       compatible:
-        $ref: "string-array.yaml"
+        $ref: string-array.yaml
       $nodename:
-        $ref: "string-array.yaml"
+        $ref: string-array.yaml
       memory-region:
-        $ref: "cell.yaml#/array"
+        $ref: cell.yaml#/array
       memory-region-names:
-        $ref: "string-array.yaml"
+        $ref: string-array.yaml
     patternProperties:
       '.*-names$':
-        $ref: "string-array.yaml"
+        $ref: string-array.yaml
 
       '^#.*-cells$':
-        $ref: "cell.yaml#/single"
+        $ref: cell.yaml#/single
 
       '-supply$':
         propertyNames:
@@ -60,7 +60,7 @@ definitions:
 
       '-(bits|-kBps|percent|bp|mhz|hz|sec|ms|us|ns|ps|mm|microamp(-hours)?|(micro-)?ohms|microwatt-hours|microvolt|(femto|pico)farads|(milli)?celsius|kelvin|kpascal)$':
         allOf:
-          - $ref: "cell.yaml#/array"
+          - $ref: cell.yaml#/array
           - description: Standard unit suffix properties don't need a type $ref
             propertyNames:
               not:
@@ -87,7 +87,7 @@ definitions:
               required:
                 - type
             then:
-              $ref: "nodes.yaml#"
+              $ref: nodes.yaml#
           - if:
               required: [ properties ]
             then:

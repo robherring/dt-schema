@@ -15,27 +15,27 @@ properties:
     pattern: "^(cache-controller|cpu)(@[0-9a-f,]+)*$"
 
   cache-level:
-    $ref: "/schemas/types.yaml#/definitions/uint32"
+    $ref: /schemas/types.yaml#/definitions/uint32
     maximum: 32
 
   cache-unified:
-    $ref: "/schemas/types.yaml#/definitions/flag"
+    $ref: /schemas/types.yaml#/definitions/flag
 
   next-level-cache:
-    $ref: "/schemas/types.yaml#/definitions/phandle"
+    $ref: /schemas/types.yaml#/definitions/phandle
 
 patternProperties:
   "^(i-|d-|)cache-size$":
-    $ref: "/schemas/types.yaml#/definitions/uint32"
+    $ref: /schemas/types.yaml#/definitions/uint32
 
   "^(i-|d-|)cache-sets$":
-    $ref: "/schemas/types.yaml#/definitions/uint32"
+    $ref: /schemas/types.yaml#/definitions/uint32
 
   "^(i-|d-|)cache-block-size$":
-    $ref: "/schemas/types.yaml#/definitions/uint32"
+    $ref: /schemas/types.yaml#/definitions/uint32
 
   "^(i-|d-|)cache-line-size$":
-    $ref: "/schemas/types.yaml#/definitions/uint32"
+    $ref: /schemas/types.yaml#/definitions/uint32
 
 if:
   properties:

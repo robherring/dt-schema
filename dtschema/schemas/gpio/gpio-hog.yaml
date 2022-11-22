@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
-$id: "http://devicetree.org/schemas/gpio/gpio-hog.yaml#"
-$schema: "http://devicetree.org/meta-schemas/base.yaml#"
+$id: http://devicetree.org/schemas/gpio/gpio-hog.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
 
 title: GPIO Hog Nodes
 
-description: "Schema for GPIO hog devicetree bindings"
+description: Schema for GPIO hog devicetree bindings
 
 maintainers:
   - Rob Herring <robh@kernel.org>
@@ -23,22 +23,22 @@ properties:
     pattern: "^(hog-[0-9]+|.+-hog(-[0-9]+)?)$"
 
   gpio-hog:
-    $ref: "/schemas/types.yaml#/definitions/flag"
+    $ref: /schemas/types.yaml#/definitions/flag
 
   gpios:
-    $ref: "/schemas/types.yaml#/definitions/uint32-matrix"
+    $ref: /schemas/types.yaml#/definitions/uint32-matrix
 
   input:
-    $ref: "/schemas/types.yaml#/definitions/flag"
+    $ref: /schemas/types.yaml#/definitions/flag
 
   line-name:
-    $ref: "/schemas/types.yaml#/definitions/string"
+    $ref: /schemas/types.yaml#/definitions/string
 
   output-high:
-    $ref: "/schemas/types.yaml#/definitions/flag"
+    $ref: /schemas/types.yaml#/definitions/flag
 
   output-low:
-    $ref: "/schemas/types.yaml#/definitions/flag"
+    $ref: /schemas/types.yaml#/definitions/flag
 
 required:
   - gpio-hog

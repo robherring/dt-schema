@@ -16,10 +16,10 @@ select: true
 
 properties:
   power-domains:
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    $ref: /schemas/types.yaml#/definitions/phandle-array
 
   power-domain-names:
-    $ref: "/schemas/types.yaml#/definitions/string-array"
+    $ref: /schemas/types.yaml#/definitions/string-array
 
 dependencies:
   power-domain-names: [ power-domains ]

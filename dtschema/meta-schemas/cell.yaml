@@ -3,7 +3,7 @@
 # Copyright 2018 Arm Ltd.
 %YAML 1.2
 ---
-$id: "http://devicetree.org/meta-schemas/cell.yaml#"
+$id: http://devicetree.org/meta-schemas/cell.yaml#
 $schema: https://json-schema.org/draft/2019-09/schema
 
 array:

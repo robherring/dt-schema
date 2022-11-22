@@ -2,15 +2,15 @@
 # Copyright 2021 Arm Ltd.
 %YAML 1.2
 ---
-$id: "http://devicetree.org/meta-schemas/nvmem.yaml#"
+$id: http://devicetree.org/meta-schemas/nvmem.yaml#
 $schema: https://json-schema.org/draft/2019-09/schema
 
 properties:
   nvmem:
-    $ref: "cell.yaml#/array"
+    $ref: cell.yaml#/array
 
   nvmem-cells:
-    $ref: "cell.yaml#/array"
+    $ref: cell.yaml#/array
 
 dependentRequired:
   nvmem-names: [nvmem]

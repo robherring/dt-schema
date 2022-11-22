@@ -2,8 +2,8 @@
 # Copyright 2018 Linaro Ltd.
 # Copyright 2018 Arm Ltd.
 
-$id: "http://devicetree.org/schemas/interrupts.yaml#"
-$schema: "http://devicetree.org/meta-schemas/base.yaml#"
+$id: http://devicetree.org/schemas/interrupts.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
 
 title: Interrupt Consumer Common Properties
 
@@ -15,13 +15,13 @@ select: true
 
 properties:
   interrupt-parent:
-    $ref: "types.yaml#/definitions/phandle"
+    $ref: types.yaml#/definitions/phandle
   interrupts:
-    $ref: "types.yaml#/definitions/uint32-matrix"
+    $ref: types.yaml#/definitions/uint32-matrix
   interrupt-names:
-    $ref: "/schemas/types.yaml#/definitions/string-array"
+    $ref: /schemas/types.yaml#/definitions/string-array
   interrupts-extended:
-    $ref: "types.yaml#/definitions/phandle-array"
+    $ref: types.yaml#/definitions/phandle-array
 dependencies:
   interrupt-names:
     oneOf:

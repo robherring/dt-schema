@@ -74,7 +74,7 @@ patternProperties:
           decrementer registers are updated (in Hertz).
 
       status:
-        $ref: "types.yaml#/definitions/string"
+        $ref: types.yaml#/definitions/string
         enum: [ okay, disabled, fail ]
         description:
           A standard property describing the state of a CPU. A CPU may be

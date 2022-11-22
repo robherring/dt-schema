@@ -3,7 +3,7 @@
 # Copyright 2018 Arm Ltd.
 %YAML 1.2
 ---
-$id: "http://devicetree.org/meta-schemas/boolean.yaml#"
+$id: http://devicetree.org/meta-schemas/boolean.yaml#
 $schema: https://json-schema.org/draft/2019-09/schema
 
 properties:

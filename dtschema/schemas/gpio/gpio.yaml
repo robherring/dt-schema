@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2018 Linaro Ltd.
-$id: "http://devicetree.org/schemas/gpio/gpio.yaml#"
-$schema: "http://devicetree.org/meta-schemas/base.yaml#"
+$id: http://devicetree.org/schemas/gpio/gpio.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
 
 title: GPIO Controller Common Properties
-description: "Schema for GPIO devicetree bindings"
+description: Schema for GPIO devicetree bindings
 maintainers:
   - Rob Herring <robh@kernel.org>
 
@@ -14,18 +14,18 @@ select: true
 properties:
   "#gpio-cells": true
   gpio-controller:
-    $ref: "/schemas/types.yaml#/definitions/flag"
+    $ref: /schemas/types.yaml#/definitions/flag
   gpio-line-names:
-    $ref: "/schemas/types.yaml#/definitions/non-unique-string-array"
+    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
   ngpios:
-    $ref: "/schemas/types.yaml#/definitions/uint32"
+    $ref: /schemas/types.yaml#/definitions/uint32
   gpio-reserved-ranges:
-    $ref: "/schemas/types.yaml#/definitions/uint32-matrix"
+    $ref: /schemas/types.yaml#/definitions/uint32-matrix
     items:
       minItems: 2
       maxItems: 2
   gpio-ranges:
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    $ref: /schemas/types.yaml#/definitions/phandle-array
     items:
       items:
         - description: pin controller phandle

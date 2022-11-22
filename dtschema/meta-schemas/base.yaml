@@ -3,13 +3,13 @@
 # Copyright 2018 Arm Ltd.
 %YAML 1.2
 ---
-$id: "http://devicetree.org/meta-schemas/base.yaml#"
+$id: http://devicetree.org/meta-schemas/base.yaml#
 $schema: https://json-schema.org/draft/2019-09/schema
-description: "Metaschema for devicetree binding documentation"
+description: Metaschema for devicetree binding documentation
 
 allOf:
-  - $ref: "http://json-schema.org/draft-07/schema#"
-  - $ref: "http://devicetree.org/meta-schemas/keywords.yaml#"
+  - $ref: http://json-schema.org/draft-07/schema#
+  - $ref: http://devicetree.org/meta-schemas/keywords.yaml#
 
 properties:
   # listing all properties here to narrow the scope of what is allowed in
@@ -39,7 +39,7 @@ properties:
   select:
     description: '"select" must contain a valid json-schema'
     allOf:
-      - $ref: "http://json-schema.org/draft-07/schema#"
+      - $ref: http://json-schema.org/draft-07/schema#
       - oneOf:
           - type: object
             properties:

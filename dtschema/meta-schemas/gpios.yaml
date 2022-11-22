@@ -3,24 +3,24 @@
 # Copyright 2018 Arm Ltd.
 %YAML 1.2
 ---
-$id: "http://devicetree.org/meta-schemas/gpios.yaml#"
+$id: http://devicetree.org/meta-schemas/gpios.yaml#
 $schema: https://json-schema.org/draft/2019-09/schema
 
 properties:
   gpio-controller:
-    $ref: "boolean.yaml"
+    $ref: boolean.yaml
   gpio-line-names:
-    $ref: "string-array.yaml"
+    $ref: string-array.yaml
   ngpios:
-    $ref: "cell.yaml#/single"
+    $ref: cell.yaml#/single
   gpio-ranges:
-    $ref: "cell.yaml#/array"
+    $ref: cell.yaml#/array
   gpios:
-    $ref: "cell.yaml#/array"
+    $ref: cell.yaml#/array
 
 patternProperties:
   '(?<!,nr)-gpios?$':
-    $ref: "cell.yaml#/array"
+    $ref: cell.yaml#/array
 
 dependentRequired:
   gpio-controller: ['#gpio-cells']

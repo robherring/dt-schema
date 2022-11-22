@@ -2,12 +2,12 @@
 # Copyright 2020 Arm Ltd.
 %YAML 1.2
 ---
-$id: "http://devicetree.org/meta-schemas/dma.yaml#"
+$id: http://devicetree.org/meta-schemas/dma.yaml#
 $schema: https://json-schema.org/draft/2019-09/schema
 
 properties:
   dmas:
-    $ref: "cell.yaml#/array"
+    $ref: cell.yaml#/array
 
 dependentRequired:
   dma-names: [dmas]

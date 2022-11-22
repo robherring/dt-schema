@@ -16,10 +16,10 @@ select: true
 
 properties:
   hwlocks:
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    $ref: /schemas/types.yaml#/definitions/phandle-array
 
   hwlock-names:
-    $ref: "/schemas/types.yaml#/definitions/string-array"
+    $ref: /schemas/types.yaml#/definitions/string-array
 
 dependencies:
   hwlock-names: [ hwlocks ]

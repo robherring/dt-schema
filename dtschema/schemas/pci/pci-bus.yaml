@@ -29,7 +29,7 @@ properties:
 
   ranges:
     oneOf:
-      - $ref: "/schemas/types.yaml#/definitions/flag"
+      - $ref: /schemas/types.yaml#/definitions/flag
       - minItems: 1
         maxItems: 32    # Should be enough
         items:

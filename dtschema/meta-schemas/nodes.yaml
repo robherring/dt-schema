@@ -2,7 +2,7 @@
 # Copyright 2019 Arm Ltd.
 %YAML 1.2
 ---
-$id: "http://devicetree.org/meta-schemas/nodes.yaml#"
+$id: http://devicetree.org/meta-schemas/nodes.yaml#
 $schema: https://json-schema.org/draft/2019-09/schema
 
 type: object

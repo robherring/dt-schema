@@ -26,102 +26,102 @@ select: true
 # Please don't add to this.
 properties:
   opp-hz:
-    $ref: "types.yaml#/definitions/uint64-matrix"
+    $ref: types.yaml#/definitions/uint64-matrix
 
 patternProperties:
   "-bits$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: number of bits
 
   "-kBps$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: kilobytes per second
 
   "-percent$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: percentage
 
   "-bp$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: basis points (1/100 of a percent)
 
   # Time/Frequency
   "-mhz$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: megahertz
   "(^(?!opp)).*-hz$":
-    $ref: "types.yaml#/definitions/uint32-matrix"
+    $ref: types.yaml#/definitions/uint32-matrix
     description: hertz (preferred)
   "-sec$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: second
   "-ms$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: millisecond
   "-us$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: microsecond
   "-ns$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: nanosecond
   "-ps$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: picosecond
 
   # Distance
   "-mm$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: millimeter
 
   # Electricity
   "-microamp$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: microampere
   "-nanoamp$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: nanoampere
   "-microamp-hours$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: microampere hour
   "-ohms$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: ohm
   "-micro-ohms$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: microohm
   "-microwatt$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: microwatt
   "-milliwatt$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: milliwatt
   "-microwatt-hours$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: microwatt hour
   "-microvolt$":
-    $ref: "types.yaml#/definitions/int32-matrix"
+    $ref: types.yaml#/definitions/int32-matrix
     description: microvolt
   "-picofarads$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: picofarad
   "-femtofarads$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: femtofarad
 
   # Temperature
   "-celsius$":
-    $ref: "types.yaml#/definitions/int32-array"
+    $ref: types.yaml#/definitions/int32-array
     description: degree Celsius
   "-millicelsius$":
-    $ref: "types.yaml#/definitions/int32-array"
+    $ref: types.yaml#/definitions/int32-array
     description: millidegree Celsius
   "-kelvin$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: SI unit of thermodynamic temperature
 
   # Pressure
   "-kpascal$":
-    $ref: "types.yaml#/definitions/uint32-array"
+    $ref: types.yaml#/definitions/uint32-array
     description: kilopascal
 
 additionalProperties: true

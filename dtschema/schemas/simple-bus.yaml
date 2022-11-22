@@ -49,7 +49,7 @@ patternProperties:
               maxItems: 7
             minItems: 1
             maxItems: 1024
-          - $ref: "types.yaml#/definitions/flag"
+          - $ref: types.yaml#/definitions/flag
     anyOf:
       - required:
           - reg

@@ -20,7 +20,7 @@ properties:
 
 patternProperties:
   "pinctrl-[0-9]":
-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    $ref: /schemas/types.yaml#/definitions/phandle-array
 
 dependencies:
   pinctrl-names: [ pinctrl-0 ]
