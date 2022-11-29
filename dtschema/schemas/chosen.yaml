@@ -120,14 +120,18 @@ properties:
       respectively, of the root node.
 
   linux,initrd-start:
-    $ref: types.yaml#/definitions/uint32
+    oneOf:
+      - $ref: types.yaml#/definitions/uint32
+      - $ref: types.yaml#/definitions/uint64
     description:
       These properties hold the physical start and end address of an initrd that\'s
       loaded by the bootloader. Note that linux,initrd-start is inclusive, but
       linux,initrd-end is exclusive.
 
   linux,initrd-end:
-    $ref: types.yaml#/definitions/uint32
+    oneOf:
+      - $ref: types.yaml#/definitions/uint32
+      - $ref: types.yaml#/definitions/uint64
     description:
       These properties hold the physical start and end address of an initrd that\'s
       loaded by the bootloader. Note that linux,initrd-start is inclusive, but
