@@ -56,12 +56,12 @@ class schema_group():
                         if disabled or (isinstance(error.instance, dict) and \
                            'status' in error.instance and \
                            'disabled' in error.instance['status']):
-                            if 'required property' in error.message:
+                            if {'required', 'unevaluatedProperties'} & set(error.schema_path):
                                 continue
                             elif error.context:
                                 found = False
                                 for e in error.context:
-                                    if 'required property' in e.message:
+                                    if {'required', 'unevaluatedProperties'} & set(error.schema_path):
                                         found = True
                                         break
                                 if found:
