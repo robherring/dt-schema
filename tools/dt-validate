@@ -61,7 +61,7 @@ class schema_group():
                             elif error.context:
                                 found = False
                                 for e in error.context:
-                                    if {'required', 'unevaluatedProperties'} & set(error.schema_path):
+                                    if {'required', 'unevaluatedProperties'} & set(e.schema_path):
                                         found = True
                                         break
                                 if found:
