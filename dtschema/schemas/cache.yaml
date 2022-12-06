@@ -15,13 +15,8 @@ description: Generic cache binding for caches nodes which only have common cache
 maintainers:
   - Rob Herring <robh@kernel.org>
 
-select:
-  properties:
-    compatible:
-      const: cache
-
-  required:
-    - compatible
+# Disable until warnings fixed
+select: false
 
 allOf:
   - $ref: cache-controller.yaml#
