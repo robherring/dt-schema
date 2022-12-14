@@ -215,11 +215,6 @@ def _is_matrix_schema(subschema):
     return False
 
 
-known_variable_matrix_props = {
-    'fsl,pins',
-}
-
-
 # If we have a matrix with variable inner and outer dimensions, then drop the dimensions
 # because we have no way to reconstruct them.
 def _fixup_int_matrix(propname, subschema):
@@ -229,8 +224,7 @@ def _fixup_int_matrix(propname, subschema):
     outer_dim = _get_array_range(subschema)
     inner_dim = _get_array_range(subschema.get('items', {}))
 
-    if propname in known_variable_matrix_props or \
-       (outer_dim[0] != outer_dim[1] and inner_dim[0] != inner_dim[1]):
+    if outer_dim[0] != outer_dim[1] and inner_dim[0] != inner_dim[1]:
         subschema.pop('items', None)
         subschema.pop('maxItems', None)
         subschema.pop('minItems', None)
@@ -469,6 +463,12 @@ def fixup_schema(schema):
     fixup_sub_schema(schema, True)
 
 
+known_variable_matrix_props = {
+    'fsl,pins',
+    'qcom,board-id'
+}
+
+
 def fixup_sub_schema(schema, is_prop):
     if not isinstance(schema, dict):
         return
@@ -495,6 +495,13 @@ def fixup_sub_schema(schema, is_prop):
             continue
 
         for prop in v:
+            if prop in known_variable_matrix_props and isinstance(v[prop], dict):
+                ref = v[prop].pop('$ref', None)
+                schema[k][prop] = {}
+                if ref:
+                    schema[k][prop]['$ref'] = ref
+                continue
+
             walk_properties(prop, v[prop])
             # Recurse to check for {properties,patternProperties} in each prop
             fixup_sub_schema(v[prop], True)
