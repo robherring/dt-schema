@@ -150,6 +150,7 @@ properties:
   maxItems:
     minimum: 1
   minItems:
+    description: An array property has at least 1 item or is not present
     minimum: 1
   not:
     $ref: "#/definitions/sub-schemas"
@@ -186,6 +187,7 @@ properties:
     additionalProperties:
       $ref: "#/definitions/sub-schemas"
   required:
+    description: "'required' must be valid DT property or node names"
     type: array
     uniqueItems: true
     items:
