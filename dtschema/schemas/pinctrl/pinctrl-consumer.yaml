@@ -19,7 +19,7 @@ properties:
   pinctrl-names: true
 
 patternProperties:
-  "pinctrl-[0-9]":
+  "^pinctrl-[0-9]+$":
     $ref: /schemas/types.yaml#/definitions/phandle-array
 
 dependencies:
