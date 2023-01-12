@@ -41,7 +41,10 @@ def bytes_to_string(b):
         if count > 0 and not len(strings[-1]):
             for string in strings[:-1]:
                 if not string:
-                    continue
+                    # While empty strings are valid, assume empty strings means
+                    # not a string as we only get here when there are multiple
+                    # types.
+                    break
                 if not string.isprintable():
                     break
             else:
