@@ -876,13 +876,11 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
                 p['dim'] = _merge_dim(p['dim'], dim)
             return
         if p['type'].startswith(prop_type):
-            # Already have the same or looser type
+            # Already have the same or looser type, just record the $id
+            new_prop = None
             if schema['$id'] not in p['$id']:
                 p['$id'] += [schema['$id']]
-                # Descend into child schemas if we haven't seen this node already
-                if prop_type == 'node':
-                    break
-            return
+            break
         elif p['type'] in prop_type:
             # Replace scalar type with array type
             new_prop['$id'] += p['$id']
@@ -892,7 +890,8 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     if dup_prop:
         props[propname].remove(dup_prop)
 
-    props[propname] += [new_prop]
+    if new_prop:
+        props[propname] += [new_prop]
 
     if subschema.keys() & {'properties', 'patternProperties', 'additionalProperties'}:
         _extract_subschema_types(props, schema, subschema)
