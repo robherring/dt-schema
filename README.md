@@ -82,7 +82,7 @@ them against the DT meta-schema.
 
 Example:
 ```
-dt-doc-validate -u test/schema test/schemas/good-example.yaml
+dt-doc-validate -u test/schemas test/schemas/good-example.yaml
 ```
 
 `tools/dt-mk-schema`
