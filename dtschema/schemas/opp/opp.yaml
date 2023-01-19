@@ -2,7 +2,7 @@
 # Copyright 2023 Linaro Ltd.
 %YAML 1.2
 ---
-$id: http://devicetree.org/schemas/power-domain/opp.yaml#
+$id: http://devicetree.org/schemas/opp/opp.yaml#
 $schema: http://devicetree.org/meta-schemas/base.yaml#
 
 title: Operating Performance Points Consumer Common Properties
