@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2023 Linaro Ltd.
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/power-domain/opp.yaml#
+$schema: http://devicetree.org/meta-schemas/base.yaml#
+
+title: Operating Performance Points Consumer Common Properties
+
+maintainers:
+  - Rob Herring <robh@kernel.org>
+
+# always select the core schema
+select: true
+
+properties:
+  operating-points-v2:
+    $ref: /schemas/types.yaml#/definitions/phandle
+
+  required-opps:
+    $ref: /schemas/types.yaml#/definitions/phandle-array
+    minItems: 1
+    maxItems: 8
+
+additionalProperties: true
