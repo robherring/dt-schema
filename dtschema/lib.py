@@ -806,11 +806,11 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     # We only support local refs
     if '$ref' in subschema and subschema['$ref'].startswith('#/'):
         sch_path = subschema['$ref'].split('/')[1:]
-        subschema = schema
+        tmp_subschema = schema
         for p in sch_path:
-            subschema = subschema[p]
-        #print(propname, sch_path, subschema, file=sys.stderr)
-        _extract_prop_type(props, schema, propname, subschema, is_pattern)
+            tmp_subschema = tmp_subschema[p]
+        #print(propname, sch_path, tmp_subschema, file=sys.stderr)
+        _extract_prop_type(props, schema, propname, tmp_subschema, is_pattern)
 
     for k in subschema.keys() & {'allOf', 'oneOf', 'anyOf'}:
         for v in subschema[k]:
@@ -821,7 +821,8 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     new_prop = {}
     prop_type = None
 
-    if 'type' in subschema and subschema['type'] == 'object':
+    if ('type' in subschema and subschema['type'] == 'object') or \
+        subschema.keys() & {'properties', 'patternProperties', 'additionalProperties'}:
         prop_type = 'node'
     else:
         try:
