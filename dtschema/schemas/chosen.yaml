@@ -222,6 +222,32 @@ properties:
       carrying the TPM measurement log. The address and the size are expressed in
       #address-cells and #size-cells, respectively of the root node.
 
+  linux,uefi-system-table:
+    $ref: types.yaml#/definitions/uint64
+    description:
+      Physical address of the UEFI System Table.
+
+  linux,uefi-mmap-start:
+    $ref: types.yaml#/definitions/uint64
+    description:
+      Physical address of the UEFI memory map, populated by the UEFI
+      GetMemoryMap() call.
+
+  linux,uefi-mmap-size:
+    $ref: types.yaml#/definitions/uint32
+    description:
+      Size in bytes of the UEFI memory map pointed to by linux,uefi-mmap-start.
+
+  linux,uefi-mmap-desc-size:
+    $ref: types.yaml#/definitions/uint32
+    description:
+      Size in bytes of each entry in the UEFI memory map.
+
+  linux,uefi-mmap-desc-ver:
+    $ref: types.yaml#/definitions/uint32
+    description:
+      Version of the mmap descriptor format.
+
   u-boot,bootconf:
     $ref: types.yaml#/definitions/string
     description:
