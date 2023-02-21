@@ -499,6 +499,10 @@ def fixup_node_props(schema):
     schema['properties'].setdefault('bootph-some-ram', True)
     schema['properties'].setdefault('bootph-all', True)
 
+    # 'dma-ranges' allowed when 'ranges' is present
+    if 'ranges' in schema['properties']:
+        schema['properties'].setdefault('dma-ranges', True)
+
     keys = list(schema['properties'].keys())
     if 'patternProperties' in schema:
         keys.extend(schema['patternProperties'])
