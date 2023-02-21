@@ -499,10 +499,7 @@ def fixup_node_props(schema):
     schema['properties'].setdefault('bootph-some-ram', True)
     schema['properties'].setdefault('bootph-all', True)
 
-    keys = list()
-    if 'properties' in schema:
-        keys.extend(schema['properties'])
-
+    keys = list(schema['properties'].keys())
     if 'patternProperties' in schema:
         keys.extend(schema['patternProperties'])
 
