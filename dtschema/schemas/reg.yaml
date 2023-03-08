@@ -46,6 +46,9 @@ properties:
 
 additionalProperties: true
 
+dependencies:
+  "#size-cells": [ "#address-cells" ]
+
 allOf:
   - if:
       properties:

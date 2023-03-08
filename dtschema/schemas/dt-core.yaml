@@ -82,9 +82,6 @@ patternProperties:
   "^#[a-zA-Z0-9,+\\-._]{0,63}$":
     $ref: types.yaml#/definitions/uint32
 
-dependencies:
-  "#size-cells": [ "#address-cells" ]
-
 additionalProperties: false
 
 ...
