@@ -37,6 +37,12 @@ properties:
     $ref: types.yaml#/definitions/flag
   dma-noncoherent:
     $ref: types.yaml#/definitions/flag
+  firmware-name:
+    $ref: types.yaml#/definitions/string-array
+    description:
+      The filename for a device's firmware file. It is typically a single
+      entry, but some devices have multiple firmware files. It can also
+      be just a stem name used to construct the full firmware filename(s).
   secure-status:
     $ref: types.yaml#/definitions/string
     enum: [ okay, disabled, reserved ]
