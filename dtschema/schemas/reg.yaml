@@ -5,17 +5,44 @@
 $id: http://devicetree.org/schemas/reg.yaml#
 $schema: http://devicetree.org/meta-schemas/core.yaml#
 
-title: reg property checks
-
-description: |
-  Common checks for 'reg' properties
+title: Address related Common Properties
 
 maintainers:
   - Rob Herring <robh@kernel.org>
 
 select: true
 
-properties: {}
+properties:
+  '#address-cells':
+    maximum: 3
+
+  '#size-cells':
+    maximum: 2
+
+  dma-ranges:
+    oneOf:
+      - $ref: types.yaml#/definitions/flag
+      - $ref: types.yaml#/definitions/uint32-matrix
+
+  ranges:
+    oneOf:
+      - $ref: types.yaml#/definitions/flag
+      - $ref: types.yaml#/definitions/uint32-matrix
+
+  reg:
+    $ref: types.yaml#/definitions/uint32-matrix
+
+  reg-io-width:
+    $ref: types.yaml#/definitions/uint32
+    minimum: 1
+    maximum: 0xf
+    description:
+      Typically, a single set bit indicating the access size, but some uses treat
+      this as a bit mask of allowed sizes.
+
+  reg-shift:
+    $ref: types.yaml#/definitions/uint32
+    enum: [ 0, 1, 2 ]
 
 additionalProperties: true
 
