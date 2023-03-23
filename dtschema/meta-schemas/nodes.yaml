@@ -26,6 +26,7 @@ propertyNames:
     - unevaluatedProperties
     - deprecated
     - required
+    - not
     - allOf
     - anyOf
     - oneOf
