@@ -49,7 +49,25 @@ properties:
                 - 0xc2000000
                 - 0xc3000000
 
-  reg: true
+  reg:
+    description: |
+      On PCI-PCI bridge nodes, as defined in the IEEE Std 1275-1994
+      document, it is a five-cell address encoded as (phys.hi phys.mid
+      phys.lo size.hi size.lo). phys.hi should contain the device's BDF as
+      0b00000000 bbbbbbbb dddddfff 00000000. The other cells should be zero.
+
+      The bus number is defined by firmware, through the standard bridge
+      configuration mechanism. If this port is a switch port, then firmware
+      allocates the bus number and writes it into the Secondary Bus Number
+      register of the bridge directly above this port. Otherwise, the bus
+      number of a root port is the first number in the bus-range property,
+      defaulting to zero.
+
+      If firmware leaves the ARI Forwarding Enable bit set in the bridge
+      above this port, then phys.hi contains the 8-bit function number as
+      0b00000000 bbbbbbbb ffffffff 00000000. Note that the PCIe specification
+      recommends that firmware only leaves ARI enabled when it knows that the
+      OS is ARI-aware.
 
   dma-ranges:
     oneOf:
@@ -83,6 +101,15 @@ properties:
     items:
       maximum: 255
 
+  external-facing:
+    description:
+      When present, the port is externally facing. All bridges and endpoints
+      downstream of this port are external to the machine. The OS can, for
+      example, use this information to identify devices that cannot be
+      trusted with relaxed DMA protection, as users could easily attach
+      malicious devices to this port.
+    type: boolean
+
   "#interrupt-cells":
     const: 1
 
@@ -107,9 +134,21 @@ properties:
         maximum: 7
 
   linux,pci-domain:
+    description:
+      If present this property assigns a fixed PCI domain number to a host bridge,
+      otherwise an unstable (across boots) unique number will be assigned.
+      It is required to either not set this property at all or set it for all
+      host bridges in the system, otherwise potentially conflicting domain numbers
+      may be assigned to root buses behind different host bridges.  The domain
+      number for each host bridge in the system must be unique.
     $ref: /schemas/types.yaml#/definitions/uint32
 
   max-link-speed:
+    description:
+      If present this property specifies PCI generation number for link
+      capability.  Host drivers could add this as a strategy to avoid
+      unnecessary operation for unsupported link speed, for instance, trying to
+      do training for unsupported link speed, etc.
     $ref: /schemas/types.yaml#/definitions/uint32
     enum: [ 1, 2, 3, 4 ]
 
@@ -145,6 +184,11 @@ properties:
     maxItems: 1
 
   supports-clkreq:
+    description:
+      If present this property specifies that CLKREQ signal routing exists from
+      root port to downstream device and host bridge drivers can do programming
+      which depends on CLKREQ signal existence. For example, programming root port
+      not to advertise ASPM L1 Sub-States support if there is no CLKREQ signal.
     type: boolean
 
   aspm-no-l0s:
