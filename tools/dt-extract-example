@@ -17,8 +17,11 @@ import ruamel.yaml
 import argparse
 
 interrupt_template = """
-        interrupt-controller;
-        #interrupt-cells = < {int_cells} >;
+        interrupt-parent = <&fake_intc{index}>;
+        fake_intc{index}: fake-interrupt-controller {{
+            interrupt-controller;
+            #interrupt-cells = < {int_cells} >;
+        }};
 """
 
 example_template = """
@@ -81,7 +84,7 @@ if __name__ == "__main__":
                 example_dts += example_start
                 ex = '        '.join(ex.splitlines(True))
                 if int_cells > 0:
-                    int_props = interrupt_template.format(int_cells=int_cells)
+                    int_props = interrupt_template.format(int_cells=int_cells, index=idx)
                 else:
                     int_props = ""
                 example_dts += example_template.format(example=ex, example_num=idx, interrupt=int_props)
