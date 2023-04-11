@@ -1110,7 +1110,7 @@ def http_handler(uri):
                 raise RefResolutionError('Unable to find schema file matching $id: ' + uri)
 
             try:
-                DTValidator.check_schema(schema)
+                DTValidator.check_schema(schema, strict=False)
             except Exception as exc:
                 raise RefResolutionError('Error in referenced schema matching $id: ' + uri)
 
