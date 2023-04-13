@@ -1264,46 +1264,6 @@ class DTValidator():
 
         check_id_path(filename, schema['$id'])
 
-    @classmethod
-    def _check_str(self, err_msg, schema, key, v):
-        if not (isinstance(v, ruamel.yaml.scalarstring.SingleQuotedScalarString) or
-                isinstance(v, ruamel.yaml.scalarstring.DoubleQuotedScalarString)):
-            return
-
-        # Only checking const and list values
-        if key and key != 'const':
-            return
-
-        if v[0] in '#/"':
-            return
-
-        # Flow style with ',' needs quoting
-        if schema.fa.flow_style() and ',' in v:
-            return
-
-        if isinstance(schema, ruamel.yaml.comments.CommentedBase):
-            if isinstance(schema, dict):
-                line = schema.lc.key(key)[0]
-            else:
-                line = schema.lc.line
-            line += 1
-        else:
-            line = None
-
-        print(err_msg + str(line) + ": quotes are not necessary: " + v, file=sys.stderr)
-
-    @classmethod
-    def check_quotes(self, err_msg, schema):
-        if isinstance(schema, dict):
-            for k, v in schema.items():
-                self._check_str(err_msg, schema, k, v)
-                self.check_quotes(err_msg, v)
-
-        if isinstance(schema, list):
-            for s in schema:
-                self._check_str(err_msg, schema, None, s)
-                self.check_quotes(err_msg, s)
-
 
 def format_error(filename, error, prefix="", nodename=None, verbose=False):
     src = prefix + os.path.abspath(filename) + ':'
