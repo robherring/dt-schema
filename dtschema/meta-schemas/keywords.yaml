@@ -103,6 +103,15 @@ dependentRequired:
     - then
 
 properties:
+  $defs:
+    propertyNames:
+      description: A json-schema keyword was found in $defs key.
+      not:
+        $ref: "#/definitions/json-schema-prop-names"
+    additionalProperties:
+      description: $defs entries must contain schemas
+      type: object
+      $ref: "#/definitions/sub-schemas"
   $ref:
     description:
       References must start with '/schemas' or be relative to current
