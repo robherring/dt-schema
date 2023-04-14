@@ -4,7 +4,6 @@
 
 import sys
 import struct
-import pprint
 
 import libfdt
 from libfdt import QUIET_NOTFOUND
