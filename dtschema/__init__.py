@@ -6,12 +6,17 @@ from dtschema.lib import (
     DTValidator,
     format_error,
     extract_compatibles,
+    extract_node_compatibles,
     extract_types,
     get_undocumented_compatibles,
     property_get_type,
     property_get_type_dim,
     property_has_fixed_dimensions,
     sized_int,
+)
+
+from dtschema.fixups import (
+    fixup_schema,
 )
 
 from dtschema.version import (
