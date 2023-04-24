@@ -195,6 +195,7 @@ properties:
           not:
             $ref: "#/definitions/json-schema-prop-names"
     additionalProperties:
+      type: [ object, boolean ]
       $ref: "#/definitions/sub-schemas"
   required:
     description: "'required' must be valid DT property or node names"
