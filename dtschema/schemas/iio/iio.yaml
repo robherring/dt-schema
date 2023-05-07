@@ -30,6 +30,10 @@ properties:
       with a single IIO output and 1 for nodes with multiple IIO outputs.
       A few unusual devices have a 2 level mapping.
 
+  label:
+    description:
+      Unique name to identify which IIO channel or device this is.
+
   mount-matrix:
     $ref: /schemas/types.yaml#/definitions/non-unique-string-array
     minItems: 9
