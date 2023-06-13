@@ -190,4 +190,4 @@ class DTSchema(dict):
         try:
             self._check_schema_refs(self)
         except jsonschema.RefResolutionError as exc:
-            print(self.filename + ':', exc, file=sys.stderr)
+            print(f"{self.filename}:\n{exc}", file=sys.stderr)

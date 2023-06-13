@@ -240,21 +240,21 @@ def process_schema(filename):
     try:
         dtsch = DTSchema(filename)
     except:
-        print(filename + ": ignoring, error parsing file", file=sys.stderr)
+        print(f"{filename}: ignoring, error parsing file", file=sys.stderr)
         return
 
     # Check that the validation schema is valid
     try:
         dtsch.is_valid()
     except jsonschema.SchemaError as exc:
-        print(filename + ": ignoring, error in schema: " + ': '.join(str(x) for x in exc.path),
+        print(f"{filename}: ignoring, error in schema: " + ': '.join(str(x) for x in exc.path),
               file=sys.stderr)
         #print(exc.message)
         return
 
     schema = dtsch.fixup()
     if 'select' not in schema:
-        print(filename + ": warning: no 'select' found in schema found", file=sys.stderr)
+        print(f"{filename}: warning: no 'select' found in schema found", file=sys.stderr)
         return
 
     schema["type"] = "object"
@@ -272,7 +272,7 @@ def process_schemas(schema_paths, core_schema=True):
         if not sch or '$id' not in sch:
             continue
         if sch['$id'] in schemas:
-            print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
+            print(f"{os.path.abspath(filename)}: duplicate '$id' value '{sch['$id']}'", file=sys.stderr)
         else:
             schemas[sch['$id']] = sch
 
@@ -289,12 +289,12 @@ def process_schemas(schema_paths, core_schema=True):
             if sch:
                 count += 1
                 if sch['$id'] in schemas:
-                    print(os.path.abspath(filename) + ": duplicate '$id' value '" + sch['$id'] + "'", file=sys.stderr)
+                    print(f"{os.path.abspath(filename)}: duplicate '$id' value '{sch['$id']}'", file=sys.stderr)
                 else:
                     schemas[sch['$id']] = sch
 
         if count == 0:
-            print("warning: no schema found in path: %s" % path, file=sys.stderr)
+            print(f"warning: no schema found in path: {path}", file=sys.stderr)
 
     return schemas
 
