@@ -144,8 +144,14 @@ properties:
   const:
     type: [ integer, string ]
   enum:
+    description: '"enum" must be an array of either integers or strings'
     type: array
     uniqueItems: true
+    oneOf:
+      - items:
+          type: integer
+      - items:
+          type: string
   if:
     $ref: "#/definitions/sub-schemas"
   items:
