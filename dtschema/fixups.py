@@ -12,7 +12,7 @@ from dtschema.lib import _is_string_schema
 
 
 def _extract_single_schemas(subschema):
-    scalar_keywords = ('const', 'enum', 'pattern', 'minimum', 'maximum')
+    scalar_keywords = ('const', 'enum', 'pattern', 'minimum', 'maximum', 'multipleOf')
     return {k: subschema.pop(k) for k in scalar_keywords if k in subschema}
 
 
