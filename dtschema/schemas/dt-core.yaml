@@ -47,8 +47,10 @@ properties:
     $ref: types.yaml#/definitions/string
     enum: [ okay, disabled, reserved ]
   status:
-    $ref: types.yaml#/definitions/string
-    enum: [ okay, disabled, reserved ]
+    oneOf:
+      - type: object
+      - $ref: types.yaml#/definitions/string
+        enum: [ okay, disabled, reserved ]
   phandle:
     $ref: types.yaml#/definitions/uint32
 
