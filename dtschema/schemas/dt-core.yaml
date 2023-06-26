@@ -45,12 +45,12 @@ properties:
       be just a stem name used to construct the full firmware filename(s).
   secure-status:
     $ref: types.yaml#/definitions/string
-    enum: [ okay, disabled, reserved ]
+    enum: [ okay, disabled, reserved, fail ]
   status:
     oneOf:
       - type: object
       - $ref: types.yaml#/definitions/string
-        enum: [ okay, disabled, reserved ]
+        enum: [ okay, disabled, reserved, fail ]
   phandle:
     $ref: types.yaml#/definitions/uint32
 
