@@ -70,7 +70,7 @@ patternProperties:
     type: [object, array, boolean, 'null']
 
   # Anything with a '@' is definitely a node
-  "^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$":
+  "^[a-zA-Z0-9][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$":
     type: object
 
   # Anything beginnning and ending with '__' is a generated node
