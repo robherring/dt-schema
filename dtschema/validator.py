@@ -216,7 +216,7 @@ def make_compatible_schema(schemas):
     for c in compatible_list:
         if prog.match(c):
             # Exclude the generic pattern
-            if c != '^[a-zA-Z0-9][a-zA-Z0-9,+\-._]+$':
+            if c != '^[a-zA-Z0-9][a-zA-Z0-9,+\-._/]+$':
                 compat_sch += [{'pattern': c}]
         else:
             compat_sch[0]['enum'].append(c)
