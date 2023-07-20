@@ -102,13 +102,13 @@ if __name__ == "__main__":
                     help="Filename or directory of devicetree DTB input file(s)")
     ap.add_argument('-s', '--schema', help="preparsed schema file or path to schema files")
     ap.add_argument('-p', '--preparse', help="preparsed schema file (deprecated, use '-s')")
-    ap.add_argument('-l', '--limit', help="limit validation to schema files matching substring")
+    ap.add_argument('-l', '--limit', help="limit validation to schemas with $id matching LIMIT substring")
     ap.add_argument('-m', '--show-unmatched',
         help="Print out node 'compatible' strings which don't match any schema.",
         action="store_true")
     ap.add_argument('-n', '--line-number', help="Obsolete", action="store_true")
     ap.add_argument('-v', '--verbose', help="verbose mode", action="store_true")
-    ap.add_argument('-u', '--url-path', help="Additional search path for references")
+    ap.add_argument('-u', '--url-path', help="Additional search path for references (deprecated)")
     ap.add_argument('-V', '--version', help="Print version number",
                     action="version", version=dtschema.__version__)
     args = ap.parse_args()
