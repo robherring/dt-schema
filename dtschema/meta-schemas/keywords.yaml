@@ -87,10 +87,15 @@ dependentSchemas:
     $ref: "#/definitions/scalar-prop-list"
   additionalProperties:
     description: "'additionalProperties' depends on 'properties' or 'patternProperties'"
-    anyOf:
-      - required: [ type ]
-      - required: [ properties ]
-      - required: [ patternProperties ]
+    if:
+      properties:
+        additionalProperties:
+            type: boolean
+    then:
+      anyOf:
+        - required: [ type ]
+        - required: [ properties ]
+        - required: [ patternProperties ]
 
 dependentRequired:
   # Ensure only valid combinations of if/then/else are present
