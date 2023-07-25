@@ -348,8 +348,11 @@ def fixup_sub_schema(schema, is_prop):
         schema.pop('additionalProperties', None)
 
     for k, v in schema.items():
-        if k in ['select', 'if', 'then', 'else', 'additionalProperties', 'not']:
+        if k in ['select', 'if', 'then', 'else', 'not']:
             fixup_sub_schema(v, False)
+
+        if k in ['additionalProperties']:
+            fixup_sub_schema(v, True)
 
         if k in ['allOf', 'anyOf', 'oneOf']:
             for subschema in v:
