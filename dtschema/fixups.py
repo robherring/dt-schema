@@ -333,14 +333,13 @@ known_variable_matrix_props = {
 }
 
 
-def fixup_sub_schema(schema, is_prop):
+def fixup_sub_schema(schema):
     if not isinstance(schema, dict):
         return
 
     schema.pop('description', None)
     fixup_interrupts(schema)
-    if is_prop:
-        fixup_node_props(schema)
+    fixup_node_props(schema)
 
     # 'additionalProperties: true' doesn't work with 'unevaluatedProperties', so
     # remove it. It's in the schemas for common (incomplete) schemas.
@@ -348,15 +347,12 @@ def fixup_sub_schema(schema, is_prop):
         schema.pop('additionalProperties', None)
 
     for k, v in schema.items():
-        if k in ['select', 'if', 'then', 'else', 'not']:
-            fixup_sub_schema(v, False)
-
-        if k in ['additionalProperties']:
-            fixup_sub_schema(v, True)
+        if k in ['select', 'if', 'then', 'else', 'not', 'additionalProperties']:
+            fixup_sub_schema(v)
 
         if k in ['allOf', 'anyOf', 'oneOf']:
             for subschema in v:
-                fixup_sub_schema(subschema, True)
+                fixup_sub_schema(subschema)
 
         if k not in ['dependentRequired', 'dependentSchemas', 'dependencies', 'properties', 'patternProperties', '$defs']:
             continue
@@ -371,15 +367,15 @@ def fixup_sub_schema(schema, is_prop):
 
             walk_properties(prop, v[prop])
             # Recurse to check for {properties,patternProperties} in each prop
-            fixup_sub_schema(v[prop], True)
+            fixup_sub_schema(v[prop])
 
     fixup_schema_to_201909(schema)
 
 
 def fixup_node_props(schema):
-    if not {'properties', 'patternProperties', 'unevaluatedProperties', 'additionalProperties'} & schema.keys():
-        return
-    if ('additionalProperties' in schema and schema['additionalProperties'] is True) or \
+    # If no restrictions on undefined properties, then no need to add any implicit properties
+    if (not {'unevaluatedProperties', 'additionalProperties'} & schema.keys()) or \
+       ('additionalProperties' in schema and schema['additionalProperties'] is True) or \
        ('unevaluatedProperties' in schema and schema['unevaluatedProperties'] is True):
         return
 
@@ -484,4 +480,4 @@ def fixup_schema(schema):
     schema.pop('historical', None)
 
     add_select_schema(schema)
-    fixup_sub_schema(schema, True)
+    fixup_sub_schema(schema)
