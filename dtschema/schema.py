@@ -101,13 +101,7 @@ class DTSchema(dict):
         self.validator.resolver.push_scope(scope)
         ref_depth = 1
 
-        lastp = ''
         for p in path:
-            # json-schema 3.2.0 includes 'if' in schema path
-            if lastp != 'properties' and p == 'if':
-                continue
-            lastp = p
-
             while '$ref' in schema and isinstance(schema['$ref'], str):
                 ref = self.validator.resolver.resolve(schema['$ref'])
                 schema = ref[1]
