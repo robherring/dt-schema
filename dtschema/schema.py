@@ -117,8 +117,7 @@ class DTSchema(dict):
             if '$id' in schema and isinstance(schema['$id'], str):
                 error.schema_file = schema['$id']
 
-            if p in schema:
-                schema = schema[p]
+            schema = schema[p]
 
             if isinstance(schema, dict):
                 if 'description' in schema and isinstance(schema['description'], str):
