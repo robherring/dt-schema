@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2023 Arm Ltd.
+%YAML 1.2
+---
+$id: http://devicetree.org/meta-schemas/types.yaml#
+$schema: https://json-schema.org/draft/2019-09/schema
+
+description: Checks for schemas with a defined type
+
+allOf:
+  - if:
+      properties:
+        $ref:
+          pattern: 'u?int(8|16|32|64)$'
+      required:
+        - $ref
+    then:
+      description: An integer type must have integer constraints
+      properties:
+        const:
+          type: integer
+        enum:
+          items:
+            type: integer
+  - if:
+      properties:
+        $ref:
+          pattern: 'string$'
+      required:
+        - $ref
+    then:
+      description: A string type must have string constraints
+      properties:
+        const:
+          type: string
+        enum:
+          items:
+            type: string
+

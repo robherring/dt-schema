@@ -54,6 +54,7 @@ definitions:
     allOf:
       - $ref: "#"
       - $ref: items.yaml#
+      - $ref: types.yaml#
     propertyNames:
       # The subset of keywords allowed for sub-schema
       anyOf:
