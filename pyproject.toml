@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=61", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "dtschema/version.py"
+
+[project]
+name = "dtschema"
+description = "DeviceTree validation schema and tools"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE.txt"}
+authors = [
+  {email = "robh@kernel.org"},
+  {name = "Rob Herring"},
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+]
+dynamic = ["version"]
+
+dependencies = [
+    "ruamel.yaml>0.15.69",
+    "jsonschema>=4.1.2,<4.18",
+    "rfc3987",
+    "pylibfdt",
+]
+
+[project.urls]
+HomePage="https://github.com/devicetree-org/dt-schema"
+Source="https://github.com/devicetree-org/dt-schema"
+
+[tool.setuptools]
+license-files = ["LICENSE.txt"]
+script-files = [
+    'tools/dt-check-compatible',
+    'tools/dt-validate',
+    'tools/dt-doc-validate',
+    'tools/dt-mk-schema',
+    'tools/dt-extract-example',
+    'tools/dt-extract-props',
+    'tools/dtb2py'
+]
