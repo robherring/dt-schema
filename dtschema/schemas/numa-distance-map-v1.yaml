@@ -1,0 +1,103 @@
+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-clause
+# Copyright 2023 Arm, Ltd.
+#
+# Based on numa.txt binding from Linux kernel
+# Copyright 2016 Cavium Networks, Inc.
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/numa-distance-map-v1.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: NUMA distance-map node
+
+maintainers:
+  - devicetree-spec@vger.kernel.org
+
+description: |
+  Systems employing a Non Uniform Memory Access (NUMA) architecture contain
+  collections of hardware resources including processors, memory, and I/O buses,
+  that comprise what is commonly known as a NUMA node.
+  Processor accesses to memory within the local NUMA node is generally faster
+  than processor accesses to memory outside of the local NUMA node.
+  DT defines interfaces that allow the platform to convey NUMA node
+  topology information to OS.
+
+  The optional device tree node "distance-map" describes the relative distance
+  (memory latency) between all numa nodes. There must be only one device node
+  distance-map which must reside in the root node. If the distance-map node is
+  not present, a default distance-matrix is used.
+
+properties:
+  $nodename:
+    const: distance-map
+
+  compatible:
+    const: numa-distance-map-v1
+
+  distance-matrix:
+    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+    items:
+      items:
+        - description: 1st NUMA node ID
+        - description: 2nd NUMA node ID
+        - description: distance from 1st to 2nd NUMA node
+          minimum: 10
+    description: |
+      Defines a matrix to describe the relative distances between all numa
+      nodes. It is represented as a list of node pairs and their relative
+      distance.
+
+      Note:
+      1. Each entry represents distance from first node to second node.
+      The distances are equal in either direction.
+      2. The distance from a node to self (local distance) is represented
+      with value 10 and all internode distance should be represented with
+      a value greater than 10.
+      3. distance-matrix should have entries in lexicographical ascending
+      order of nodes.
+
+      Example:
+      4 nodes connected in mesh/ring topology as below,
+
+        0_______20______1
+        |               |
+        |               |
+        20             20
+        |               |
+        |               |
+        |_______________|
+        3       20      2
+
+      If relative distance for each hop is 20,
+      then internode distance would be,
+            0 -> 1 = 20
+            1 -> 2 = 20
+            2 -> 3 = 20
+            3 -> 0 = 20
+            0 -> 2 = 40
+            1 -> 3 = 40
+
+additionalProperties: false
+
+examples:
+  - |
+    distance-map {
+        compatible = "numa-distance-map-v1";
+        distance-matrix = <0 0  10>,
+                          <0 1  20>,
+                          <0 2  40>,
+                          <0 3  20>,
+                          <1 0  20>,
+                          <1 1  10>,
+                          <1 2  20>,
+                          <1 3  40>,
+                          <2 0  40>,
+                          <2 1  20>,
+                          <2 2  10>,
+                          <2 3  20>,
+                          <3 0  20>,
+                          <3 1  40>,
+                          <3 2  20>,
+                          <3 3  10>;
+    };
+...
