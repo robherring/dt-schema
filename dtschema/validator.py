@@ -51,7 +51,11 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
         for p in sch_path:
             tmp_subschema = tmp_subschema[p]
         #print(propname, sch_path, tmp_subschema, file=sys.stderr)
-        _extract_prop_type(props, schema, propname, tmp_subschema, is_pattern)
+        try:
+            _extract_prop_type(props, schema, propname, tmp_subschema, is_pattern)
+        except RecursionError:
+            # We should probably detect this
+            pass
 
     for k in subschema.keys() & {'allOf', 'oneOf', 'anyOf'}:
         for v in subschema[k]:
