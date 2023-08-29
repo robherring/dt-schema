@@ -46,6 +46,9 @@ properties:
   '#size-cells':
     const: 0
 
+  cpu-map:
+    $ref: /schemas/cpu-map.yaml#
+
 patternProperties:
   '^cpu@[0-9a-f]+$':
     $ref: cpu.yaml#

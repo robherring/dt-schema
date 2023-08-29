@@ -1,0 +1,255 @@
+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-clause
+# Copyright 2013,2023 Arm, Ltd.
+#
+# Based on cpu-topology.txt binding from Linux kernel
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/cpu-map.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: CPU Topology nodes
+
+maintainers:
+  - devicetree-spec@vger.kernel.org
+
+description: |
+  In a SMP system, the hierarchy of CPUs is defined through three entities that
+  are used to describe the layout of physical CPUs in the system:
+
+  - socket
+  - cluster
+  - core
+  - thread
+
+  The bottom hierarchy level sits at core or thread level depending on whether
+  symmetric multi-threading (SMT) is supported or not.
+
+  For instance in a system where CPUs support SMT, "cpu" nodes represent all
+  threads existing in the system and map to the hierarchy level "thread" above.
+  In systems where SMT is not supported "cpu" nodes represent all cores present
+  in the system and map to the hierarchy level "core" above.
+
+  CPU topology bindings allow one to associate cpu nodes with hierarchical groups
+  corresponding to the system hierarchy; syntactically they are defined as device
+  tree nodes.
+
+  Currently, only ARM/RISC-V intend to use this cpu topology binding but it may be
+  used for any other architecture as well.
+
+  The cpu nodes, as per bindings defined in [4], represent the devices that
+  correspond to physical CPUs and are to be mapped to the hierarchy levels.
+
+  A topology description containing phandles to cpu nodes that are not compliant
+  with bindings standardized in [4] is therefore considered invalid.
+
+  ===========================================
+  2 - cpu-map node
+  ===========================================
+
+  The ARM/RISC-V CPU topology is defined within the cpu-map node, which is a direct
+  child of the cpus node and provides a container where the actual topology
+  nodes are listed.
+
+  The cpu-map node can only contain 4 types of child nodes:
+
+  - socket node
+  - cluster node
+  - core node
+  - thread node
+
+  The nodes describing the CPU topology (socket/cluster/core/thread) can
+  only be defined within the cpu-map node and every core/thread in the
+  system must be defined within the topology.  Any other configuration is
+  invalid and therefore must be ignored.
+
+  ===========================================
+  2.1 - cpu-map child nodes naming convention
+  ===========================================
+
+  cpu-map child nodes must follow a naming convention where the node name
+  must be "socketN", "clusterN", "coreN", "threadN" depending on the node type
+  (ie socket/cluster/core/thread) (where N = {0, 1, ...} is the node number; nodes
+  which are siblings within a single common parent node must be given a unique and
+  sequential N value, starting from 0).
+  cpu-map child nodes which do not share a common parent node can have the same
+  name (ie same number N as other cpu-map child nodes at different device tree
+  levels) since name uniqueness will be guaranteed by the device tree hierarchy.
+
+  ===========================================
+  [1] ARM Linux kernel documentation
+      Documentation/devicetree/bindings/arm/cpus.yaml
+  [2] Devicetree NUMA binding description
+      Documentation/devicetree/bindings/numa.txt
+  [3] RISC-V Linux kernel documentation
+      Documentation/devicetree/bindings/riscv/cpus.yaml
+  [4] https://www.devicetree.org/specifications/
+
+$defs:
+  cluster:
+    type: object
+    oneOf:
+      - additionalProperties: false
+        patternProperties:
+          '^cluster[0-9]+$':
+            $ref: '#/$defs/cluster'
+      - additionalProperties: false
+        patternProperties:
+          '^core[0-9]+$':
+            $ref: '#/$defs/core'
+
+  core:
+    type: object
+    oneOf:
+      - additionalProperties: false
+        patternProperties:
+          '^thread[0-9]+$':
+            $ref: '#/$defs/core'
+      - additionalProperties: false
+        properties:
+          cpu:
+            $ref: /schemas/types.yaml#/definitions/phandle
+        required:
+          - cpu
+
+properties:
+  $nodename:
+    const: cpu-map
+
+patternProperties:
+  '^(socket|cluster)[0-9]+$':
+    $ref: '#/$defs/cluster'
+    description: |
+      The cpu-map node's child nodes can be:
+
+      - one or more cluster nodes or
+      - one or more socket nodes in a multi-socket system. A system can
+        contain single or multiple physical socket.
+        The association of sockets and NUMA nodes is beyond the scope of this
+        binding, please refer [2] for NUMA bindings.
+
+additionalProperties: false
+
+examples:
+  - |
+    # 16-cpu system, two clusters of clusters in a single physical socket
+    cpu-map {
+        socket0 {
+            cluster0 {
+                cluster0 {
+                    core0 {
+                        thread0 {
+                            cpu = <&CPU0>;
+                        };
+                        thread1 {
+                            cpu = <&CPU1>;
+                        };
+                    };
+
+                    core1 {
+                        thread0 {
+                            cpu = <&CPU2>;
+                        };
+                        thread1 {
+                            cpu = <&CPU3>;
+                        };
+                    };
+                };
+
+                cluster1 {
+                    core0 {
+                        thread0 {
+                            cpu = <&CPU4>;
+                        };
+                        thread1 {
+                            cpu = <&CPU5>;
+                        };
+                    };
+
+                    core1 {
+                        thread0 {
+                            cpu = <&CPU6>;
+                        };
+                        thread1 {
+                            cpu = <&CPU7>;
+                        };
+                    };
+                };
+            };
+
+            cluster1 {
+                cluster0 {
+                    core0 {
+                        thread0 {
+                            cpu = <&CPU8>;
+                        };
+                        thread1 {
+                            cpu = <&CPU9>;
+                        };
+                    };
+                    core1 {
+                        thread0 {
+                            cpu = <&CPU10>;
+                        };
+                        thread1 {
+                            cpu = <&CPU11>;
+                        };
+                    };
+                };
+
+                cluster1 {
+                    core0 {
+                        thread0 {
+                            cpu = <&CPU12>;
+                        };
+                        thread1 {
+                            cpu = <&CPU13>;
+                        };
+                    };
+                    core1 {
+                        thread0 {
+                            cpu = <&CPU14>;
+                        };
+                        thread1 {
+                            cpu = <&CPU15>;
+                        };
+                    };
+                };
+            };
+        };
+    };
+
+  - |
+    # 2 Clusters of 4 cores each with no SMT
+    cpu-map {
+        cluster0 {
+            core0 {
+                cpu = <&CPU0>;
+            };
+            core1 {
+                cpu = <&CPU1>;
+            };
+            core2 {
+                cpu = <&CPU2>;
+            };
+            core3 {
+                cpu = <&CPU3>;
+            };
+        };
+
+        cluster1 {
+            core0 {
+                cpu = <&CPU4>;
+            };
+            core1 {
+                cpu = <&CPU5>;
+            };
+            core2 {
+                cpu = <&CPU6>;
+            };
+            core3 {
+                cpu = <&CPU7>;
+            };
+        };
+    };
+
+...
