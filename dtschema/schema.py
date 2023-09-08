@@ -46,16 +46,6 @@ def get_line_col(tree, path, obj=None):
     return -1, -1
 
 
-def typeSize(validator, typeSize, instance, schema):
-    try:
-        size = instance[0][0].size
-    except:
-        size = 32
-
-    if typeSize != size:
-        yield jsonschema.ValidationError("size is %r, expected %r" % (size, typeSize))
-
-
 class DTSchema(dict):
     DtValidator = jsonschema.validators.extend(
         jsonschema.Draft201909Validator,
