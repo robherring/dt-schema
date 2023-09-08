@@ -266,19 +266,26 @@ def process_schema(filename):
     return schema
 
 
+def _add_schema(schemas, filename):
+    sch = process_schema(os.path.abspath(filename))
+    if not sch or '$id' not in sch:
+        return False
+    if sch['$id'] in schemas:
+        print(f"{sch['$filename']}: warning: ignoring duplicate '$id' value '{sch['$id']}'", file=sys.stderr)
+        return False
+    else:
+        schemas[sch['$id']] = sch
+
+    return True
+
+
 def process_schemas(schema_paths, core_schema=True):
     schemas = {}
 
     for filename in schema_paths:
         if not os.path.isfile(filename):
             continue
-        sch = process_schema(os.path.abspath(filename))
-        if not sch or '$id' not in sch:
-            continue
-        if sch['$id'] in schemas:
-            print(f"{os.path.abspath(filename)}: duplicate '$id' value '{sch['$id']}'", file=sys.stderr)
-        else:
-            schemas[sch['$id']] = sch
+        _add_schema(schemas, filename)
 
     if core_schema:
         schema_paths.append(os.path.join(schema_basedir, 'schemas/'))
@@ -289,13 +296,8 @@ def process_schemas(schema_paths, core_schema=True):
             continue
 
         for filename in glob.iglob(os.path.join(os.path.abspath(path), "**/*.yaml"), recursive=True):
-            sch = process_schema(os.path.abspath(filename))
-            if sch:
+            if _add_schema(schemas, filename):
                 count += 1
-                if sch['$id'] in schemas:
-                    print(f"{os.path.abspath(filename)}: duplicate '$id' value '{sch['$id']}'", file=sys.stderr)
-                else:
-                    schemas[sch['$id']] = sch
 
         if count == 0:
             print(f"warning: no schema found in path: {path}", file=sys.stderr)
