@@ -33,6 +33,10 @@ patternProperties:
     $ref: types.yaml#/definitions/uint32-array
     description: number of bits
 
+  "-bps$":
+    $ref: types.yaml#/definitions/uint32
+    description: bits per second
+
   "-kBps$":
     $ref: types.yaml#/definitions/uint32-array
     description: kilobytes per second
