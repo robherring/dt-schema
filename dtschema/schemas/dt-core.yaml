@@ -23,6 +23,12 @@ properties:
     items:
       # Keep in sync with make_compatible_schema()
       pattern: "^[a-zA-Z0-9][a-zA-Z0-9,+\\-._/]+$"
+  cpu:
+    description:
+      Phandles to a CPU node associated with the referring node.
+    oneOf:
+      - type: object
+      - $ref: types.yaml#/definitions/phandle
   cpus:
     description:
       Phandles to CPU nodes associated with the referring node.
