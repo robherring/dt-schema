@@ -38,10 +38,15 @@ type_re = re.compile('(flag|u?int(8|16|32|64)(-(array|matrix))?|string(-array)?|
 
 
 def _extract_prop_type(props, schema, propname, subschema, is_pattern):
-    if not isinstance(subschema, dict):
+    if propname.startswith('$'):
         return
 
-    if propname.startswith('$'):
+    if not isinstance(subschema, dict):
+        if subschema is True:
+            default_type = {'type': None, '$id': [schema['$id']]}
+            if is_pattern:
+                default_type['regex'] = re.compile(propname)
+            props.setdefault(propname, [default_type])
         return
 
     new_prop = {}
@@ -173,39 +178,33 @@ def extract_types(schemas):
 
     return props
 
-
-def get_prop_types(schemas, want_missing_types=False, want_node_types=False):
+def get_prop_types(schemas):
     pat_props = {}
 
     props = extract_types(schemas)
 
     # hack to remove aliases and generic patterns
     del props['^[a-z][a-z0-9\-]*$']
-    props.pop('^[a-zA-Z][a-zA-Z0-9\\-_]{0,63}$', None)
-    props.pop('^.*$', None)
-    props.pop('.*', None)
 
-    # Remove node types
-    if not want_node_types:
-        for val in props.values():
-            val[:] = [t for t in val if t['type'] != 'node']
-
-    # Remove all properties without a type
-    if not want_missing_types:
-        for val in props.values():
-            val[:] = [t for t in val if t['type'] is not None]
-
-    # Delete any entries now empty due to above operations
+    # Remove all node types
+    for val in props.values():
+        val[:] = [t for t in val if t['type'] != 'node']
     for key in [key for key in props if len(props[key]) == 0]:
         del props[key]
 
     # Split out pattern properties
-    for key in [key for key in props if len(props[key]) and 'regex' in props[key][0]]:
+    for key in [key for key in props if 'regex' in props[key][0]]:
         # Only want patternProperties with type and some amount of fixed string
-        if re.search(r'[0-9a-zA-F-]{3}', key):
-            #print(key, props[key], file=sys.stderr)
+        if props[key][0]['type'] is not None:
             pat_props[key] = props[key]
         del props[key]
+
+    # Delete any entries without a type, but matching a patternProperty
+    for key in [key for key in props if props[key][0]['type'] is None]:
+        for pat, val in pat_props.items():
+            if val[0]['type'] and val[0]['regex'].search(key):
+                del props[key]
+                break
 
     return [props, pat_props]
 
@@ -411,8 +410,16 @@ class DTValidator:
 
         return undoc_compats
 
+    def check_missing_property_types(self):
+        for p, val in self.props.items():
+            if val[0]['type'] is None:
+                for id in val[0]['$id']:
+                    print(f"{self.schemas[id]['$filename']}: {p}: missing type definition", file=sys.stderr)
+
     def make_property_type_cache(self):
         self.props, self.pat_props = get_prop_types(self.schemas)
+
+        self.check_missing_property_types()
 
         for val in self.props.values():
             for t in val:
