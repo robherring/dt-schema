@@ -76,7 +76,7 @@ properties:
     description: 0
 
   vendor,property:
-    enum: [ 0, 1, 2 ]
+    type: boolean
 
 required:
   - model

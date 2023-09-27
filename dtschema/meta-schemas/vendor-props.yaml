@@ -25,58 +25,28 @@ patternProperties:
       - description
 
 additionalProperties:
-    type: object
+    type: [boolean, object]
     description: Vendor specific properties must have a type and description
       unless they have a defined, common suffix.
-    oneOf:
-      - description: 'A vendor boolean property can use "type: boolean"'
-        properties:
-          description: true
-          type:
-            const: boolean
-          deprecated: true
-        required:
-          - type
-          - description
-        additionalProperties: false
 
-      - description: A vendor string property with exact values has an implicit
-          type
-        properties:   # A string property with exact values
-          description: true
-          enum:
-            items:
-              type: string
-          const:
-              type: string
-          deprecated: true
-        required:
-          - description
-        oneOf:
-          - required: [ enum ]
-          - required: [ const ]
-        additionalProperties: false
+    properties:
+      type:
+        description: 'A vendor boolean property can use "type: boolean"'
+        const: boolean
 
-      - description: A vendor property needs a $ref to types.yaml
-        properties:   # A property with a type and additional constraints
+    dependentRequired:
+      type: [description]
+
+    anyOf:
+      - properties:
           $ref:
+            description: A vendor property needs a $ref to types.yaml
             pattern: "types.yaml#\/definitions\/"
-          allOf:
-            items:
-              - properties:
-                  $ref:
-                    pattern: "types.yaml#\/definitions\/"
-                required:
-                  - $ref
-        required:
-          - description
-        oneOf:
-          - required: [ $ref ]
-          - required: [ allOf ]
-      - description: A vendor property can have a $ref to a a $defs schema
-        properties:   # A property with a type and additional constraints
+        dependentRequired:
+          $ref: [description]
+      - properties:
           $ref:
+            description: A vendor property can have a $ref to a a $defs schema
             pattern: "^#\/(definitions|\\$defs)\/"
-        required: [ $ref ]
 
 ...
