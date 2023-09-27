@@ -44,27 +44,32 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
     if propname.startswith('$'):
         return
 
+    new_prop = {}
+    prop_type = None
+
     # We only support local refs
-    if '$ref' in subschema and subschema['$ref'].startswith('#/'):
-        if propname in props:
-            for p in props[propname]:
-                if schema['$id'] in p['$id']:
-                    return
-        sch_path = subschema['$ref'].split('/')[1:]
-        tmp_subschema = schema
-        for p in sch_path:
-            tmp_subschema = tmp_subschema[p]
-        #print(propname, sch_path, tmp_subschema, file=sys.stderr)
-        _extract_prop_type(props, schema, propname, tmp_subschema, is_pattern)
+    if '$ref' in subschema:
+        if subschema['$ref'].startswith('#/'):
+            if propname in props:
+                for p in props[propname]:
+                    if schema['$id'] in p['$id']:
+                        return
+            sch_path = subschema['$ref'].split('/')[1:]
+            tmp_subschema = schema
+            for p in sch_path:
+                tmp_subschema = tmp_subschema[p]
+            #print(propname, sch_path, tmp_subschema, file=sys.stderr)
+            _extract_prop_type(props, schema, propname, tmp_subschema, is_pattern)
+        elif '/properties/' in subschema['$ref']:
+            ref_prop = subschema['$ref'].split('/')[-1]
+            if ref_prop in props:
+                prop_type = props[ref_prop][0]['type']
 
     for k in subschema.keys() & {'allOf', 'oneOf', 'anyOf'}:
         for v in subschema[k]:
             _extract_prop_type(props, schema, propname, v, is_pattern)
 
     props.setdefault(propname, [])
-
-    new_prop = {}
-    prop_type = None
 
     if ('type' in subschema and subschema['type'] == 'object') or \
        subschema.keys() & {'properties', 'patternProperties', 'additionalProperties'}:
@@ -95,8 +100,6 @@ def _extract_prop_type(props, schema, propname, subschema, is_pattern):
                     prop_type = None
             elif '$ref' in subschema and re.search(r'\.yaml#?$', subschema['$ref']):
                 prop_type = 'node'
-            else:
-                prop_type = None
 
     new_prop['type'] = prop_type
     new_prop['$id'] = [schema['$id']]
