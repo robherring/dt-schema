@@ -192,7 +192,7 @@ properties:
         - description: Fixed strings belong in 'properties', not 'patternProperties'
           pattern: '[\^$()*@]'
           not:
-            pattern:  '^\^[a-zA-Z0-9,\-._#]+\$$'
+            pattern:  '^\^[a-zA-Z0-9,\-._#@]+\$$'
         - description: A json-schema keyword was found instead of a DT property name.
           not:
             $ref: "#/definitions/json-schema-prop-names"
