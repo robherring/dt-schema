@@ -92,7 +92,7 @@ class DTSchema(dict):
         ref_depth = 1
 
         for p in path:
-            while '$ref' in schema and isinstance(schema['$ref'], str):
+            while p not in schema and '$ref' in schema and isinstance(schema['$ref'], str):
                 ref = self.validator.resolver.resolve(schema['$ref'])
                 schema = ref[1]
                 self.validator.resolver.push_scope(ref[0])
