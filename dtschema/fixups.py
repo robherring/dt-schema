@@ -196,11 +196,11 @@ def _fixup_scalar_to_array(subschema):
     subschema['items'] = [{'items': [_extract_single_schemas(subschema)]}]
 
 
-def _fixup_items_size(schema):
+def _fixup_items_size(schema, path=[]):
     # Make items list fixed size-spec
     if isinstance(schema, list):
         for l in schema:
-            _fixup_items_size(l)
+            _fixup_items_size(l, path=path)
     elif isinstance(schema, dict):
         schema.pop('description', None)
         if 'items' in schema:
@@ -213,12 +213,13 @@ def _fixup_items_size(schema):
                 if 'maxItems' not in schema:
                     schema['maxItems'] = c
 
-            _fixup_items_size(schema['items'])
+            _fixup_items_size(schema['items'], path=path + ['items'])
 
-        elif 'maxItems' in schema and 'minItems' not in schema:
-            schema['minItems'] = schema['maxItems']
-        elif 'minItems' in schema and 'maxItems' not in schema:
-            schema['maxItems'] = schema['minItems']
+        elif not {'then', 'else'} & set(path):
+            if 'maxItems' in schema and 'minItems' not in schema:
+                schema['minItems'] = schema['maxItems']
+            elif 'minItems' in schema and 'maxItems' not in schema:
+                schema['maxItems'] = schema['minItems']
 
 
 def fixup_schema_to_201909(schema):
@@ -275,7 +276,7 @@ def fixup_vals(schema, path=[]):
     _fixup_int_array_items_to_matrix(schema, path=path)
     _fixup_string_to_array(schema)
     _fixup_scalar_to_array(schema)
-    _fixup_items_size(schema)
+    _fixup_items_size(schema, path=path)
 
     fixup_schema_to_201909(schema)
 
