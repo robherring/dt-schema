@@ -16,7 +16,7 @@ def _extract_single_schemas(subschema):
     return {k: subschema.pop(k) for k in scalar_keywords if k in subschema}
 
 
-def _fixup_string_to_array(propname, subschema):
+def _fixup_string_to_array(subschema):
     # nothing to do if we don't have a set of string schema
     if not _is_string_schema(subschema):
         return
@@ -24,9 +24,9 @@ def _fixup_string_to_array(propname, subschema):
     subschema['items'] = [_extract_single_schemas(subschema)]
 
 
-def _fixup_reg_schema(propname, subschema):
+def _fixup_reg_schema(subschema, path=[]):
     # nothing to do if we don't have a set of string schema
-    if propname != 'reg':
+    if 'reg' not in path:
         return
 
     if 'items' in subschema:
@@ -60,7 +60,7 @@ def _is_matrix_schema(subschema):
 
 # If we have a matrix with variable inner and outer dimensions, then drop the dimensions
 # because we have no way to reconstruct them.
-def _fixup_int_matrix(propname, subschema):
+def _fixup_int_matrix(subschema):
     if not _is_matrix_schema(subschema):
         return
 
@@ -87,7 +87,7 @@ known_array_props = {
 }
 
 
-def is_int_array_schema(propname, subschema):
+def is_int_array_schema(subschema, path=[]):
     if 'allOf' in subschema:
         # Find 'items'. It may be under the 'allOf' or at the same level
         for item in subschema['allOf']:
@@ -98,8 +98,9 @@ def is_int_array_schema(propname, subschema):
                 return int_array_re.search(item['$ref'])
     if '$ref' in subschema:
         return int_array_re.search(subschema['$ref'])
-    elif unit_types_re.search(propname) or propname in known_array_props:
-        return True
+    else:
+        if [p for p in path if unit_types_re.search(p)] or set(path) & known_array_props:
+            return True
 
     return 'items' in subschema and \
         ((isinstance(subschema['items'], list) and _is_int_schema(subschema['items'][0])) or
@@ -108,8 +109,8 @@ def is_int_array_schema(propname, subschema):
 
 # Fixup an int array that only defines the number of items.
 # In this case, we allow either form [[ 0, 1, 2]] or [[0], [1], [2]]
-def _fixup_int_array_min_max_to_matrix(propname, subschema):
-    if not is_int_array_schema(propname, subschema):
+def _fixup_int_array_min_max_to_matrix(subschema, path=[]):
+    if not is_int_array_schema(subschema, path=path):
         return
 
     if 'allOf' in subschema:
@@ -166,9 +167,9 @@ def _fixup_remove_empty_items(subschema):
         del subschema['items']
 
 
-def _fixup_int_array_items_to_matrix(propname, subschema):
+def _fixup_int_array_items_to_matrix(subschema, path=[]):
     itemkeys = ('items', 'minItems', 'maxItems', 'uniqueItems', 'default')
-    if not is_int_array_schema(propname, subschema):
+    if not is_int_array_schema(subschema, path=path):
         return
 
     if 'allOf' in subschema:
@@ -188,7 +189,7 @@ def _fixup_int_array_items_to_matrix(propname, subschema):
         subschema['items'] = [{k: subschema.pop(k) for k in itemkeys if k in subschema}]
 
 
-def _fixup_scalar_to_array(propname, subschema):
+def _fixup_scalar_to_array(subschema):
     if not _is_int_schema(subschema):
         return
 
@@ -261,25 +262,25 @@ def fixup_schema_to_202012(schema):
         pass
 
 
-def fixup_vals(propname, schema):
+def fixup_vals(schema, path=[]):
     # Now we should be a the schema level to do actual fixups
     #print(schema)
 
     schema.pop('description', None)
 
-    _fixup_reg_schema(propname, schema)
+    _fixup_reg_schema(schema, path=path)
     _fixup_remove_empty_items(schema)
-    _fixup_int_matrix(propname, schema)
-    _fixup_int_array_min_max_to_matrix(propname, schema)
-    _fixup_int_array_items_to_matrix(propname, schema)
-    _fixup_string_to_array(propname, schema)
-    _fixup_scalar_to_array(propname, schema)
+    _fixup_int_matrix(schema)
+    _fixup_int_array_min_max_to_matrix(schema, path=path)
+    _fixup_int_array_items_to_matrix(schema, path=path)
+    _fixup_string_to_array(schema)
+    _fixup_scalar_to_array(schema)
     _fixup_items_size(schema)
 
     fixup_schema_to_201909(schema)
 
 
-def walk_properties(propname, schema):
+def walk_properties(schema, path=[]):
     if not isinstance(schema, dict):
         return
     # Recurse until we don't hit a conditional
@@ -288,12 +289,12 @@ def walk_properties(propname, schema):
     for cond in ['allOf', 'oneOf', 'anyOf']:
         if cond in schema.keys():
             for l in schema[cond]:
-                walk_properties(propname, l)
+                walk_properties(l, path=path + [cond])
 
     if 'then' in schema.keys():
-        walk_properties(propname, schema['then'])
+        walk_properties(schema['then'], path=path + ['then'])
 
-    fixup_vals(propname, schema)
+    fixup_vals(schema, path=path)
 
 
 def fixup_interrupts(schema):
@@ -333,7 +334,7 @@ known_variable_matrix_props = {
 }
 
 
-def fixup_sub_schema(schema):
+def fixup_sub_schema(schema, path=[]):
     if not isinstance(schema, dict):
         return
 
@@ -348,11 +349,11 @@ def fixup_sub_schema(schema):
 
     for k, v in schema.items():
         if k in ['select', 'if', 'then', 'else', 'not', 'additionalProperties']:
-            fixup_sub_schema(v)
+            fixup_sub_schema(v, path=path + [k])
 
         if k in ['allOf', 'anyOf', 'oneOf']:
             for subschema in v:
-                fixup_sub_schema(subschema)
+                fixup_sub_schema(subschema, path=path + [k])
 
         if k not in ['dependentRequired', 'dependentSchemas', 'dependencies', 'properties', 'patternProperties', '$defs']:
             continue
@@ -365,9 +366,9 @@ def fixup_sub_schema(schema):
                     schema[k][prop]['$ref'] = ref
                 continue
 
-            walk_properties(prop, v[prop])
+            walk_properties(v[prop], path=path + [k, prop])
             # Recurse to check for {properties,patternProperties} in each prop
-            fixup_sub_schema(v[prop])
+            fixup_sub_schema(v[prop], path=path + [k, prop])
 
     fixup_schema_to_201909(schema)
 
