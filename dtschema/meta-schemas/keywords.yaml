@@ -143,8 +143,14 @@ properties:
       $ref: "#/definitions/sub-schemas"
   contains:
     $ref: "#/definitions/sub-schemas"
+  dependencies:
+    additionalProperties:
+      $ref: "#/definitions/sub-schemas"
   dependentRequired:
     uniqueItems: true
+  dependentSchemas:
+    additionalProperties:
+      $ref: "#/definitions/sub-schemas"
   else:
     $ref: "#/definitions/sub-schemas"
   const:
