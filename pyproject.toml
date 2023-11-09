@@ -32,6 +32,7 @@ dependencies = [
 
 [project.scripts]
 dt-check-compatible = "dtschema.check_compatible:main"
+dt-cmp-schema = "dtschema.cmp_schema:main"
 dt-doc-validate = "dtschema.doc_validate:main"
 dt-extract-example = "dtschema.extract_example:main"
 dt-extract-props = "dtschema.extract_props:main"
