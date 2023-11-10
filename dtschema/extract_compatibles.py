@@ -4,9 +4,9 @@
 # Copyright 2018 Arm Ltd.
 
 import os
-import sys
-import ruamel.yaml
 import argparse
+
+import ruamel.yaml
 
 yaml = ruamel.yaml.YAML()
 

@@ -5,7 +5,6 @@
 
 import sys
 import os
-import jsonschema
 import argparse
 import glob
 

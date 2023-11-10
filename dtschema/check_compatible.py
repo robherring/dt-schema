@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2022 Arm Ltd.
 
-import sys
 import os
 import argparse
 

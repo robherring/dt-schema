@@ -6,10 +6,11 @@
 
 import os
 import sys
-import ruamel.yaml
-import dtschema
 import argparse
 import glob
+
+import ruamel.yaml
+import dtschema
 
 line_number = False
 verbose = False

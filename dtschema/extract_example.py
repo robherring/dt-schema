@@ -3,18 +3,19 @@
 # Copyright 2018 Linaro Ltd.
 # Copyright 2019-2022 Arm Ltd.
 
+import re
+import sys
+import argparse
 import signal
+
+import ruamel.yaml
+
 
 def sigint_handler(signum, frame):
     sys.exit(-2)
 
-signal.signal(signal.SIGINT, sigint_handler)
 
-import os
-import re
-import sys
-import ruamel.yaml
-import argparse
+signal.signal(signal.SIGINT, sigint_handler)
 
 interrupt_template = """
         interrupt-parent = <&fake_intc{index}>;

@@ -3,14 +3,12 @@
 # Copyright 2018 Linaro Ltd.
 # Copyright 2018 Arm Ltd.
 
-import os
 import sys
+import argparse
+import json
+
 import ruamel.yaml
 import dtschema
-import argparse
-import glob
-import jsonschema
-import json
 
 
 def main():
