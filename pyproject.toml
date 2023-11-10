@@ -30,17 +30,15 @@ dependencies = [
     "pylibfdt",
 ]
 
+[project.scripts]
+dt-check-compatible = "dtschema.check_compatible:main"
+dt-doc-validate = "dtschema.doc_validate:main"
+dt-extract-example = "dtschema.extract_example:main"
+dt-extract-props = "dtschema.extract_props:main"
+dt-mk-schema = "dtschema.mk_schema:main"
+dt-validate = "dtschema.dtb_validate:main"
+dtb2py = "dtschema.dtb2py:main"
+
 [project.urls]
 Homepage="https://github.com/devicetree-org/dt-schema"
 Source="https://github.com/devicetree-org/dt-schema"
-
-[tool.setuptools]
-script-files = [
-    'tools/dt-check-compatible',
-    'tools/dt-validate',
-    'tools/dt-doc-validate',
-    'tools/dt-mk-schema',
-    'tools/dt-extract-example',
-    'tools/dt-extract-props',
-    'tools/dtb2py'
-]

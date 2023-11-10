@@ -91,11 +91,11 @@ class schema_group():
     def check_dtb(self, filename):
         """Check the given DT against all schemas"""
         with open(filename, 'rb') as f:
-            dt = sg.validator.decode_dtb(f.read())
+            dt = self.validator.decode_dtb(f.read())
         for subtree in dt:
             self.check_subtree(dt, subtree, False, "/", "/", filename)
 
-if __name__ == "__main__":
+def main():
     ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
         epilog='Arguments can also be passed in a file prefixed with a "@" character.')
     ap.add_argument("dtbs", nargs='*',

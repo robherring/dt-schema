@@ -18,7 +18,7 @@ import dtschema
 
 strict = False
 
-if __name__ == "__main__":
+def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("schema_files", type=str, nargs='*',
                     help="preparsed schema file or list of additional schema files/directories")

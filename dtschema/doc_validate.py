@@ -41,7 +41,7 @@ def check_doc(filename):
 
     return ret
 
-if __name__ == "__main__":
+def main():
     ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
         epilog='Arguments can also be passed in a file prefixed with a "@" character.')
     ap.add_argument("yamldt", nargs='*', type=str,

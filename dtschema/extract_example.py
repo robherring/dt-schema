@@ -51,7 +51,7 @@ example_start = """
 
 yaml = ruamel.yaml.YAML(typ='safe')
 
-if __name__ == "__main__":
+def main():
     ex = '// empty'
     ap = argparse.ArgumentParser()
     ap.add_argument("yamlfile", type=str,

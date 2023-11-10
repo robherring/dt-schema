@@ -11,7 +11,7 @@ import dtschema
 
 strict = False
 
-if __name__ == "__main__":
+def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("dtbfile", type=str, help="Schema directories and/or files")
     ap.add_argument('-s', '--schema', help="path to additional additional schema files")

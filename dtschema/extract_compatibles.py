@@ -23,8 +23,7 @@ def item_generator(json_input, lookup_key):
             for item_val in item_generator(item, lookup_key):
                 yield item_val
 
-if __name__ == "__main__":
-
+def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("yamlfile", type=str,
                     help="Filename of YAML encoded schema input file")

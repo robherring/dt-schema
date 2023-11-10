@@ -20,8 +20,7 @@ import jsonschema
 import json
 
 
-
-if __name__ == "__main__":
+def main():
     ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
         epilog='Arguments can also be passed in a file prefixed with a "@" character.')
     ap.add_argument("-o", "--outfile", type=str,
@@ -37,7 +36,7 @@ if __name__ == "__main__":
 
     schemas = dtschema.DTValidator(args.schemas).schemas
     if not schemas:
-        exit(-1)
+        return -1
 
     if args.outfile:
         f = open(args.outfile, 'w', encoding='utf-8')
