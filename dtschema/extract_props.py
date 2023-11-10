@@ -2,13 +2,6 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright 2022 Arm Ltd.
 
-import signal
-
-def sigint_handler(signum, frame):
-    sys.exit(-2)
-
-signal.signal(signal.SIGINT, sigint_handler)
-
 import argparse
 import os
 import sys

@@ -1,3 +1,10 @@
+import signal
+
+def sigint_handler(signum, frame):
+    sys.exit(-2)
+
+signal.signal(signal.SIGINT, sigint_handler)
+
 from dtschema.lib import (
     format_error,
     extract_compatibles,

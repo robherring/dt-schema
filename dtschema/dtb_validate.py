@@ -3,13 +3,6 @@
 # Copyright 2018 Linaro Ltd.
 # Copyright 2018 Arm Ltd.
 
-import signal
-
-def sigint_handler(signum, frame):
-    sys.exit(-2)
-
-signal.signal(signal.SIGINT, sigint_handler)
-
 import sys
 import os
 import jsonschema

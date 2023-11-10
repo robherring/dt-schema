@@ -6,7 +6,7 @@
 import signal
 
 def sigint_handler(signum, frame):
-    exit(130)
+    sys.exit(-2)
 
 signal.signal(signal.SIGINT, sigint_handler)
 
