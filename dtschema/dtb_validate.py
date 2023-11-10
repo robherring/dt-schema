@@ -70,7 +70,7 @@ class schema_group():
                 print(dtschema.format_error(filename, error, nodename=nodename, verbose=verbose),
                     file=sys.stderr)
         except RecursionError as e:
-            print(ap.prog + ": recursion error: Check for prior errors in a referenced schema", file=sys.stderr)
+            print(os.path.basename(sys.argv[0]) + ": recursion error: Check for prior errors in a referenced schema", file=sys.stderr)
 
     def check_subtree(self, tree, subtree, disabled, nodename, fullname, filename):
         if nodename.startswith('__'):

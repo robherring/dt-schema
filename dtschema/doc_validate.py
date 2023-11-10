@@ -18,6 +18,7 @@ import argparse
 import glob
 
 line_number = False
+verbose = False
 
 def check_doc(filename):
     ret = 0
@@ -30,7 +31,7 @@ def check_doc(filename):
 
     try:
         for error in sorted(dtsch.iter_errors(), key=lambda e: e.linecol):
-            print(dtschema.format_error(filename, error, verbose=args.verbose), file=sys.stderr)
+            print(dtschema.format_error(filename, error, verbose=verbose), file=sys.stderr)
             ret = 1
     except:
         raise
@@ -42,6 +43,9 @@ def check_doc(filename):
     return ret
 
 def main():
+    global verbose
+    global line_number
+
     ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
         epilog='Arguments can also be passed in a file prefixed with a "@" character.')
     ap.add_argument("yamldt", nargs='*', type=str,
@@ -54,6 +58,7 @@ def main():
     args = ap.parse_args()
 
     line_number=args.line_number
+    verbose = args.verbose
 
     ret = 0
     for f in args.yamldt:
