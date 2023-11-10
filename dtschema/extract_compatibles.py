@@ -10,6 +10,7 @@ import ruamel.yaml
 
 yaml = ruamel.yaml.YAML()
 
+
 def item_generator(json_input, lookup_key):
     if isinstance(json_input, dict):
         for k, v in json_input.items():
@@ -23,6 +24,7 @@ def item_generator(json_input, lookup_key):
             for item_val in item_generator(item, lookup_key):
                 yield item_val
 
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("yamlfile", type=str,
@@ -33,7 +35,7 @@ def main():
 
     testtree = yaml.load(open(args.yamlfile, encoding='utf-8').read())
 
-    compatible_list = [ ]
+    compatible_list = []
     for l in item_generator(testtree['properties']['compatible'], 'enum'):
         for _l in l:
             if _l not in compatible_list:

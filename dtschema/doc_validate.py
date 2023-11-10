@@ -15,6 +15,7 @@ import dtschema
 line_number = False
 verbose = False
 
+
 def check_doc(filename):
     ret = 0
     try:
@@ -37,6 +38,7 @@ def check_doc(filename):
 
     return ret
 
+
 def main():
     global verbose
     global line_number
@@ -52,7 +54,7 @@ def main():
                     action="version", version=dtschema.__version__)
     args = ap.parse_args()
 
-    line_number=args.line_number
+    line_number = args.line_number
     verbose = args.verbose
 
     ret = 0

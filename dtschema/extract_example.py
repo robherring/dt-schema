@@ -17,6 +17,7 @@ def sigint_handler(signum, frame):
 
 signal.signal(signal.SIGINT, sigint_handler)
 
+
 interrupt_template = """
         interrupt-parent = <&fake_intc{index}>;
         fake_intc{index}: fake-interrupt-controller {{
@@ -52,6 +53,7 @@ example_start = """
 
 yaml = ruamel.yaml.YAML(typ='safe')
 
+
 def main():
     ex = '// empty'
     ap = argparse.ArgumentParser()
@@ -71,7 +73,7 @@ def main():
     example_dts = example_header
 
     if 'examples' in binding.keys():
-        for idx,ex in enumerate(binding['examples']):
+        for idx, ex in enumerate(binding['examples']):
             # Check if example contains a root node "/{"
             root_node = re.search('/\s*{', ex)
 

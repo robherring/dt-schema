@@ -14,6 +14,7 @@ verbose = False
 show_unmatched = False
 match_schema_file = None
 
+
 class schema_group():
     def __init__(self, schema_file=""):
         if schema_file != "" and not os.path.exists(schema_file):
@@ -26,7 +27,7 @@ class schema_group():
         if 'example-0' in node or 'example-' in nodename:
             return
 
-        node['$nodename'] = [ nodename ]
+        node['$nodename'] = [nodename]
 
         try:
             for error in self.validator.iter_errors(node, filter=match_schema_file):
@@ -37,9 +38,9 @@ class schema_group():
                 # boards using that particular node. Thus, if the
                 # node is marked as disabled, let's just ignore
                 # any error message reporting a missing property.
-                if disabled or (isinstance(error.instance, dict) and \
-                    'status' in error.instance and \
-                    'disabled' in error.instance['status']):
+                if disabled or (isinstance(error.instance, dict) and
+                   'status' in error.instance and
+                   'disabled' in error.instance['status']):
 
                     if {'required', 'unevaluatedProperties'} & set(error.schema_path):
                         continue
@@ -76,7 +77,7 @@ class schema_group():
         self.check_node(tree, subtree, disabled, nodename, fullname, filename)
         if fullname != "/":
             fullname += "/"
-        for name,value in subtree.items():
+        for name, value in subtree.items():
             if isinstance(value, dict):
                 self.check_subtree(tree, value, disabled, name, fullname + name, filename)
 
@@ -86,6 +87,7 @@ class schema_group():
             dt = self.validator.decode_dtb(f.read())
         for subtree in dt:
             self.check_subtree(dt, subtree, False, "/", "/", filename)
+
 
 def main():
     global verbose

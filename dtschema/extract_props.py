@@ -11,6 +11,7 @@ import dtschema
 
 strict = False
 
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("schema_files", type=str, nargs='*',
@@ -26,7 +27,7 @@ def main():
 
     if args.duplicates:
         tmp_props = {}
-        for k,v in props.items():
+        for k, v in props.items():
             if len(v) > 1:
                 tmp_props[k] = v
 
@@ -36,7 +37,7 @@ def main():
         prop_types = props
     else:
         prop_types = {}
-        for k,v in props.items():
+        for k, v in props.items():
             prop_types[k] = []
             for l in v:
                 if 'type' in l:

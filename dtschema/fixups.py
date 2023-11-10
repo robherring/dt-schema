@@ -41,7 +41,7 @@ def _fixup_reg_schema(subschema, path=[]):
     else:
         return
 
-    subschema['items'] = [ {'items': [ _extract_single_schemas(item_schema) ] } ]
+    subschema['items'] = [{'items': [_extract_single_schemas(item_schema)]}]
 
 
 def _is_matrix_schema(subschema):

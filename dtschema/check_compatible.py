@@ -7,6 +7,7 @@ import argparse
 
 import dtschema
 
+
 def main():
     ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
         epilog='Arguments can also be passed in a file prefixed with a "@" character.')
