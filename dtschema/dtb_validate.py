@@ -96,6 +96,10 @@ class schema_group():
             self.check_subtree(dt, subtree, False, "/", "/", filename)
 
 def main():
+    global verbose
+    global show_unmatched
+    global match_schema_file
+
     ap = argparse.ArgumentParser(fromfile_prefix_chars='@',
         epilog='Arguments can also be passed in a file prefixed with a "@" character.')
     ap.add_argument("dtbs", nargs='*',
