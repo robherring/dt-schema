@@ -1,4 +1,5 @@
 import signal
+import sys
 
 def sigint_handler(signum, frame):
     sys.exit(-2)
