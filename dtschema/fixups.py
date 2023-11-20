@@ -108,7 +108,6 @@ def is_int_array_schema(subschema, path=[]):
 
 
 # Fixup an int array that only defines the number of items.
-# In this case, we allow either form [[ 0, 1, 2]] or [[0], [1], [2]]
 def _fixup_int_array_min_max_to_matrix(subschema, path=[]):
     if not is_int_array_schema(subschema, path=path):
         return
@@ -136,17 +135,8 @@ def _fixup_int_array_min_max_to_matrix(subschema, path=[]):
         tmpsch['maxItems'] = subschema.pop('maxItems')
 
     if tmpsch:
-        subschema['oneOf'] = [copy.deepcopy(tmpsch), {'items': [copy.deepcopy(tmpsch)]}]
-        subschema['oneOf'][0].update({'items': {'maxItems': 1}})
-
-        # if minItems can be 1, then both oneOf clauses can be true so increment
-        # minItems in one clause to prevent that.
-        if subschema['oneOf'][0].get('minItems') == 1:
-            subschema['oneOf'][0]['minItems'] += 1
-
-        # Since we added an 'oneOf' the tree walking code won't find it and we need to do fixups
-        _fixup_items_size(subschema['oneOf'])
-
+        subschema['items'] = tmpsch
+        subschema['maxItems'] = 1
 
 def _fixup_remove_empty_items(subschema):
     if 'items' not in subschema:
