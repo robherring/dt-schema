@@ -28,7 +28,7 @@ License: BSD-2-Clause. Author: Rob Herring <robh@kernel.org>.
 | `dtschema/` | The Python package: library modules, CLI `main()`s, and bundled `schemas/` + `meta-schemas/` data |
 | `dtschema/schemas/` | Core/common Devicetree binding schemas (constrain DT data) |
 | `dtschema/meta-schemas/` | Meta-schemas (constrain the binding schema files) |
-| `rust/` | Additive Rust reimplementation (Cargo workspace): the `dtschema` core lib + Linux-integrated CLIs under `cli/`, command-line-compatible with the corresponding Python tools. Python stays authoritative; the Rust tree ports its behaviour and differential-tests against it |
+| `rust/` | Additive Rust reimplementation (Cargo workspace): the `dtschema` core lib + Linux-integrated CLIs under `cli/`, command-line-compatible with the corresponding Python tools. Python stays authoritative; the Rust tree ports its behaviour and differential-tests against it. Rust `dt-mk-schema -j` emits a versioned indexed runtime container; use `--legacy-json` for the textual Python-compatible representation. |
 | `test/` | Test suite `test-dt-validate.py`, `.dts` fixtures, example schemas under `test/schemas/` |
 | `tools/` | Standalone helper scripts: `dt-prop-populate`, `yaml-format`, `yaml2json` |
 | `.github/workflows/` | `ci.yml` (lint + test matrix) and `publish.yml` (PyPI on tags) |
@@ -105,6 +105,9 @@ Preprocessing & caching:
   `generated-types`, `generated-pattern-types`, `generated-compatibles`, and a `version`
   stamp). `DTValidator` can reload that file directly to skip all fixup/type work;
   a `version` mismatch raises *"Processed schema out of date, delete and retry"*.
+  The Rust `dt-mk-schema -j` instead emits a versioned indexed container: it eagerly
+  loads only dispatch/type metadata and lazily reads selected schema payloads. Its
+  `--legacy-json` option emits the textual Python-compatible representation.
 - **`dt-validate --cache-dir`** is a *separate* per-DTB diagnostics cache: one
   `<sha256>.json` per DTB, keyed on cache/dtschema versions + DTB hash + schema hash +
   options, with file paths normalized to the `$dtb` sentinel so entries are

@@ -44,6 +44,13 @@ fn write_processed_schema(repo: &Path, path: &Path) {
     std::fs::write(path, text).unwrap();
 }
 
+fn write_indexed_schema(repo: &Path, path: &Path) {
+    let schemas = repo.join("test/schemas");
+    let processed = ProcessedSchemas::build(&[schemas], true, &dtschema::version());
+    let file = std::fs::File::create(path).unwrap();
+    processed.write_indexed(file).unwrap();
+}
+
 /// Compile a `.dts` fixture to a `.dtb` under `out_dir`, returning its path.
 fn compile_dtb(repo: &Path, dts_rel: &str, out: &Path) -> PathBuf {
     let dts = repo.join(dts_rel);
@@ -170,6 +177,34 @@ fn test_json_cli_output_file() {
     assert!(validation.get("message").is_some());
     assert!(validation.get("formatted").is_some());
     assert!(validation.get("schema").is_some());
+}
+
+#[test]
+fn test_indexed_processed_schema() {
+    if !have_dtc() {
+        eprintln!("SKIP: dtc not available");
+        return;
+    }
+    let repo = repo_root();
+    let tmp = std::env::temp_dir().join("dt-validate-cli-indexed");
+    std::fs::create_dir_all(&tmp).unwrap();
+    let dtb = compile_dtb(&repo, "test/device-fail.dts", &tmp);
+    let schema = tmp.join("schema.indexed");
+    write_indexed_schema(&repo, &schema);
+
+    let out = Command::new(dt_validate_bin())
+        .arg("-s")
+        .arg(&schema)
+        .arg(&dtb)
+        .output()
+        .expect("run dt-validate with indexed schema");
+    assert!(out.status.success());
+    assert_eq!(out.stdout, b"");
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("from schema $id:"),
+        "missing diagnostics:\n{stderr}"
+    );
 }
 
 #[test]

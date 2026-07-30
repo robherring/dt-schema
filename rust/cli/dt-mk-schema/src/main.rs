@@ -3,8 +3,8 @@
 //! `dt-mk-schema`: build a processed schema from raw binding YAML directories.
 //!
 //! Reads directories or YAML files, meta-validates and fixes up each, attaches
-//! the generated type / compatible caches, and emits the result as JSON (`-j`)
-//! or YAML.
+//! the generated type / compatible caches, and emits an indexed runtime schema
+//! (`-j`) or YAML. `--legacy-json` retains the old textual representation.
 
 use std::io::Write;
 use std::path::PathBuf;
@@ -19,9 +19,18 @@ struct Args {
     #[arg(short = 'o', long = "outfile")]
     outfile: Option<PathBuf>,
 
-    /// Encode the processed schema in JSON.
+    /// Emit the versioned indexed processed-schema format.
     #[arg(short = 'j', long = "json")]
     json: bool,
+
+    /// Encode an indexed runtime schema. Schema payloads are loaded lazily by
+    /// the Rust validator; this format is intentionally opaque.
+    #[arg(long = "indexed")]
+    indexed: bool,
+
+    /// Emit the legacy textual JSON processed-schema format.
+    #[arg(long = "legacy-json", conflicts_with_all = ["json", "indexed"])]
+    legacy_json: bool,
 
     /// Only process user schemas (skip the bundled core schemas).
     #[arg(short = 'u', long = "useronly")]
@@ -57,7 +66,9 @@ fn main() -> anyhow::Result<()> {
         None => Box::new(std::io::stdout()),
     };
 
-    if args.json {
+    if args.json || args.indexed {
+        ps.write_indexed(&mut out)?;
+    } else if args.legacy_json {
         let text = serde_json::to_string_pretty(&ps.schemas)?;
         writeln!(out, "{text}")?;
     } else {

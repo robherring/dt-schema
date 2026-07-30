@@ -17,7 +17,6 @@ use dtschema::diagnostic::{
     unmatched_diagnostic,
 };
 use dtschema::dtb::DtValue;
-use dtschema::process::ProcessedSchemas;
 use dtschema::validator::{DTValidator, DtError};
 use rayon::prelude::*;
 use serde_json::Value;
@@ -230,45 +229,11 @@ fn main() -> Result<()> {
 
 /// Build a [`DTValidator`] from the schema file/dir (or bundled-only when none).
 fn build_validator(schema_file: Option<&Path>) -> Result<DTValidator> {
-    let version = dtschema::version();
     match schema_file {
-        Some(p) if p.is_file() => {
-            // A processed schema JSON file.
-            let processed = load_processed_schema(p, &version)?;
-            DTValidator::from_processed(processed)
-        }
+        Some(p) if p.is_file() => DTValidator::new(&[p.to_path_buf()]),
         Some(p) => DTValidator::new(&[p.to_path_buf()]),
         None => DTValidator::new(&[]),
     }
-}
-
-/// Load a processed-schema JSON file into [`ProcessedSchemas`] using the fast
-/// path for version checks and `generated-*` reuse.
-fn load_processed_schema(path: &Path, version: &str) -> Result<ProcessedSchemas> {
-    let text =
-        std::fs::read_to_string(path).with_context(|| format!("reading {}", path.display()))?;
-    let value: Value = serde_json::from_str(&text)
-        .with_context(|| format!("{}: not valid JSON", path.display()))?;
-    let obj = value
-        .as_object()
-        .with_context(|| format!("{}: processed schema is not an object", path.display()))?;
-
-    if obj.contains_key("$id") {
-        anyhow::bail!(
-            "{}: looks like a single schema, not a processed schema set",
-            path.display()
-        );
-    }
-    if let Some(v) = obj.get("version").and_then(Value::as_str)
-        && v != version
-    {
-        anyhow::bail!(
-            "Processed schema out of date, delete and retry: {}",
-            path.display()
-        );
-    }
-
-    ProcessedSchemas::from_value(&value, version)
 }
 
 /// Decode a DTB and walk the resulting tree. Buffered diagnostics are returned;
