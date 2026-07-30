@@ -156,15 +156,29 @@ impl TypeContext {
     }
 
     /// Build a decode context from an already-processed schema map (the
-    /// `generated-types`/`generated-pattern-types` entries and the individual
-    /// bindings), avoiding a second processing pass when the validator has
-    /// already built [`crate::process::ProcessedSchemas`].
+    /// `generated-types`/`generated-pattern-types` entries), avoiding a
+    /// second property-type extraction pass when the validator has already
+    /// built [`crate::process::ProcessedSchemas`].
     pub fn from_processed(schemas: &BTreeMap<String, Value>) -> Self {
-        Self::from_schemas(schemas)
+        let props = cached_props(schemas, "generated-types");
+        let pat_props = cached_props(schemas, "generated-pattern-types");
+        match (props, pat_props) {
+            (Some(props), Some(pat_props)) => Self::from_prop_maps(props, pat_props),
+            // Accept older or hand-written processed schemas which do not
+            // carry the generated caches.
+            _ => Self::from_schemas(schemas),
+        }
     }
 
     fn from_schemas(schemas: &BTreeMap<String, Value>) -> Self {
         let (props, pat_props) = get_prop_types(schemas);
+        Self::from_prop_maps(props, pat_props)
+    }
+
+    fn from_prop_maps(
+        props: BTreeMap<String, Vec<Value>>,
+        pat_props: BTreeMap<String, Vec<Value>>,
+    ) -> Self {
         let pat = pat_props
             .into_iter()
             .filter_map(|(k, list)| {
@@ -243,6 +257,22 @@ impl TypeContext {
             None => false,
         }
     }
+}
+
+/// Read a serialized property-type cache from a processed schema. Cache
+/// entries use the same `property -> list of type entries` representation as
+/// [`get_prop_types`], except that JSON arrays must be cloned into vectors.
+fn cached_props(
+    schemas: &BTreeMap<String, Value>,
+    cache_name: &str,
+) -> Option<BTreeMap<String, Vec<Value>>> {
+    schemas
+        .get(cache_name)?
+        .get("properties")?
+        .as_object()?
+        .iter()
+        .map(|(name, entries)| Some((name.clone(), entries.as_array()?.to_vec())))
+        .collect()
 }
 
 // ---------------------------------------------------------------------------
@@ -1134,4 +1164,66 @@ pub fn decode_dtb(
     fixups.fixup_phandles(&mut map, "");
 
     Ok(DtValue::Node(map))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn processed_context_uses_generated_type_caches() {
+        let schemas = BTreeMap::from([
+            (
+                "generated-types".to_string(),
+                json!({
+                    "properties": {
+                        "cached-prop": [{ "type": "uint32" }],
+                    },
+                }),
+            ),
+            (
+                "generated-pattern-types".to_string(),
+                json!({
+                    "properties": {
+                        "^cached-pattern$": [{ "type": "string" }],
+                    },
+                }),
+            ),
+            (
+                "raw-schema".to_string(),
+                json!({
+                    "$id": "raw-schema",
+                    "properties": {
+                        "must-not-be-extracted": {
+                            "$ref": "http://devicetree.org/schemas/types.yaml#/definitions/uint64",
+                        },
+                    },
+                }),
+            ),
+        ]);
+
+        let ctx = TypeContext::from_processed(&schemas);
+        assert!(ctx.get_type("cached-prop").contains("uint32"));
+        assert!(ctx.get_type("cached-pattern").contains("string"));
+        assert!(ctx.get_type("must-not-be-extracted").is_empty());
+    }
+
+    #[test]
+    fn processed_context_falls_back_without_generated_caches() {
+        let schemas = BTreeMap::from([(
+            "raw-schema".to_string(),
+            json!({
+                "$id": "raw-schema",
+                "properties": {
+                    "raw-prop": {
+                        "$ref": "http://devicetree.org/schemas/types.yaml#/definitions/uint64",
+                    },
+                },
+            }),
+        )]);
+
+        let ctx = TypeContext::from_processed(&schemas);
+        assert!(ctx.get_type("raw-prop").contains("uint64"));
+    }
 }
