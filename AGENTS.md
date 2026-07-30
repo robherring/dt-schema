@@ -34,6 +34,9 @@ cargo test --manifest-path rust/Cargo.toml --workspace --locked
 cargo fmt --manifest-path rust/Cargo.toml --all -- --check
 ```
 
+Rust `dt-mk-schema -j` emits indexed data; `--legacy-json` emits JSON that
+Python can read. Preserve compatibility when changing processed formats.
+
 ## Editing
 
 - Keep changes focused and follow existing style.

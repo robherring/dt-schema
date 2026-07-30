@@ -4,6 +4,7 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use dtschema::process::load_indexed_processed_schema;
 use serde_json::Value;
 
 fn repo_root() -> PathBuf {
@@ -83,7 +84,7 @@ fn json_output_matches_python_by_value() {
     let response_arg = format!("@{}", args_file.display());
 
     let rust = Command::new(env!("CARGO_BIN_EXE_dt-mk-schema"))
-        .args(["-j", &response_arg])
+        .args(["--legacy-json", &response_arg])
         .current_dir(&repo)
         .output()
         .expect("run rust dt-mk-schema");
@@ -115,4 +116,31 @@ fn json_output_matches_python_by_value() {
     normalize_generated_order(&mut want);
 
     assert_eq!(got, want);
+}
+
+#[test]
+fn indexed_output_loads() {
+    let repo = repo_root();
+    let output = std::env::temp_dir().join("dt-mk-schema-indexed-schema.json");
+    let _ = std::fs::remove_file(&output);
+    let result = Command::new(env!("CARGO_BIN_EXE_dt-mk-schema"))
+        .args(["-j", "-o"])
+        .arg(&output)
+        .arg(repo.join("test/schemas"))
+        .current_dir(&repo)
+        .output()
+        .expect("run rust dt-mk-schema");
+    assert!(
+        result.status.success(),
+        "dt-mk-schema failed: {}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+
+    let indexed = load_indexed_processed_schema(&output, &dtschema::version())
+        .unwrap()
+        .expect("indexed schema magic");
+    assert!(!indexed.index.schemas.is_empty());
+    assert!(indexed.index.schemas.contains_key("generated-types"));
+    drop(indexed);
+    std::fs::remove_file(output).unwrap();
 }

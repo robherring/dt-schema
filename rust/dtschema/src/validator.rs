@@ -13,8 +13,10 @@
 
 use std::borrow::Cow;
 use std::collections::BTreeMap;
+use std::fs::File;
+use std::io::{Read, Seek, SeekFrom};
 use std::path::PathBuf;
-use std::sync::{Arc, OnceLock};
+use std::sync::{Arc, Mutex, OnceLock};
 
 use jsonschema::error::ValidationErrorKind;
 use jsonschema::json::{Array, Json, JsonNumber, Node, NodeIdentity, Object};
@@ -23,7 +25,7 @@ use regex::{Regex, RegexSet};
 use serde_json::{Map, Value};
 
 use crate::dtb::{self, DtValue, TypeContext};
-use crate::process::ProcessedSchemas;
+use crate::process::{IndexedProcessedSchemas, ProcessedSchemas, load_indexed_processed_schema};
 
 // ---------------------------------------------------------------------------
 // Custom `jsonschema` representation over `&DtValue`.
@@ -305,7 +307,7 @@ type ValidatorSlot = Arc<OnceLock<Option<Arc<Validator<DtJson>>>>>;
 
 /// The devicetree data validator.
 pub struct DTValidator {
-    schemas: Arc<BTreeMap<String, Value>>,
+    schemas: SchemaStore,
     compat_map: BTreeMap<String, String>,
     always_schemas: Vec<String>,
     type_ctx: TypeContext,
@@ -324,10 +326,82 @@ pub struct DTValidator {
 
 /// Retriever that resolves `$ref` URIs against the processed schema map.
 struct DtSchemaRetriever {
-    schemas: Arc<BTreeMap<String, Value>>,
+    schemas: SchemaStore,
 }
 
-const VENDOR_PREFIXES_SCHEMA: &str = "http://devicetree.org/schemas/vendor-prefixes.yaml";
+pub(crate) const VENDOR_PREFIXES_SCHEMA: &str =
+    "http://devicetree.org/schemas/vendor-prefixes.yaml";
+
+/// Full schemas are either held in memory (raw/legacy processed input) or
+/// decoded on demand from an indexed processed-schema container.
+#[derive(Clone)]
+enum SchemaStore {
+    Eager(Arc<BTreeMap<String, Arc<Value>>>),
+    Indexed(Arc<IndexedSchemaStore>),
+}
+
+struct IndexedSchemaStore {
+    indexed: IndexedProcessedSchemas,
+    loaded: Mutex<BTreeMap<String, Arc<Value>>>,
+}
+
+impl SchemaStore {
+    fn eager(schemas: BTreeMap<String, Value>) -> Self {
+        Self::Eager(Arc::new(
+            schemas
+                .into_iter()
+                .map(|(id, schema)| (id, Arc::new(schema)))
+                .collect(),
+        ))
+    }
+
+    fn indexed(indexed: IndexedProcessedSchemas) -> Self {
+        Self::Indexed(Arc::new(IndexedSchemaStore {
+            indexed,
+            loaded: Mutex::new(BTreeMap::new()),
+        }))
+    }
+
+    fn ids(&self) -> Vec<String> {
+        match self {
+            Self::Eager(schemas) => schemas.keys().cloned().collect(),
+            Self::Indexed(schemas) => schemas.indexed.index.schemas.keys().cloned().collect(),
+        }
+    }
+
+    fn get(&self, id: &str) -> Option<Arc<Value>> {
+        match self {
+            Self::Eager(schemas) => schemas.get(id).cloned(),
+            Self::Indexed(schemas) => schemas.get(id),
+        }
+    }
+}
+
+impl IndexedSchemaStore {
+    fn get(&self, id: &str) -> Option<Arc<Value>> {
+        if let Some(schema) = self.loaded.lock().ok()?.get(id).cloned() {
+            return Some(schema);
+        }
+        let payload = self.indexed.index.schemas.get(id)?;
+        let mut file = File::open(&self.indexed.path).ok()?;
+        file.seek(SeekFrom::Start(
+            self.indexed.payload_offset + payload.offset,
+        ))
+        .ok()?;
+        let mut bytes = vec![0; usize::try_from(payload.len).ok()?];
+        file.read_exact(&mut bytes).ok()?;
+        let schema: Arc<Value> = Arc::new(serde_json::from_slice(&bytes).ok()?);
+        if let Ok(mut loaded) = self.loaded.lock() {
+            return Some(
+                loaded
+                    .entry(id.to_string())
+                    .or_insert_with(|| schema.clone())
+                    .clone(),
+            );
+        }
+        Some(schema)
+    }
+}
 
 struct VendorPrefixesFastPath {
     properties: std::collections::BTreeSet<String>,
@@ -781,7 +855,7 @@ impl Retrieve for DtSchemaRetriever {
     ) -> Result<Value, Box<dyn std::error::Error + Send + Sync>> {
         let key = uri.as_str().trim_end_matches('#');
         if let Some(v) = self.schemas.get(key) {
-            return Ok(validation_resource(v));
+            return Ok(validation_resource(&v));
         }
         // A missed reference becomes a `false` schema that rejects everything.
         Ok(Value::Bool(false))
@@ -795,9 +869,13 @@ impl DTValidator {
         let version = crate::version();
         if let [schema_file] = schema_paths
             && schema_file.is_file()
-            && let Some(processed) = load_processed_schema_file(schema_file, &version)?
         {
-            return Self::from_processed(processed);
+            if let Some(indexed) = load_indexed_processed_schema(schema_file, &version)? {
+                return Self::from_indexed(indexed);
+            }
+            if let Some(processed) = load_processed_schema_file(schema_file, &version)? {
+                return Self::from_processed(processed);
+            }
         }
         let processed = ProcessedSchemas::build(schema_paths, true, &version);
         Self::from_processed(processed)
@@ -823,7 +901,55 @@ impl DTValidator {
             .iter()
             .map(|_| Arc::new(OnceLock::new()))
             .collect();
-        let schemas = Arc::new(schemas);
+        let schemas = SchemaStore::eager(schemas);
+        let retriever = Arc::new(DtSchemaRetriever {
+            schemas: schemas.clone(),
+        });
+        Ok(Self {
+            schemas,
+            compat_map,
+            always_schemas,
+            type_ctx,
+            retriever,
+            always_dispatch,
+            vendor_prefixes,
+            raw_validators,
+            always_validators,
+        })
+    }
+
+    fn from_indexed(indexed: IndexedProcessedSchemas) -> anyhow::Result<Self> {
+        let mut type_schemas = BTreeMap::new();
+        type_schemas.insert(
+            "generated-types".to_string(),
+            indexed.index.generated_types.clone(),
+        );
+        type_schemas.insert(
+            "generated-pattern-types".to_string(),
+            indexed.index.generated_pattern_types.clone(),
+        );
+        let type_ctx = TypeContext::from_processed(&type_schemas);
+        let always_dispatch = AlwaysDispatch::build(
+            &indexed.index.dispatch_schemas,
+            &indexed.index.always_schemas,
+        );
+        let vendor_prefixes = indexed
+            .index
+            .vendor_prefixes
+            .as_ref()
+            .and_then(VendorPrefixesFastPath::build);
+        let compat_map = indexed.index.compat_map.clone();
+        let always_schemas = indexed.index.always_schemas.clone();
+        let schemas = SchemaStore::indexed(indexed);
+        let raw_validators = schemas
+            .ids()
+            .into_iter()
+            .map(|schema_id| (schema_id, Arc::new(OnceLock::new())))
+            .collect();
+        let always_validators = always_schemas
+            .iter()
+            .map(|_| Arc::new(OnceLock::new()))
+            .collect();
         let retriever = Arc::new(DtSchemaRetriever {
             schemas: schemas.clone(),
         });
@@ -888,7 +1014,7 @@ impl DTValidator {
                         && let Some(schema) = self.schemas.get(schema_id)
                         && let Some(slot) = self.raw_validators.get(schema_id)
                     {
-                        self.collect(schema, schema_id, false, slot, node, &mut out);
+                        self.collect(&schema, schema_id, false, slot, node, &mut out);
                     }
                     break;
                 }
@@ -915,7 +1041,7 @@ impl DTValidator {
             let Some(slot) = self.always_validators.get(schema_index) else {
                 continue;
             };
-            self.collect(schema, schema_id, true, slot, node, &mut out);
+            self.collect(&schema, schema_id, true, slot, node, &mut out);
         }
 
         out
@@ -984,7 +1110,7 @@ impl DTValidator {
         let Some(schema) = self.schemas.get(crate::GENERATED_COMPATIBLES_SCHEMA) else {
             return compatibles.to_vec();
         };
-        let validator = match self.build_validator(schema, false) {
+        let validator = match self.build_validator(&schema, false) {
             Ok(v) => v,
             Err(_) => return compatibles.to_vec(),
         };
@@ -1141,7 +1267,7 @@ mod tests {
         schemas: BTreeMap<String, Value>,
     ) -> Validator<DtJson> {
         let retriever = SharedRetriever(Arc::new(DtSchemaRetriever {
-            schemas: Arc::new(schemas),
+            schemas: SchemaStore::eager(schemas),
         }));
         dt_options(retriever).build(schema).unwrap()
     }

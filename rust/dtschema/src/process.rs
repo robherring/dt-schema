@@ -9,13 +9,49 @@
 //! consumes.
 
 use std::collections::BTreeMap;
+use std::fs::File;
+use std::io::{Read, Seek, Write};
 use std::path::{Path, PathBuf};
 
 use rayon::prelude::*;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::schema::DTSchema;
 use crate::{bundled_dir, types};
+
+const INDEXED_MAGIC: &[u8; 8] = b"DTSIDX01";
+const INDEXED_FORMAT_VERSION: u32 = 1;
+
+/// Location of one schema JSON payload within an indexed processed schema.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct SchemaPayload {
+    pub offset: u64,
+    pub len: u64,
+}
+
+/// The eagerly-loaded portion of an indexed processed schema.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ProcessedSchemaIndex {
+    pub format_version: u32,
+    pub version: String,
+    pub schemas: BTreeMap<String, SchemaPayload>,
+    pub compat_map: BTreeMap<String, String>,
+    pub always_schemas: Vec<String>,
+    pub dispatch_schemas: BTreeMap<String, Value>,
+    pub generated_types: Value,
+    pub generated_pattern_types: Value,
+    pub vendor_prefixes: Option<Value>,
+}
+
+/// An opened indexed processed-schema container. The index is in memory while
+/// individual schema payloads remain on disk until the validator needs them.
+#[derive(Clone, Debug)]
+pub struct IndexedProcessedSchemas {
+    pub path: PathBuf,
+    pub index: ProcessedSchemaIndex,
+    pub payload_offset: u64,
+}
 
 /// A fully processed schema set, keyed by `$id` (trailing `#` stripped), plus
 /// the generated cache entries and `version`.
@@ -195,8 +231,84 @@ impl ProcessedSchemas {
         }
     }
 
-    /// Reconstruct a processed set from a loaded processed-schema JSON document
-    /// (the `dt-mk-schema -j` output). The `generated-*` entries are kept as-is;
+    /// Encode this processed schema as an indexed runtime container. The small
+    /// dispatch/type index is read at startup; each full schema is stored as a
+    /// separate JSON payload and loaded only when validation selects it.
+    pub fn indexed_bytes(&self) -> anyhow::Result<Vec<u8>> {
+        let mut payloads: Vec<Vec<u8>> = Vec::new();
+        let mut schema_index = BTreeMap::new();
+        let mut offset = 0u64;
+        for (id, schema) in &self.schemas {
+            if id == "version" {
+                continue;
+            }
+            let payload = serde_json::to_vec(schema)?;
+            let len = u64::try_from(payload.len())?;
+            schema_index.insert(id.clone(), SchemaPayload { offset, len });
+            offset += len;
+            payloads.push(payload);
+        }
+
+        let dispatch_schemas = self
+            .always_schemas
+            .iter()
+            .filter_map(|id| {
+                self.schemas
+                    .get(id)
+                    .map(|schema| (id.clone(), dispatch_projection(schema)))
+            })
+            .collect();
+        let generated_types = self
+            .schemas
+            .get("generated-types")
+            .cloned()
+            .ok_or_else(|| anyhow::anyhow!("processed schema lacks generated-types"))?;
+        let generated_pattern_types = self
+            .schemas
+            .get("generated-pattern-types")
+            .cloned()
+            .ok_or_else(|| anyhow::anyhow!("processed schema lacks generated-pattern-types"))?;
+        let index = ProcessedSchemaIndex {
+            format_version: INDEXED_FORMAT_VERSION,
+            version: self
+                .schemas
+                .get("version")
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+                .to_string(),
+            schemas: schema_index,
+            compat_map: self.compat_map.clone(),
+            always_schemas: self.always_schemas.clone(),
+            dispatch_schemas,
+            generated_types,
+            generated_pattern_types,
+            vendor_prefixes: self
+                .schemas
+                .get(crate::validator::VENDOR_PREFIXES_SCHEMA)
+                .cloned(),
+        };
+        let index = serde_json::to_vec(&index)?;
+        let index_len = u64::try_from(index.len())?;
+
+        let mut out = Vec::with_capacity(INDEXED_MAGIC.len() + 12 + index.len() + offset as usize);
+        out.extend_from_slice(INDEXED_MAGIC);
+        out.extend_from_slice(&INDEXED_FORMAT_VERSION.to_le_bytes());
+        out.extend_from_slice(&index_len.to_le_bytes());
+        out.extend_from_slice(&index);
+        for payload in payloads {
+            out.extend_from_slice(&payload);
+        }
+        Ok(out)
+    }
+
+    /// Write an indexed runtime container to `writer`.
+    pub fn write_indexed(&self, mut writer: impl Write) -> anyhow::Result<()> {
+        writer.write_all(&self.indexed_bytes()?)?;
+        Ok(())
+    }
+
+    /// Reconstruct a processed set from a loaded legacy JSON document
+    /// (`dt-mk-schema --legacy-json` output). The `generated-*` entries are kept as-is;
     /// `compat_map`/`always_schemas` are rebuilt from the entries.
     pub fn from_value(value: &Value, version: &str) -> anyhow::Result<Self> {
         let obj = value
@@ -269,4 +381,74 @@ impl ProcessedSchemas {
         }
         (compat_map, always_schemas)
     }
+}
+
+/// Load an indexed processed schema when `path` carries the indexed magic.
+/// A non-indexed file returns `Ok(None)` so callers can fall back to legacy
+/// JSON/YAML handling.
+pub fn load_indexed_processed_schema(
+    path: &Path,
+    version: &str,
+) -> anyhow::Result<Option<IndexedProcessedSchemas>> {
+    let mut file = File::open(path)?;
+    let mut magic = [0u8; INDEXED_MAGIC.len()];
+    if file.read_exact(&mut magic).is_err() || magic != *INDEXED_MAGIC {
+        return Ok(None);
+    }
+    let mut format = [0u8; 4];
+    file.read_exact(&mut format)?;
+    if u32::from_le_bytes(format) != INDEXED_FORMAT_VERSION {
+        anyhow::bail!(
+            "Unsupported processed schema format, rebuild it: {}",
+            path.display()
+        );
+    }
+    let mut len = [0u8; 8];
+    file.read_exact(&mut len)?;
+    let index_len = usize::try_from(u64::from_le_bytes(len))?;
+    let mut bytes = vec![0; index_len];
+    file.read_exact(&mut bytes)?;
+    let index: ProcessedSchemaIndex = serde_json::from_slice(&bytes)
+        .map_err(|e| anyhow::anyhow!("{}: invalid indexed schema: {e}", path.display()))?;
+    if index.version != version {
+        anyhow::bail!(
+            "Processed schema out of date, delete and retry: {}",
+            path.display()
+        );
+    }
+    let payload_offset = file.stream_position()?;
+    Ok(Some(IndexedProcessedSchemas {
+        path: path.to_path_buf(),
+        index,
+        payload_offset,
+    }))
+}
+
+fn dispatch_projection(schema: &Value) -> Value {
+    let mut projection = serde_json::Map::new();
+    if let Some(id) = schema.get("$id") {
+        projection.insert("$id".to_string(), id.clone());
+    }
+    let Some(select) = schema.get("select") else {
+        return Value::Object(projection);
+    };
+    projection.insert("select".to_string(), select.clone());
+    if select != &Value::Bool(true) {
+        return Value::Object(projection);
+    }
+    for key in [
+        "properties",
+        "patternProperties",
+        "dependentRequired",
+        "dependentSchemas",
+    ] {
+        if let Some(props) = schema.get(key).and_then(Value::as_object) {
+            let keys = props
+                .keys()
+                .map(|name| (name.clone(), Value::Bool(true)))
+                .collect();
+            projection.insert(key.to_string(), Value::Object(keys));
+        }
+    }
+    Value::Object(projection)
 }
