@@ -1,0 +1,45 @@
+// SPDX-License-Identifier: BSD-2-Clause
+// Copyright 2026 dt-schema contributors
+/dts-v1/;
+
+/ {
+    iommu1: iommu-one {
+        #iommu-cells = <1>;
+    };
+
+    iommu2: iommu-two {
+        #iommu-cells = <2>;
+    };
+
+    iommu0: iommu-zero {
+        #iommu-cells = <0>;
+    };
+
+    bus {
+        default-map {
+            iommu-map = <0 &iommu1 0x100 0x80>,
+                        <0x80 &iommu1 0x200 0x80>;
+        };
+
+        wide-provider {
+            iommu-map = <0 &iommu2 0 0x100 0x80>,
+                        <0x80 &iommu2 0 0x200 0x80>;
+        };
+
+        wide-mapper {
+            #iommu-cells = <2>;
+            iommu-map = <0 0 &iommu2 0 0x100 0x80>,
+                        <0 0x80 &iommu2 0 0x200 0x80>;
+        };
+
+        zero-mapper {
+            #iommu-cells = <0>;
+            iommu-map = <0 &iommu1 0x100 0x80>,
+                        <0x80 &iommu1 0x200 0x80>;
+        };
+
+        zero-provider {
+            iommu-map = <0 &iommu0 0x80>, <0x80 &iommu0 0x80>;
+        };
+    };
+};

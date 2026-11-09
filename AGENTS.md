@@ -24,6 +24,16 @@ flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 yamllint --strict $(git ls-files '*.yaml')
 ```
 
+## Rust
+
+The `rust/` workspace ports Python behavior; Python remains the reference.
+Preserve parity tests when changing validation or schema processing.
+
+```sh
+cargo test --manifest-path rust/Cargo.toml --workspace --locked
+cargo fmt --manifest-path rust/Cargo.toml --all -- --check
+```
+
 ## Editing
 
 - Keep changes focused and follow existing style.
