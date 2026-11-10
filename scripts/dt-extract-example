@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright 2026 dt-schema contributors
+
+import sys
+
+from dtschema.extract_example import main
+
+
+if __name__ == "__main__":
+    sys.exit(main())

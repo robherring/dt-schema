@@ -20,7 +20,3 @@ sha2.workspace = true
 rayon.workspace = true
 anyhow.workspace = true
 thiserror.workspace = true
-
-[build-dependencies]
-# Bundled schema/meta-schema data path is resolved at runtime relative to the
-# repository; see lib.rs `bundled_dir`.

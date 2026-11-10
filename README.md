@@ -74,9 +74,9 @@ As a developer you normally will not need to write metaschema files.
 Devicetree Meta-Schema files are normal YAML files using the jsonschema vocabulary.
 
 ## Usage
-There are several tools available in the *tools/* directory.
+The following commands are installed on your `PATH`.
 
-`tools/dt-doc-validate`
+`dt-doc-validate`
 This tool takes a schema file(s) or directory of schema files and validates
 them against the DT meta-schema.
 
@@ -85,7 +85,7 @@ Example:
 dt-doc-validate -u test/schemas test/schemas/good-example.yaml
 ```
 
-`tools/dt-mk-schema`
+`dt-mk-schema`
 This tool takes user-provided schema file(s) plus the core schema files in this
 repo, removes everything not needed for validation, applies fix-ups to the
 schemas, and outputs a single file with the processed schema. This step
@@ -97,7 +97,18 @@ Example:
 dt-mk-schema -j test/schemas/ > processed-schema.json
 ```
 
-`tools/dt-validate`
+With the Rust backend, `-j` and `--indexed` produce a container that loads
+schema payloads on demand. Use `--legacy-json` for JSON usable by both
+implementations. With the Python backend, `-j` produces JSON. Omitting the
+format flag produces YAML with either backend. Indexed files can only be
+read by the Rust tools:
+
+```
+dt-mk-schema --indexed test/schemas/ -o processed-schema.indexed
+dt-validate -s processed-schema.indexed device.dtb
+```
+
+`dt-validate`
 This tool takes user-provided Devicetree(s) and either a schema directory
 or a pre-processed schema file from `dt-mk-schema`, and then validates the
 Devicetree against the schema.
@@ -108,7 +119,7 @@ dtc -O dtb -o device.dtb test/device.dts
 dt-validate -s processed-schema.json device.dtb
 ```
 
-`tools/dt-check-compatible`
+`dt-check-compatible`
 This tool tests whether a list of compatible strings are found or not in
 the schemas. By default, a compatible string is printed when it matches
 one (or a pattern) in the schemas.
@@ -132,6 +143,25 @@ pip3 install git+https://github.com/devicetree-org/dt-schema.git@main
 ```
 
 All executables will be installed. Ensure ~/.local/bin is in the PATH.
+
+The five commands `dt-validate`, `dt-doc-validate`, `dt-mk-schema`,
+`dt-check-compatible`, and `dt-extract-example` use packaged Rust executables
+when available. The other commands and the Python library API continue to
+use Python. Installation commands and command names are unchanged.
+
+Release wheels include Rust executables for Linux x86-64 and AArch64.
+Source and editable installations attempt to build them using Cargo and
+Rust 1.88 or newer. Both use optimized release builds, including `pip install -e .`.
+If Rust is unavailable or its build fails, installation continues with the
+Python implementation. Wheels require no Rust compiler.
+
+The implementation is selected at build time. When the Rust build succeeds,
+these command names are native executables and start without Python. If Rust
+is unavailable or the build fails, the same names run the Python implementation.
+The Python library API remains available in either case.
+
+The native tools find their installed schemas automatically. `DTSCHEMA_DIR`
+can override the Rust schema directory.
 
 
 For development, clone the git repository manually and run pip on local tree::

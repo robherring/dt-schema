@@ -1,0 +1,5 @@
+include rust/Cargo.toml rust/Cargo.lock
+recursive-include rust Cargo.toml *.rs *.yaml *.dts
+prune rust/target
+include setup.py test/test-installed.py
+include scripts/*

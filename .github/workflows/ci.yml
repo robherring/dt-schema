@@ -34,3 +34,15 @@ jobs:
     - name: Test
       run: |
         test/test-dt-validate.py
+    - name: Test Rust
+      if: matrix.python-version == '3.13'
+      run: cargo test --manifest-path rust/Cargo.toml --workspace --locked
+    - name: Test Python-only install
+      if: matrix.python-version == '3.13'
+      env:
+        RUSTC: /nonexistent/rustc
+        DTSCHEMA_TEST_BACKEND: python
+      run: |
+        python -m pip install --force-reinstall --no-deps .
+        cd /tmp
+        python "$GITHUB_WORKSPACE/test/test-installed.py"

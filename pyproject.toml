@@ -1,6 +1,15 @@
 [build-system]
-requires = ["setuptools>=61", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=61", "setuptools_scm[toml]>=6.2", "setuptools-rust>=1.9"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+script-files = [
+    "scripts/dt-validate",
+    "scripts/dt-doc-validate",
+    "scripts/dt-mk-schema",
+    "scripts/dt-check-compatible",
+    "scripts/dt-extract-example",
+]
 
 [tool.setuptools_scm]
 write_to = "dtschema/version.py"
@@ -10,6 +19,41 @@ include = ["dtschema"]
 
 [tool.setuptools.package-data]
 dtschema = ["meta-schemas/**/*.yaml", "schemas/**/*.yaml"]
+
+[[tool.setuptools-rust.bins]]
+target = "dt-validate"
+path = "rust/cli/dt-validate/Cargo.toml"
+debug = false
+cargo-manifest-args = ["--locked"]
+optional = true
+
+[[tool.setuptools-rust.bins]]
+target = "dt-doc-validate"
+path = "rust/cli/dt-doc-validate/Cargo.toml"
+debug = false
+cargo-manifest-args = ["--locked"]
+optional = true
+
+[[tool.setuptools-rust.bins]]
+target = "dt-mk-schema"
+path = "rust/cli/dt-mk-schema/Cargo.toml"
+debug = false
+cargo-manifest-args = ["--locked"]
+optional = true
+
+[[tool.setuptools-rust.bins]]
+target = "dt-check-compatible"
+path = "rust/cli/dt-check-compatible/Cargo.toml"
+debug = false
+cargo-manifest-args = ["--locked"]
+optional = true
+
+[[tool.setuptools-rust.bins]]
+target = "dt-extract-example"
+path = "rust/cli/dt-extract-example/Cargo.toml"
+debug = false
+cargo-manifest-args = ["--locked"]
+optional = true
 
 [project]
 name = "dtschema"
@@ -37,13 +81,8 @@ dependencies = [
 ]
 
 [project.scripts]
-dt-check-compatible = "dtschema.check_compatible:main"
 dt-cmp-schema = "dtschema.cmp_schema:main"
-dt-doc-validate = "dtschema.doc_validate:main"
-dt-extract-example = "dtschema.extract_example:main"
 dt-extract-props = "dtschema.extract_props:main"
-dt-mk-schema = "dtschema.mk_schema:main"
-dt-validate = "dtschema.dtb_validate:main"
 dtb2py = "dtschema.dtb2py:main"
 
 [project.urls]

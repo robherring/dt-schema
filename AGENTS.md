@@ -37,6 +37,14 @@ cargo fmt --manifest-path rust/Cargo.toml --all -- --check
 Rust `dt-mk-schema -j` emits indexed data; `--legacy-json` emits JSON that
 Python can read. Preserve compatibility when changing processed formats.
 
+Pip installs the five Rust tools under the standard command names, falling
+back to the whole Python toolset if any build fails. Keep `debug = false` in
+all setuptools-rust entries so editable installs remain optimized.
+
+For packaging changes, run `test/test-installed.py` outside the source tree
+against the installed wheel with its CLIs on PATH. It requires native tools;
+set `DTSCHEMA_TEST_BACKEND=python` to test a compiler-free build.
+
 ## Editing
 
 - Keep changes focused and follow existing style.
