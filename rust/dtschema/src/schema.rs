@@ -206,7 +206,12 @@ impl DTSchema {
                 if e.instance_path().iter().next().is_some() {
                     src.push(' ');
                 }
-                format!("{src}{e}")
+                let mut message = format!("{src}{e}");
+                if let Some(hint) = meta_schema_hint(&retriever, &e) {
+                    message.push_str("\n\thint: ");
+                    message.push_str(&hint);
+                }
+                message
             })
             .collect();
         errs.sort();
@@ -234,6 +239,28 @@ impl DTSchema {
         let filename = self.filename.to_string_lossy().into_owned();
         check_refs_rec(&retriever, &filename, &self.value, None, None, None);
     }
+}
+
+/// Find the closest description enclosing the failed keyword. Use the resolved
+/// location so references select the meta-schema, rather than the binding data.
+fn meta_schema_hint(
+    retriever: &DtRetriever,
+    error: &jsonschema::ValidationError<'_>,
+) -> Option<String> {
+    let location = error.absolute_keyword_location()?.as_str();
+    let (document, mut pointer) = location.split_once('#')?;
+    let schema = retriever.retrieve(&uri_of(document)).ok()?;
+    while let Some((parent, _)) = pointer.rsplit_once('/') {
+        pointer = parent;
+        if let Some(description) = schema
+            .pointer(pointer)
+            .and_then(|value| value.get("description"))
+            .and_then(Value::as_str)
+        {
+            return Some(description.to_string());
+        }
+    }
+    None
 }
 
 /// Return whether a subschema describes a node: `type: object` or any of the

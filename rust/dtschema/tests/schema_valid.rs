@@ -14,6 +14,37 @@ use dtschema::schema::{DTSchema, DtRetriever};
 use jsonschema::Draft;
 use serde_json::Value;
 
+#[test]
+fn test_meta_validation_hints() {
+    let example = dtschema_dir()
+        .parent()
+        .unwrap()
+        .join("test/schemas/good-example.yaml");
+    for (keyword, hint) in [
+        (
+            "maxItems",
+            "\"maxItems\" is not needed with an \"items\" list",
+        ),
+        (
+            "minItems",
+            "\"minItems\" is only needed if less than the \"items\" list length",
+        ),
+    ] {
+        let mut schema = DTSchema::load(&example).unwrap();
+        schema.value["properties"]["clocks"] = serde_json::json!({
+            "description": "Binding descriptions are not diagnostic hints",
+            "items": [{"description": "first clock"}, {"description": "second clock"}],
+            (keyword): 2,
+        });
+        let errors = schema.format_errors().unwrap().join("\n");
+        assert!(
+            errors.contains(&format!("\n\thint: {hint}")),
+            "missing {keyword} hint:\n{errors}"
+        );
+        assert!(!errors.contains("hint: Binding descriptions"));
+    }
+}
+
 /// The bundled `dtschema/` data directory (honours `DTSCHEMA_DIR`).
 fn dtschema_dir() -> PathBuf {
     dtschema::bundled_dir()
